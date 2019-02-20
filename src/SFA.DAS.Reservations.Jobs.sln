@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Jobs.Functions.RefreshCourse", "SFA.DAS.Reservations.Jobs.Functions.RefreshCourse\SFA.DAS.Reservations.Jobs.Functions.RefreshCourse.csproj", "{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{7BA3397A-01E4-454C-A282-A09F402764CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4} = {7BA3397A-01E4-454C-A282-A09F402764CE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD5A047B-5DB3-4BD8-89DF-94E5FE734FEC}
+	EndGlobalSection
+EndGlobal
