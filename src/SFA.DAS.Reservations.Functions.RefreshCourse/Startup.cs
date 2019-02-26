@@ -76,7 +76,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));
 
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
-            services.AddTransient<IRefreshCourseHandler, RefreshCourseHandler>();
+            services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
 
             return services.BuildServiceProvider();
         }
