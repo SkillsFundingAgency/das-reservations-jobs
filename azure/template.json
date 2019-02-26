@@ -3,121 +3,197 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourceEnvironmentName": {
-            "type": "string"
-        },
-        "environmentName": {
-            "type": "string"
-        },
-        "sharedAppServicePlanName": {
-            "type": "string"
-        },
-        "sharedSqlServerName": {
-            "type": "string"
-        },
-        "sharedResourceGroup": {
-            "type": "string"
-        },
-        "configurationStorageConnectionString": {
-            "type": "securestring"
-        },
-        "databaseSkuName": {
             "type": "string",
-            "defaultValue": "S0"
+            "metadata": {
+                "description": "Short name of the environment. Used for the name of resources created"
+            }
         },
-        "databaseTier": {
+        "deployStubFunctions": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "aseResourceGroup": {
             "type": "string",
-            "defaultValue": "Standard"
+            "defaultValue": ""
         },
-        "logAnalyticsSubscriptionId": {
+        "aseHostingEnvironmentName": {
             "type": "string",
-            "defaultValue": "[subscription().subscriptionId]"
+            "defaultValue": ""
         },
-        "logAnalyticsResourceGroup": {
-            "type": "string"
+        "appServicePlanSize": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2",
+                "3"
+            ],
+            "defaultValue": "1"
         },
-        "logAnalyticsWorkspaceName": {
-            "type": "string"
+        "appServicePlanInstances": {
+            "type": "int",
+            "defaultValue": 2
         }
     },
     "variables": {
-        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName')))]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-rsrvwkr-as')]"
+		"deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-rsrvwkr')]",
+        "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
+        "functionAppName": "[concat(variables('resourcePrefix'),'-refreshcourse-fa')]",
+        "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),'rsrvwkrstr')]"
     },
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "applicationInsights",
+            "name": "WorkerAppServicePlan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('appServiceName')]"
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
                     },
-                    "attachedService": {
-                        "value": "[variables('appServiceName')]"
+                    "aseHostingEnvironmentName": {
+                        "value": "[parameters('aseHostingEnvironmentName')]"
+                    },
+                    "aseResourceGroup": {
+                        "value": "[parameters('aseResourceGroup')]"
+                    },
+                    "aspSize": {
+                        "value": "[parameters('appServicePlanSize')]"
+                    },
+                    "aspInstances": {
+                        "value": "[parameters('appServicePlanInstances')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "appService",
+            "name": "FunctionAppInsights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "appServiceName": {
-                        "value": "[variables('appServiceName')]"
+                    "appInsightsName": {
+                        "value": "[variables('functionAppName')]"
                     },
-                    "appServicePlanName": {
-                        "value": "[parameters('sharedAppServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[parameters('sharedResourceGroup')]"
-                    },
-                    "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "Environment",
-                                "value": "[parameters('environmentName')]"
-                            },
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('applicationInsights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            }
-                        ]
-                    },
-                    "customHostName": {
-                        "value": ""
-                    },
-                    "certificateThumbprint": {
-                        "value": ""
+                    "attachedService": {
+                        "value": "[variables('functionAppName')]"
                     }
                 }
             }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "Storage",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'storage-account-arm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "StubFunctionApp",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[parameters('deployStubFunctions')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('stubFunctionAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[resourceGroup().name]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": [
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "WorkerAppServicePlan"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "FunctionApp",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[resourceGroup().name]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": [
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('Storage').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[reference('Storage').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "WorkerAppServicePlan"
+            ]
         }
     ],
     "outputs": {
-        "appServiceName": {
+        "functionAppName": {
             "type": "string",
-            "value": "[variables('appServiceName')]"
+            "value": "[variables('functionAppName')]"
         }
     }
 }
