@@ -3,9 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Jobs.Functions.RefreshCourse", "SFA.DAS.Reservations.Jobs.Functions.RefreshCourse\SFA.DAS.Reservations.Jobs.Functions.RefreshCourse.csproj", "{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.RefreshCourse", "SFA.DAS.Reservations.Functions.RefreshCourse\SFA.DAS.Reservations.Functions.RefreshCourse.csproj", "{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{7BA3397A-01E4-454C-A282-A09F402764CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Domain", "SFA.DAS.Reservations.Domain\SFA.DAS.Reservations.Domain.csproj", "{0149975C-7EAA-46BC-9115-3F2799777C39}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Application", "SFA.DAS.Reservations.Application\SFA.DAS.Reservations.Application.csproj", "{D7313143-6B2B-41AB-8E09-7260A0CA68B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3289F558-BCE4-4DE9-9046-620AA212BE65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Application.UnitTests", "SFA.DAS.Reservations.Application.UnitTests\SFA.DAS.Reservations.Application.UnitTests.csproj", "{9476B291-82C3-4BB4-9984-55C77B8A70FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Infrastructure", "SFA.DAS.Reservations.Infrastructure\SFA.DAS.Reservations.Infrastructure.csproj", "{28F4CF94-BA5C-4C92-AD4E-BAEDA4EC57C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Infrastructure.UnitTests", "SFA.DAS.Reservations.Infrastructure.UnitTests\SFA.DAS.Reservations.Infrastructure.UnitTests.csproj", "{A0086284-861B-4155-AA93-88948054EF70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +29,34 @@ Global
 		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0149975C-7EAA-46BC-9115-3F2799777C39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0149975C-7EAA-46BC-9115-3F2799777C39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0149975C-7EAA-46BC-9115-3F2799777C39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0149975C-7EAA-46BC-9115-3F2799777C39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7313143-6B2B-41AB-8E09-7260A0CA68B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7313143-6B2B-41AB-8E09-7260A0CA68B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7313143-6B2B-41AB-8E09-7260A0CA68B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7313143-6B2B-41AB-8E09-7260A0CA68B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9476B291-82C3-4BB4-9984-55C77B8A70FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9476B291-82C3-4BB4-9984-55C77B8A70FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9476B291-82C3-4BB4-9984-55C77B8A70FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9476B291-82C3-4BB4-9984-55C77B8A70FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28F4CF94-BA5C-4C92-AD4E-BAEDA4EC57C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28F4CF94-BA5C-4C92-AD4E-BAEDA4EC57C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28F4CF94-BA5C-4C92-AD4E-BAEDA4EC57C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28F4CF94-BA5C-4C92-AD4E-BAEDA4EC57C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0086284-861B-4155-AA93-88948054EF70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0086284-861B-4155-AA93-88948054EF70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0086284-861B-4155-AA93-88948054EF70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0086284-861B-4155-AA93-88948054EF70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4C1C3154-C08B-42EB-8456-1565C8B6EAC4} = {7BA3397A-01E4-454C-A282-A09F402764CE}
+		{9476B291-82C3-4BB4-9984-55C77B8A70FC} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
+		{A0086284-861B-4155-AA93-88948054EF70} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD5A047B-5DB3-4BD8-89DF-94E5FE734FEC}
