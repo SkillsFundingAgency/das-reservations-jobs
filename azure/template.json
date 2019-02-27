@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-		"serviceName": {
+		    "serviceName": {
             "type": "string"
         },
         "resourceEnvironmentName": {
@@ -28,7 +28,7 @@
             ],
             "defaultValue": "1"
         },
-		"configurationStorageConnectionString": {
+		    "configurationStorageConnectionString": {
             "type": "string"
         },
         "appServicePlanInstances": {
@@ -37,7 +37,7 @@
         }
     },
     "variables": {
-		"deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+		    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-rsrvwkr')]",
         "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
         "functionAppName": "[concat(variables('resourcePrefix'),'-refreshcourse-fa')]",
@@ -133,10 +133,10 @@
                     },
                     "functionAppAppSettings": {
                         "value": [
-							{
+							              {
                                 "name": "ConfigurationStorageConnectionString",
                                 "value": "[parameters('configurationStorageConnectionString')]"
-							},
+							              },
                             {
                                 "name": "AzureWebJobsStorage",
                                 "value": "[reference('storage-account').outputs.storageConnectionString.value]"
