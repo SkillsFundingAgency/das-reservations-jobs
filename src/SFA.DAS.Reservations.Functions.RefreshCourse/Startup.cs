@@ -26,6 +26,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
        
         public void Configure(IWebJobsBuilder builder)
         {
+            builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
         }
     }
@@ -36,6 +37,12 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
         public IConfiguration Configuration { get; }
         public ServiceProviderBuilder(ILoggerFactory loggerFactory)
         {
+            var path = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot", EnvironmentVariableTarget.Process);
+            if (!string.IsNullOrEmpty(path))
+            {
+                Directory.SetCurrentDirectory(path);
+            }
+            
             _loggerFactory = loggerFactory;
 
             var builder = new ConfigurationBuilder()
@@ -45,7 +52,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
                 .Build();
             
             var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(Directory.GetCurrentDirectory()) 
                 .AddJsonFile("local.settings.json")
                 .AddEnvironmentVariables()
                 .AddAzureTableStorageConfiguration(
@@ -77,6 +84,8 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
             services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
+
+            
 
             return services.BuildServiceProvider();
         }
