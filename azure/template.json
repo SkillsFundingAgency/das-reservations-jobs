@@ -38,10 +38,10 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-rsrvwkr')]",
+    "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
     "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
-    "functionAppName": "[concat(variables('resourcePrefix'),'-refreshcourse-fa')]",
-    "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),'rsrvwkrstr')]"
+    "functionAppName": "[concat(variables('resourcePrefix'),'-refcrs-fa')]",
+    "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
   },
   "resources": [
     {
@@ -106,7 +106,7 @@
         },
         "parameters": {
           "storageAccountName": {
-            "value": "[variables('workerStorageAccountName')]"
+            "value": "[variables('storageAccountName')]"
           }
         }
       }
