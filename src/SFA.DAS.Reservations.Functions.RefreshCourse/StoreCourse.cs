@@ -9,7 +9,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
     public static class StoreCourse
     {
         [FunctionName("StoreCourse")]
-        public static void Run([QueueTrigger(QueueNames.StoreCourse, Connection = "")]string myQueueItem, ILogger log)
+        public static void Run([QueueTrigger(QueueNames.StoreCourse)]string myQueueItem, ILogger log)
         {
             log.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
         }
