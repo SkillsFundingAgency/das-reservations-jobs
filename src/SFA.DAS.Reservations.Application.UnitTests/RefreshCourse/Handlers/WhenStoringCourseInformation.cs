@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
+using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Handlers
 {
     public class WhenStoringCourseInformation
     {
         private StoreCourseHandler _handler;
+        private Mock<ICourseService> _service;
 
         [SetUp]
         public void Arrange()
