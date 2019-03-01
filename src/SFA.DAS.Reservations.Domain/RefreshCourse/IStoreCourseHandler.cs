@@ -4,6 +4,6 @@ namespace SFA.DAS.Reservations.Domain.RefreshCourse
 {
     public interface IStoreCourseHandler
     {
-        Task Handle();
+        Task Handle(Course course);
     }
 }
