@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Options;
 using SFA.DAS.Apprenticeships.Api.Client;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
+using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
@@ -85,7 +87,9 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
             services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
 
-            
+            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
+            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
+            //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
             return services.BuildServiceProvider();
         }

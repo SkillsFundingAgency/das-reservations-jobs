@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
-using SFA.DAS.Reservations.Domain.Entities;
+using SFA.DAS.Reservations.Domain.RefreshCourse;
+using Course = SFA.DAS.Reservations.Domain.Entities.Course;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class CourseRepository
+    public class CourseRepository : ICourseRepository
     {
         private readonly IReservationsDataContext _reservationsDataContext;
 

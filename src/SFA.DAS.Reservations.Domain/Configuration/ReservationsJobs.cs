@@ -3,5 +3,6 @@
     public class ReservationsJobs
     {
         public string ApprenticeshipBaseUrl { get; set; }
+        public string ConnectionString { get; set; }
     }
 }
