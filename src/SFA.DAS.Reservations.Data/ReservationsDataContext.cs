@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data
@@ -6,10 +7,17 @@ namespace SFA.DAS.Reservations.Data
     public interface IReservationsDataContext
     {
         DbSet<Course> Apprenticeships { get; set; }
+        DatabaseFacade Database { get; }
         int SaveChanges();
     }
     public class ReservationsDataContext :DbContext, IReservationsDataContext
     {
+        
+
+        public override DatabaseFacade Database
+        {
+            get { return base.Database; }
+        }
         public DbSet<Course> Apprenticeships { get; set; }
         public ReservationsDataContext()
         {
