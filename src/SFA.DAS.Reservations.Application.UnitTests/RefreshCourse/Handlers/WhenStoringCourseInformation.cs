@@ -18,13 +18,17 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Handlers
         public void Arrange()
         {
             _service = new Mock<ICourseService>();
-            _handler = new StoreCourseHandler();
+            _handler = new StoreCourseHandler(_service.Object);
         }
 
         [Test]
         public async Task Then_The_Service_Is_Called_With_The_Course()
         {
+            //Arrange
+            var course = new Course("1-9-a","Test",3);
 
+            //Act
+            await _handler.Handle(course);
         }
     }
 }

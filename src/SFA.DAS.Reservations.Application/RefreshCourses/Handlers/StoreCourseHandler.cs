@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Handlers
 {
     public class StoreCourseHandler : IStoreCourseHandler
     {
-        public Task Handle()
+        private readonly ICourseService _courseService;
+
+        public StoreCourseHandler(ICourseService courseService)
         {
-            throw new NotImplementedException();
+            _courseService = courseService;
+        }
+
+        public async Task Handle(Course course)
+        {
+            await _courseService.Store(course);
         }
     }
 }
