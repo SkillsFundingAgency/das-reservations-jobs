@@ -40,9 +40,11 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
         public IConfiguration Configuration { get; }
         public ServiceProviderBuilder(ILoggerFactory loggerFactory)
         {
-            var path = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot", EnvironmentVariableTarget.Process);
+            
+            var path = Environment.GetEnvironmentVariable("WEBROOT_PATH", EnvironmentVariableTarget.Process);
             if (!string.IsNullOrEmpty(path))
             {
+                path = Path.Combine(path, "bin");
                 Directory.SetCurrentDirectory(path);
             }
             
