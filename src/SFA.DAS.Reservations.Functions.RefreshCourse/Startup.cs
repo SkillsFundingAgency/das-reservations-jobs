@@ -38,32 +38,19 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
     {
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
-        public ServiceProviderBuilder(ILoggerFactory loggerFactory)
+        public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
-            
-            var path = Environment.GetEnvironmentVariable("WEBROOT_PATH", EnvironmentVariableTarget.Process);
-            if (!string.IsNullOrEmpty(path))
-            {
-                Directory.SetCurrentDirectory(path);
-            }
-            
             _loggerFactory = loggerFactory;
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("local.settings.json")
-                .AddEnvironmentVariables()
-                .Build();
             
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory()) 
                 .AddJsonFile("local.settings.json")
                 .AddEnvironmentVariables()
                 .AddAzureTableStorageConfiguration(
-                    builder["ConfigurationStorageConnectionString"],
-                    builder["ConfigNames"].Split(','),
-                    builder["Environment"],
-                    builder["Version"]
+                    configuration["ConfigurationStorageConnectionString"],
+                    configuration["ConfigNames"].Split(','),
+                    configuration["Environment"],
+                    configuration["Version"]
                 )
                 .Build();
 
