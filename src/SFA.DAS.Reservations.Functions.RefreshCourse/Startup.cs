@@ -44,7 +44,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory()) 
-                .AddJsonFile("local.settings.json")
+                .AddJsonFile("local.settings.json",true)
                 .AddEnvironmentVariables()
                 .AddAzureTableStorageConfiguration(
                     configuration["ConfigurationStorageConnectionString"],
