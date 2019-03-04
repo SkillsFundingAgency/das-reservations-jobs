@@ -49,7 +49,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
                 .AddAzureTableStorageConfiguration(
                     configuration["ConfigurationStorageConnectionString"],
                     configuration["ConfigNames"].Split(','),
-                    configuration["Environment"],
+                    configuration["EnvironmentName"],
                     configuration["Version"]
                 )
                 .Build();

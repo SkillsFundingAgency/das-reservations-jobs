@@ -35,7 +35,7 @@
       "type": "string",
       "defaultValue": "SFA.DAS.Reservations.Jobs"
     },
-    "environment": {
+    "environmentName": {
       "type": "string"
     },
     "version": {
@@ -153,8 +153,8 @@
                 "value": "[parameters('configNames')]"
               },
               {
-                "name": "Environment",
-                "value": "[parameters('environment')]"
+                "name": "EnvironmentName",
+                "value": "[parameters('environmentName')]"
               },
               {
                 "name": "Version",
