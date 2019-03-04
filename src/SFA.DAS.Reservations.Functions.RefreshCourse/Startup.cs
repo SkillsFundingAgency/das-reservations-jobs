@@ -44,7 +44,6 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             var path = Environment.GetEnvironmentVariable("WEBROOT_PATH", EnvironmentVariableTarget.Process);
             if (!string.IsNullOrEmpty(path))
             {
-                path = Path.Combine(path, "bin");
                 Directory.SetCurrentDirectory(path);
             }
             
