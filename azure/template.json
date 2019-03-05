@@ -31,6 +31,17 @@
     "configurationStorageConnectionString": {
       "type": "string"
     },
+    "configNames": {
+      "type": "string",
+      "defaultValue": "SFA.DAS.Reservations.Jobs"
+    },
+    "environmentName": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "defaultValue": "1.0"
+    },
     "appServicePlanInstances": {
       "type": "int",
       "defaultValue": 2
@@ -136,6 +147,18 @@
               {
                 "name": "ConfigurationStorageConnectionString",
                 "value": "[parameters('configurationStorageConnectionString')]"
+              },
+              {
+                "name": "ConfigNames",
+                "value": "[parameters('configNames')]"
+              },
+              {
+                "name": "EnvironmentName",
+                "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "Version",
+                "value": "[parameters('version')]"
               },
               {
                 "name": "AzureWebJobsStorage",

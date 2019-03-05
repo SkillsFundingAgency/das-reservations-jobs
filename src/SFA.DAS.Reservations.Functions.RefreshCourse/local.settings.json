@@ -1,10 +1,10 @@
 {
   "IsEncrypted": false,
-  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
-  "ConfigNames": "SFA.DAS.Reservations.Jobs",
-  "Environment": "LOCAL",
-  "Version": "1.0",
   "Values": {
+    "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
+    "ConfigNames": "SFA.DAS.Reservations.Jobs",
+    "EnvironmentName": "LOCAL",
+    "Version": "1.0",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   }

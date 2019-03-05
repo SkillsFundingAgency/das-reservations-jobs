@@ -9,7 +9,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
     public static class RefreshCourseHttp
     {
         [FunctionName("RefreshCourseHttp")]
-        [return: Queue(QueueNames.RefreshCourse)]
+        [return: Queue(QueueNames.GetCourses)]
         public static string Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, ILogger log)
         {

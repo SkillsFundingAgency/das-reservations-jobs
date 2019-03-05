@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Options;
 using SFA.DAS.Apprenticeships.Api.Client;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
+using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
@@ -26,6 +29,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
        
         public void Configure(IWebJobsBuilder builder)
         {
+            builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
         }
     }
@@ -34,25 +38,19 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
     {
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
-        public ServiceProviderBuilder(ILoggerFactory loggerFactory)
+        public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _loggerFactory = loggerFactory;
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("local.settings.json")
-                .AddEnvironmentVariables()
-                .Build();
             
             var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("local.settings.json")
+                .SetBasePath(Directory.GetCurrentDirectory()) 
+                .AddJsonFile("local.settings.json",true)
                 .AddEnvironmentVariables()
                 .AddAzureTableStorageConfiguration(
-                    builder["ConfigurationStorageConnectionString"],
-                    builder["ConfigNames"].Split(','),
-                    builder["Environment"],
-                    builder["Version"]
+                    configuration["ConfigurationStorageConnectionString"],
+                    configuration["ConfigNames"].Split(','),
+                    configuration["EnvironmentName"],
+                    configuration["Version"]
                 )
                 .Build();
 
@@ -76,7 +74,16 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));
 
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
+            services.AddTransient<ICourseService, CourseService>();
+
             services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
+            services.AddTransient<IStoreCourseHandler, StoreCourseHandler>();
+
+            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
+            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+
+            services.AddTransient<ICourseRepository, CourseRepository>();
 
             return services.BuildServiceProvider();
         }
