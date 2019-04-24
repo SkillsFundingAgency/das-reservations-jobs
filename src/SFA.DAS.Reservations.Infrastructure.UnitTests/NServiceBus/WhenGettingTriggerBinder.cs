@@ -57,9 +57,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
 
             private static IEnumerable<ParameterInfo> GetParamsInfo(string methodName)
             {
-                var x =  typeof(TestClass).GetMethod(methodName).GetParameters();
-
-                return x;
+               return typeof(TestClass).GetMethod(methodName).GetParameters();
             }
 
             //This must be public for reflection to work
