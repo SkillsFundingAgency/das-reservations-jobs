@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Extensions.Options;
+using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
@@ -104,7 +107,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
         {
             public static void TestMethod([NServiceBusTrigger] TestMessage message)
             {
-
+                
             }
         }
     }

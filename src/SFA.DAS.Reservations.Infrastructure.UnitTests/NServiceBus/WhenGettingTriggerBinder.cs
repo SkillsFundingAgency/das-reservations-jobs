@@ -4,7 +4,10 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Triggers;
+using Microsoft.Extensions.Options;
+using Moq;
 using NUnit.Framework;
+using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
@@ -15,9 +18,9 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
         public async Task ThenReturnsTriggerBinding()
         {
             //Arrange
-            var paramInfo = TestClass.GetParamInfoWithTriggerAttrubute();
+            var paramInfo = TestClass.GetParamInfoWithTriggerAttrubuteWithConnection();
             var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
-            var provider = new NServiceBusTriggerBindingProvider();
+            var provider = new NServiceBusTriggerBindingProvider(Mock.Of<IOptions<ReservationsJobs>>());
 
             //Act
             var result = await provider.TryCreateAsync(context);
@@ -34,7 +37,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             //Arrange
             var paramInfo = TestClass.GetParamInfoWithoutTriggerAttrubute();
             var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
-            var provider = new NServiceBusTriggerBindingProvider();
+            var provider = new NServiceBusTriggerBindingProvider(Mock.Of<IOptions<ReservationsJobs>>());
 
             //Act
             var result = await provider.TryCreateAsync(context);
@@ -43,11 +46,62 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             Assert.IsNull(result);
         }
 
+        [Test]
+        public async Task ThenPopulatesAttributeConnectionIfNull()
+        {
+            //Arrange
+            var config = new ReservationsJobs
+            {
+                NServiceBusConnectionString = "new connection"
+            };
+
+            var options = new Mock<IOptions<ReservationsJobs>>();
+            var paramInfo = TestClass.GetParamInfoWithTriggerAttrubuteWithoutConnection();
+            var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
+            var provider = new NServiceBusTriggerBindingProvider(options.Object);
+
+            options.Setup(c => c.Value).Returns(config);
+
+            //Act
+            var result = await provider.TryCreateAsync(context);
+
+            //Assert
+            var binding = result as NServiceBusTriggerBinding;
+
+            Assert.IsNotNull(binding);
+            Assert.AreEqual(config.NServiceBusConnectionString, binding.Attribute.Connection);
+        }
+
+        [Test]
+        public async Task ThenDoesNotPopulatesAttributeConnectionIfPopulated()
+        {
+            //Arrange
+            var paramInfo = TestClass.GetParamInfoWithTriggerAttrubuteWithConnection();
+            var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
+            var provider = new NServiceBusTriggerBindingProvider(Mock.Of<IOptions<ReservationsJobs>>());
+
+            //Act
+            var result = await provider.TryCreateAsync(context);
+
+            //Assert
+            var binding = result as NServiceBusTriggerBinding;
+
+            Assert.IsNotNull(binding);
+            Assert.AreEqual(TestClass.ConnectionString, binding.Attribute.Connection);
+        }
+
         private class TestClass
         {
-            public static ParameterInfo GetParamInfoWithTriggerAttrubute()
+            public const string ConnectionString = "test_Connection";
+
+            public static ParameterInfo GetParamInfoWithTriggerAttrubuteWithoutConnection()
             {
                 return GetParamsInfo(nameof(PlaceholderMethod)).First();
+            }
+
+            public static ParameterInfo GetParamInfoWithTriggerAttrubuteWithConnection()
+            {
+                return GetParamsInfo(nameof(PlaceholderMethod)).Skip(1).First();
             }
 
             public static ParameterInfo GetParamInfoWithoutTriggerAttrubute()
@@ -61,10 +115,20 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             }
 
             //This must be public for reflection to work
-            public static void PlaceholderMethod([NServiceBusTrigger]string trigger, string notATrigger)
+            public static void PlaceholderMethod([NServiceBusTrigger]string trigger, [NServiceBusTrigger(Connection = ConnectionString)] string triggerWithConnection, string notATrigger)
             {
 
             }
          }
+
+        private class ReservationJobsOption : IOptions<ReservationsJobs>
+        {
+            public ReservationJobsOption(ReservationsJobs config)
+            {
+                Value = config;
+            }
+            public ReservationsJobs Value { get; }
+        }
+
     }
 }

@@ -14,8 +14,9 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 {
     public class NServiceBusTriggerBinding : ITriggerBinding
     {
-        private readonly ParameterInfo _parameter;
-        private readonly NServiceBusTriggerAttribute _attribute;
+        public ParameterInfo Parameter { get; }
+        public NServiceBusTriggerAttribute Attribute { get; }
+
         private struct BindingNames
         {
             public const string Headers = "headers";
@@ -32,8 +33,8 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         public NServiceBusTriggerBinding(ParameterInfo parameter, NServiceBusTriggerAttribute attribute)
         {
-            _parameter = parameter;
-            _attribute = attribute;
+            Parameter = parameter;
+            Attribute = attribute;
         }
 
         public Task<ITriggerData> BindAsync(object value, ValueBindingContext context)
@@ -53,14 +54,14 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
             try
             {
                 var messageText = Encoding.UTF8.GetString(triggerData.Data);
-                argument = JsonConvert.DeserializeObject(messageText, _parameter.ParameterType);
+                argument = JsonConvert.DeserializeObject(messageText, Parameter.ParameterType);
             }
             catch (Exception e)
             {
                throw new ArgumentException("Trigger data has invalid payload", nameof(value), e);
             }
             
-            var valueBinder = new NServiceBusMessageValueBinder(_parameter, argument);
+            var valueBinder = new NServiceBusMessageValueBinder(Parameter, argument);
 
             var bindingData = new Dictionary<string, object>
             {
@@ -73,7 +74,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         public Task<IListener> CreateListenerAsync(ListenerFactoryContext context)
         {
-            return Task.FromResult<IListener>(new NServiceBusListener(context.Executor, _attribute));
+            return Task.FromResult<IListener>(new NServiceBusListener(context.Executor, Attribute));
         }
 
         public ParameterDescriptor ToParameterDescriptor()
@@ -81,7 +82,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
             //TODO: Change these valies once we know more about the messages we will be processing
             return new ParameterDescriptor
             {
-                Name = _parameter.Name,
+                Name = Parameter.Name,
                 DisplayHints = new ParameterDisplayHints
                 {
                     Prompt = "NsbMessage",
