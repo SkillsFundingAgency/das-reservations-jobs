@@ -6,9 +6,21 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
     public class ConfirmReservationHandler : IConfirmReservationHandler
     {
-        public Task Handle(Guid reservationId)
+        private readonly IReservationService _service;
+
+        public ConfirmReservationHandler(IReservationService service)
         {
-            throw new NotImplementedException();
+            _service = service;
+        }
+
+        public async Task Handle(Guid reservationId)
+        {
+            if (reservationId == null || reservationId.Equals(Guid.Empty))
+            {
+                throw new ArgumentException("ReservationId must be set", nameof(reservationId));
+            }
+
+            await _service.UpdateReservationStatus(reservationId, ReservationStatus.Confirmed);
         }
     }
 }
