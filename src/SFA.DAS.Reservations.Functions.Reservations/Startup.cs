@@ -9,9 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Apprenticeships.Api.Client;
+using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
@@ -29,7 +33,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
-
         }
     }
 
@@ -72,6 +75,10 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IStandardApiClient>(x => new StandardApiClient(config.ApprenticeshipBaseUrl));
             services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));
+            
+            services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
+            services.AddTransient<IReservationService,ReservationService>();
+            services.AddTransient<IReservationRepository,ReservationRepository>();
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());

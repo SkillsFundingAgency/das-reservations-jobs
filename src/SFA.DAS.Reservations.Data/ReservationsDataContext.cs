@@ -39,6 +39,7 @@ namespace SFA.DAS.Reservations.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new Configuration.Course());
+            modelBuilder.ApplyConfiguration(new Configuration.Reservation());
 
             base.OnModelCreating(modelBuilder);
         }

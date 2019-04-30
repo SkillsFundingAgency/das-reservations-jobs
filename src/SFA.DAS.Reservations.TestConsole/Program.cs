@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using NServiceBus;
 using SFA.DAS.Reservations.Domain.Reservations;
 
@@ -14,13 +17,21 @@ namespace SFA.DAS.Reservations.TestConsole
 
         public static async Task Run()
         {
-            var endpointConfiguration = new EndpointConfiguration("testQueue");
+            var configuration = new EndpointConfiguration("testEndpoint");
+            configuration.UsePersistence<InMemoryPersistence>();
+            configuration.EnableInstallers();
 
-            var transport = endpointConfiguration.UseTransport<LearningTransport>();
+            var serialization = configuration.UseSerialization<NewtonsoftSerializer>();
+            serialization.WriterCreator(s => new JsonTextWriter(new StreamWriter(s, new UTF8Encoding(false))));
 
-            var endpointInstance = await Endpoint.Start(endpointConfiguration)
+            var transport = configuration.UseTransport<LearningTransport>();
+
+            transport.StorageDirectory("C:/TempStore");
+
+            var endpointInstance = await Endpoint.Start(configuration)
                 .ConfigureAwait(false);
 
+            
             var command = string.Empty;
 
             do
