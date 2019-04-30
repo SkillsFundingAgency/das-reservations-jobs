@@ -15,6 +15,7 @@ using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
+using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 
@@ -27,6 +28,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         {
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
+            builder.AddExtension<NServiceBusExtensionConfig>();
+
         }
     }
 

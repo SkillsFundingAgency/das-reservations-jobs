@@ -28,7 +28,8 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
         {
             var endpointConfiguration = RawEndpointConfiguration.Create(_attribute.QueueName, OnMessage, PoisonMessageQueue);
 
-            endpointConfiguration.UseTransport<AzureServiceBusTransport>().ConnectionString(_attribute.Connection);
+            //endpointConfiguration.UseTransport<AzureServiceBusTransport>().ConnectionString(_attribute.Connection);
+            endpointConfiguration.UseTransport<LearningTransport>();
 
             endpointConfiguration.DefaultErrorHandlingPolicy(PoisonMessageQueue, ImmediateRetryCount);
 

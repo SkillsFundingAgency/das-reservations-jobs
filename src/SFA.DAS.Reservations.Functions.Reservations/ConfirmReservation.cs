@@ -11,7 +11,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
     public class ConfirmReservation
     {
         [FunctionName("ConfirmReservation")]
-        public static async Task Run([NServiceBusTrigger] ConfirmReservationMessage message, ILogger log, [Inject] IConfirmReservationHandler handler)
+        public static async Task Run([NServiceBusTrigger(QueueName = "testQueue")] ConfirmReservationMessage message, ILogger log, [Inject] IConfirmReservationHandler handler)
         {
             log.LogInformation($"NServiceBus Confirm Reservation trigger function executed at: {DateTime.Now}");
 
