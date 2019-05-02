@@ -26,11 +26,15 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
             };
            
             _dataContext = new Mock<IReservationsDataContext>();
+           
             _dataContext.Setup(x => x.Reservations).ReturnsDbSet(new List<Reservation>
             {
                 _reservationEntity
             });
 
+            _dataContext.Setup(x => x.Reservations.FindAsync(_reservationEntity.Id))
+                .ReturnsAsync(_reservationEntity);
+           
             _reservationRepository = new Repository.ReservationRepository(_dataContext.Object);
         }
 
