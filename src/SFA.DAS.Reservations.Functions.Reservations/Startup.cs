@@ -26,15 +26,14 @@ using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 namespace SFA.DAS.Reservations.Functions.Reservations
 {
      internal class Startup : IWebJobsStartup
-    {
-       
+     {
         public void Configure(IWebJobsBuilder builder)
         {
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
         }
-    }
+     }
 
     internal class ServiceProviderBuilder : IServiceProviderBuilder
     {
@@ -52,8 +51,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                     configuration["ConfigurationStorageConnectionString"],
                     configuration["ConfigNames"].Split(','),
                     configuration["EnvironmentName"],
-                    configuration["Version"]
-                )
+                    configuration["Version"])
                 .Build();
 
             Configuration = config;

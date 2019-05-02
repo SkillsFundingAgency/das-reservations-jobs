@@ -32,7 +32,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
         public async Task ThenShouldReturnBinding()
         {
             //Arrange
-            var testMessage = new TestMessage {Name = "Test"};
+            var testMessage = new TestMessage { Name = "Test" };
             var messageText = JsonConvert.SerializeObject(testMessage);
             var messageTextData = Encoding.UTF8.GetBytes(messageText);
             var triggerData = new NServiceBusTriggerData
@@ -58,7 +58,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             Assert.AreEqual(testMessage.Name, actualMessage.Name);
         }
 
-        
+
         [Test]
         public void ThenThrowsExceptionIfValueIsNull()
         {
@@ -87,7 +87,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             //Arrange
             var triggerData = new NServiceBusTriggerData
             {
-                Data = new byte[]{1,2,3}
+                Data = new byte[] { 1, 2, 3 }
             };
 
             //Act + Assert
@@ -107,7 +107,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
         {
             public static void TestMethod([NServiceBusTrigger] TestMessage message)
             {
-                
+
             }
         }
     }

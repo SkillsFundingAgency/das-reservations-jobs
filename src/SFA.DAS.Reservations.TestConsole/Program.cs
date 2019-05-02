@@ -1,10 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using NServiceBus;
-using SFA.DAS.Reservations.Domain.Reservations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using SFA.DAS.Reservations.Domain.Configuration;
 
 namespace SFA.DAS.Reservations.TestConsole
 {
@@ -12,45 +13,44 @@ namespace SFA.DAS.Reservations.TestConsole
     {
         static void Main(string[] args)
         {
-            Run().Wait();
+            Run(args).Wait();
         }
 
-        public static async Task Run()
+        public static async Task Run(string[] args)
         {
-            var configuration = new EndpointConfiguration("testEndpoint");
-            configuration.UsePersistence<InMemoryPersistence>();
-            configuration.EnableInstallers();
+            var host = new HostBuilder()
+                .UseEnvironment("local")
+                .ConfigureHostConfiguration(configHost =>
+                {
+                    configHost.SetBasePath(Directory.GetCurrentDirectory());
+                    configHost.AddJsonFile("host.json");
+                    configHost.AddCommandLine(args);
+                })
+                .ConfigureAppConfiguration((hostContext, configApp) =>
+                {
+                    configApp.SetBasePath(Directory.GetCurrentDirectory());
+                    configApp.AddJsonFile("appsettings.json", optional:true);
+                    configApp.AddJsonFile(
+                        $"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json");
+                    configApp.AddCommandLine(args);
+                })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.Configure<ReservationsJobs>(hostContext.Configuration.GetSection("ReservationsJobs"));
+                    services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
-            var serialization = configuration.UseSerialization<NewtonsoftSerializer>();
-            serialization.WriterCreator(s => new JsonTextWriter(new StreamWriter(s, new UTF8Encoding(false))));
+                    services.AddTransient<NServiceBusConsole>();
+                    services.AddHostedService<LifetimeEventsHostedService>();
+                })
+                .ConfigureLogging((hostContext, configLogging) =>
+                {
+                    configLogging.AddConsole();
+                    configLogging.AddDebug();
+                })
+                .UseConsoleLifetime()
+                .Build();
 
-            var transport = configuration.UseTransport<LearningTransport>();
-
-            transport.StorageDirectory("C:/TempStore");
-
-            var endpointInstance = await Endpoint.Start(configuration)
-                .ConfigureAwait(false);
-
-            
-            var command = string.Empty;
-
-            do
-            {
-                Console.WriteLine("Enter 'q' to exit..." + Environment.NewLine);
-                Console.Write("Reservation ID: ");
-                var guidStr = Console.ReadLine();
-
-                var reservationId = Guid.Parse(guidStr);
-
-                await endpointInstance.SendLocal(new ConfirmReservationMessage {ReservationId = reservationId});
-
-                Console.WriteLine("Message sent...");
-
-            } while (!command.Equals("q"));
-            
-
-            await endpointInstance.Stop()
-                .ConfigureAwait(false);
+            await host.RunAsync();
         }
     }
 }

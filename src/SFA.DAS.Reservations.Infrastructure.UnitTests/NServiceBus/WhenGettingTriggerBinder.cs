@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Triggers;
-using Microsoft.Extensions.Options;
-using Moq;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
@@ -20,7 +18,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             //Arrange
             var paramInfo = TestClass.GetParamInfoWithTriggerAttrubuteWithConnection();
             var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
-            var provider = new NServiceBusTriggerBindingProvider(Mock.Of<IOptions<ReservationsJobs>>());
+            var provider = new NServiceBusTriggerBindingProvider();
 
             //Act
             var result = await provider.TryCreateAsync(context);
@@ -37,7 +35,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             //Arrange
             var paramInfo = TestClass.GetParamInfoWithoutTriggerAttrubute();
             var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
-            var provider = new NServiceBusTriggerBindingProvider(Mock.Of<IOptions<ReservationsJobs>>());
+            var provider = new NServiceBusTriggerBindingProvider();
 
             //Act
             var result = await provider.TryCreateAsync(context);
@@ -50,17 +48,13 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
         public async Task ThenPopulatesAttributeConnectionIfNull()
         {
             //Arrange
-            var config = new ReservationsJobs
-            {
-                NServiceBusConnectionString = "new connection"
-            };
-
-            var options = new Mock<IOptions<ReservationsJobs>>();
+            var nServiceBusConnectionString = "new connection";
+            Environment.SetEnvironmentVariable("NServiceBusConnectionString", nServiceBusConnectionString);
+           
+            
             var paramInfo = TestClass.GetParamInfoWithTriggerAttrubuteWithoutConnection();
             var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
-            var provider = new NServiceBusTriggerBindingProvider(options.Object);
-
-            options.Setup(c => c.Value).Returns(config);
+            var provider = new NServiceBusTriggerBindingProvider();
 
             //Act
             var result = await provider.TryCreateAsync(context);
@@ -69,7 +63,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             var binding = result as NServiceBusTriggerBinding;
 
             Assert.IsNotNull(binding);
-            Assert.AreEqual(config.NServiceBusConnectionString, binding.Attribute.Connection);
+            Assert.AreEqual(nServiceBusConnectionString, binding.Attribute.Connection);
         }
 
         [Test]
@@ -78,7 +72,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             //Arrange
             var paramInfo = TestClass.GetParamInfoWithTriggerAttrubuteWithConnection();
             var context = new TriggerBindingProviderContext(paramInfo, new CancellationToken(false));
-            var provider = new NServiceBusTriggerBindingProvider(Mock.Of<IOptions<ReservationsJobs>>());
+            var provider = new NServiceBusTriggerBindingProvider();
 
             //Act
             var result = await provider.TryCreateAsync(context);
@@ -111,7 +105,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
 
             private static IEnumerable<ParameterInfo> GetParamsInfo(string methodName)
             {
-               return typeof(TestClass).GetMethod(methodName).GetParameters();
+                return typeof(TestClass).GetMethod(methodName).GetParameters();
             }
 
             //This must be public for reflection to work
@@ -119,16 +113,6 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
             {
 
             }
-         }
-
-        private class ReservationJobsOption : IOptions<ReservationsJobs>
-        {
-            public ReservationJobsOption(ReservationsJobs config)
-            {
-                Value = config;
-            }
-            public ReservationsJobs Value { get; }
         }
-
     }
 }

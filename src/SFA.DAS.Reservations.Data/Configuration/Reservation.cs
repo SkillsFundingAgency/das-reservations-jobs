@@ -12,7 +12,6 @@ namespace SFA.DAS.Reservations.Data.Configuration
 
             builder.Property(x => x.Id).HasColumnName(@"id").HasColumnType("uniqueidentifier").IsRequired();
             builder.Property(x => x.Status).HasColumnName(@"Status").HasColumnType("tinyint").IsRequired();
-           
         }
     }
 }

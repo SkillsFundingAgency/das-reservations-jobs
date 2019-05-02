@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data

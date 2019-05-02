@@ -30,10 +30,9 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var endpointConfiguration = RawEndpointConfiguration.Create(_attribute.QueueName, OnMessage, PoisonMessageQueue);
-
-            //endpointConfiguration.UseTransport<AzureServiceBusTransport>().ConnectionString(_attribute.Connection);
-            endpointConfiguration.UseTransport<LearningTransport>().StorageDirectory("C:/TempStore");
-
+            
+            endpointConfiguration.UseTransport<AzureServiceBusTransport>().ConnectionString(_attribute.Connection);
+            
             endpointConfiguration.DefaultErrorHandlingPolicy(PoisonMessageQueue, ImmediateRetryCount);
 
             _endpoint = await RawEndpoint.Start(endpointConfiguration).ConfigureAwait(false);
