@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 
@@ -18,7 +17,8 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task SaveStatus(Guid reservationId, ReservationStatus status)
         {
-            var reservation = await _dataContext.Reservations.SingleOrDefaultAsync(r => r.Id.Equals(reservationId));
+            
+            var reservation = await _dataContext.Reservations.FindAsync(reservationId);
 
             if (reservation == null)
             {
