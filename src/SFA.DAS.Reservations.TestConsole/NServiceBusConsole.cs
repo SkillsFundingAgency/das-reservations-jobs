@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NServiceBus;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Infrastructure;
+using SFA.DAS.Reservations.Infrastructure.Configuration;
 
 namespace SFA.DAS.Reservations.TestConsole
 {
-    class NServiceBusConsole
+    public class NServiceBusConsole
     {
         public async Task Run()
         {
-            var configuration = new EndpointConfiguration("testEndpoint");
+            var configuration = new EndpointConfiguration(QueueNames.ConfirmReservation);
             configuration.UsePersistence<InMemoryPersistence>();
             configuration.EnableInstallers();
 
@@ -20,7 +22,7 @@ namespace SFA.DAS.Reservations.TestConsole
             serialization.WriterCreator(s => new JsonTextWriter(new StreamWriter(s, new UTF8Encoding(false))));
 
             var transport = configuration.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(Environment.GetEnvironmentVariable("NServiceBusConnectionString"));
+            transport.ConnectionString(EnvironmentVariables.NServiceBusConnectionString);
 
 
             var endpointInstance = await Endpoint.Start(configuration)

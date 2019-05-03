@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿ using System.Collections.Generic;
 using NServiceBus.Transport;
 
 namespace SFA.DAS.Reservations.Infrastructure.NServiceBus

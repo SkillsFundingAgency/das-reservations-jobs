@@ -30,15 +30,13 @@ namespace SFA.DAS.Reservations.TestConsole
                 {
                     configApp.SetBasePath(Directory.GetCurrentDirectory());
                     configApp.AddJsonFile("appsettings.json", optional:true);
-                    configApp.AddJsonFile(
-                        $"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json");
+                    configApp.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json");
                     configApp.AddCommandLine(args);
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<ReservationsJobs>(hostContext.Configuration.GetSection("ReservationsJobs"));
                     services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-
                     services.AddTransient<NServiceBusConsole>();
                     services.AddHostedService<LifetimeEventsHostedService>();
                 })

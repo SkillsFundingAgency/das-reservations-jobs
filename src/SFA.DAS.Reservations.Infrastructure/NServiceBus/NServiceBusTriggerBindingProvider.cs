@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Triggers;
+using SFA.DAS.Reservations.Infrastructure.Configuration;
 
 namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 {
@@ -19,7 +20,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
             if (string.IsNullOrEmpty(attribute.Connection))
             {
-                attribute.Connection = Environment.GetEnvironmentVariable("NServiceBusConnectionString");
+                attribute.Connection = EnvironmentVariables.NServiceBusConnectionString;
             }
 
             return Task.FromResult<ITriggerBinding>(new NServiceBusTriggerBinding(parameter, attribute));
