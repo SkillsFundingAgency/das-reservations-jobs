@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs.Host.Listeners;
 using NServiceBus;
 using NServiceBus.Transport;
 using NServiceBus.Raw;
+using SFA.DAS.Reservations.Infrastructure.Configuration;
 
 namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 {
@@ -31,7 +32,12 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
             endpointConfiguration.UseTransport<AzureServiceBusTransport>()
                 .ConnectionString(_attribute.Connection)
                 .Transactions(TransportTransactionMode.None);
-            
+
+            if (!string.IsNullOrEmpty(EnvironmentVariables.NServiceBusLicense))
+            {
+                endpointConfiguration.License(EnvironmentVariables.NServiceBusLicense);
+            }
+
             endpointConfiguration.DefaultErrorHandlingPolicy(PoisonMessageQueue, ImmediateRetryCount);
 
             _endpoint = await RawEndpoint.Start(endpointConfiguration).ConfigureAwait(false);

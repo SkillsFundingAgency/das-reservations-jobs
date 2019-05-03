@@ -18,6 +18,11 @@ namespace SFA.DAS.Reservations.TestConsole
             configuration.UsePersistence<InMemoryPersistence>();
             configuration.EnableInstallers();
 
+            if (!string.IsNullOrEmpty(EnvironmentVariables.NServiceBusLicense))
+            {
+                configuration.License(EnvironmentVariables.NServiceBusLicense);
+            }
+
             var serialization = configuration.UseSerialization<NewtonsoftSerializer>();
             serialization.WriterCreator(s => new JsonTextWriter(new StreamWriter(s, new UTF8Encoding(false))));
 
