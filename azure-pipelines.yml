@@ -46,11 +46,19 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-build'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Publish Function App'
+  displayName: 'Publish Function App Course'
   inputs:
     command: publish
     publishWebProjects: false
     projects: 'src\SFA.DAS.Reservations.Functions.RefreshCourse\SFA.DAS.Reservations.Functions.RefreshCourse.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App Reservation'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src\SFA.DAS.Reservations.Functions.Reservations\SFA.DAS.Reservations.Functions.Reservations.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
 
 - task: CopyFiles@2
