@@ -151,7 +151,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "function-app",
+      "name": "function-app-csr",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -215,7 +215,7 @@
     },
 	{
       "apiVersion": "2017-05-10",
-      "name": "function-app",
+      "name": "function-app-rsrv",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -287,11 +287,11 @@
     }
   ],
   "outputs": {
-    "functionAppName": {
+    "functionAppNameCourse": {
       "type": "string",
       "value": "[variables('functionAppNameCourse')]"
     },
-	"functionAppNameCourse": {
+	"functionAppNameReservation": {
       "type": "string",
       "value": "[variables('functionAppNameReservation')]"
     }
