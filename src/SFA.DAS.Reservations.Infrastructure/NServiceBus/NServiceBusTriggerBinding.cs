@@ -54,6 +54,14 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
             try
             {
                 var messageText = Encoding.UTF8.GetString(triggerData.Data);
+               
+                //TODO: work out why we are getting a rogue chara at the start of the message 
+                //Remove all extra invalid starting characters that have come from decoding bytes
+                while (messageText.Length > 2 && messageText[0] != '{')
+                {
+                    messageText = messageText.Remove(0, 1);
+                }
+
                 argument = JsonConvert.DeserializeObject(messageText, Parameter.ParameterType);
             }
             catch (Exception e)

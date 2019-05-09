@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using NServiceBus;
+using SFA.DAS.NServiceBus;
+using SFA.DAS.NServiceBus.AzureServiceBus;
+using SFA.DAS.NServiceBus.NewtonsoftJsonSerializer;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
@@ -14,23 +14,14 @@ namespace SFA.DAS.Reservations.TestConsole
     {
         public async Task Run()
         {
-            var configuration = new EndpointConfiguration(QueueNames.ConfirmReservation);
-            configuration.UsePersistence<InMemoryPersistence>();
-            configuration.EnableInstallers();
+            var endpointConfiguration = new EndpointConfiguration(QueueNames.ConfirmReservation)
+                .UseAzureServiceBusTransport(EnvironmentVariables.NServiceBusConnectionString, r => { })
+                .UseErrorQueue()
+                .UseInstallers()
+                .UseMessageConventions()
+                .UseNewtonsoftJsonSerializer();
 
-            if (!string.IsNullOrEmpty(EnvironmentVariables.NServiceBusLicense))
-            {
-                configuration.License(EnvironmentVariables.NServiceBusLicense);
-            }
-
-            var serialization = configuration.UseSerialization<NewtonsoftSerializer>();
-            serialization.WriterCreator(s => new JsonTextWriter(new StreamWriter(s, new UTF8Encoding(false))));
-
-            var transport = configuration.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(EnvironmentVariables.NServiceBusConnectionString);
-
-
-            var endpointInstance = await Endpoint.Start(configuration)
+            var endpointInstance = await Endpoint.Start(endpointConfiguration)
                 .ConfigureAwait(false);
 
             var command = string.Empty;
