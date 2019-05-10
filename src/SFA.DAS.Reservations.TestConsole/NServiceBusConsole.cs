@@ -14,8 +14,11 @@ namespace SFA.DAS.Reservations.TestConsole
     {
         public async Task Run()
         {
-            var endpointConfiguration = new EndpointConfiguration(QueueNames.ConfirmReservation)
-                .UseAzureServiceBusTransport(EnvironmentVariables.NServiceBusConnectionString, r => { })
+            var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Reservations.TestConsole")
+                .UseAzureServiceBusTransport(EnvironmentVariables.NServiceBusConnectionString, r =>
+                {
+                    r.RouteToEndpoint(typeof(ConfirmReservationMessage), QueueNames.ConfirmReservation);
+                })
                 .UseErrorQueue()
                 .UseInstallers()
                 .UseMessageConventions()
@@ -34,7 +37,7 @@ namespace SFA.DAS.Reservations.TestConsole
 
                 var reservationId = Guid.Parse(guidStr);
 
-                await endpointInstance.SendLocal(new ConfirmReservationMessage { ReservationId = reservationId });
+                await endpointInstance.Send(new ConfirmReservationMessage { ReservationId = reservationId });
 
                 Console.WriteLine("Message sent...");
             } while (!command.Equals("q"));
