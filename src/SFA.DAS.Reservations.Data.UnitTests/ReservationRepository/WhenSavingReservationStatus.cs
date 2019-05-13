@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
+using SFA.DAS.Reservations.Domain.Reservations;
+using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
+
+
+namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
+{
+    public class WhenSavingReservationStatus
+    {
+        private Repository.ReservationRepository _reservationRepository;
+        private Mock<IReservationsDataContext> _dataContext;
+        private Reservation _reservationEntity;
+
+        [SetUp]
+        public void Arrange()
+        {
+            _reservationEntity = new Reservation
+            {
+               Id = Guid.NewGuid(),
+                Status = 1
+            };
+           
+            _dataContext = new Mock<IReservationsDataContext>();
+           
+            _dataContext.Setup(x => x.Reservations).ReturnsDbSet(new List<Reservation>
+            {
+                _reservationEntity
+            });
+
+            _dataContext.Setup(x => x.Reservations.FindAsync(_reservationEntity.Id))
+                .ReturnsAsync(_reservationEntity);
+           
+            _reservationRepository = new Repository.ReservationRepository(_dataContext.Object);
+        }
+
+        [Test]
+        public async Task Then_If_Reservation_Exists_Its_Status_Is_Updated()
+        {
+            //Act
+            await _reservationRepository.SaveStatus(_reservationEntity.Id, ReservationStatus.Completed);
+
+            //Assert 
+            Assert.AreEqual((short)ReservationStatus.Completed, _reservationEntity.Status);
+            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+        }
+
+        [Test]
+        public void Then_If_Reservation_Does_Not_Exists_An_Exception_Is_Thrown()
+        {
+            //Act + Assert
+            Assert.ThrowsAsync<InvalidOperationException>(() => _reservationRepository.SaveStatus(Guid.NewGuid(), ReservationStatus.Confirmed));
+           
+            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
+        }
+    }
+}

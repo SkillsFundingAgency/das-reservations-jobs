@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "SFA.DAS.Reservations.Functions.Reservations": {
+      "commandName": "Project"
+    }
+  }
+}
