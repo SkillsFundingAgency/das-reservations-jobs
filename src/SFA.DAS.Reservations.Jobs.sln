@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Data.U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.Reservations", "SFA.DAS.Reservations.Functions.Reservations\SFA.DAS.Reservations.Functions.Reservations.csproj", "{3C2462BD-D98D-4DD5-91D7-2B523F6B85A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.TestConsole", "SFA.DAS.Reservations.TestConsole\SFA.DAS.Reservations.TestConsole.csproj", "{BF89F0DC-DBFC-4335-A2F0-52F6DED37D2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.TestConsole", "SFA.DAS.Reservations.TestConsole\SFA.DAS.Reservations.TestConsole.csproj", "{BF89F0DC-DBFC-4335-A2F0-52F6DED37D2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Functions.LegalEntities", "SFA.DAS.Reservations.Functions.LegalEntities\SFA.DAS.Reservations.Functions.LegalEntities.csproj", "{EB580E13-D8D0-43B2-B3E0-1E66BA547D83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{BF89F0DC-DBFC-4335-A2F0-52F6DED37D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF89F0DC-DBFC-4335-A2F0-52F6DED37D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF89F0DC-DBFC-4335-A2F0-52F6DED37D2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB580E13-D8D0-43B2-B3E0-1E66BA547D83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB580E13-D8D0-43B2-B3E0-1E66BA547D83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB580E13-D8D0-43B2-B3E0-1E66BA547D83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB580E13-D8D0-43B2-B3E0-1E66BA547D83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{0C9AB9AB-E2A9-4333-BEC9-567F65074DB2} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 		{3C2462BD-D98D-4DD5-91D7-2B523F6B85A8} = {7BA3397A-01E4-454C-A282-A09F402764CE}
 		{BF89F0DC-DBFC-4335-A2F0-52F6DED37D2B} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
+		{EB580E13-D8D0-43B2-B3E0-1E66BA547D83} = {7BA3397A-01E4-454C-A282-A09F402764CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD5A047B-5DB3-4BD8-89DF-94E5FE734FEC}
