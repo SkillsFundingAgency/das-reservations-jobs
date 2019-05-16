@@ -10,7 +10,7 @@ using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 namespace SFA.DAS.Reservations.Functions.LegalEntities
 {
     
-    public class CreateLegalEntity
+    public class HandleManageYourApprenticeshipsEvents
     {
         [FunctionName("HandleManageYourApprenticeshipsEvents")]
         public static async Task Run([NServiceBusTrigger(QueueName = QueueNames.AccountsEndpoint)] KeyValuePair<string,string> message, ILogger log)//, [Inject] IAddedLegalEntityEventHandler handler)
