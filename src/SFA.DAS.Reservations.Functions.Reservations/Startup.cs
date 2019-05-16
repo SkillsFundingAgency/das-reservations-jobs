@@ -71,9 +71,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddSingleton(_ =>
                 _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
-            services.AddTransient<IStandardApiClient>(x => new StandardApiClient(config.ApprenticeshipBaseUrl));
-            services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));
-            
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
