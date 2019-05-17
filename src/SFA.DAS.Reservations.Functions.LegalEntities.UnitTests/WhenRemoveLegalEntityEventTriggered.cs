@@ -9,14 +9,14 @@ using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
 {
-    public class WhenRemoveLegalEntityEventTiggered
+    public class WhenRemoveLegalEntityEventTriggered
     {
         [Test]
         public async Task ThenQueueMessageWillBeCreated()
         {
             //Arrange
             var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>(typeof(AccountLegalEntityRemovedEvent).ToString(), "");
+            var message = new KeyValuePair<string, string>("SFA.DAS.EmployerAccounts.Messages.Events.RemovedLegalEntityEvent", "");
 
             //Act
             await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
@@ -30,7 +30,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
         {
             //Arrange
             var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>(typeof(WhenRemoveLegalEntityEventTiggered).ToString(), "");
+            var message = new KeyValuePair<string, string>(typeof(WhenRemoveLegalEntityEventTriggered).ToString(), "");
 
             //Act
             await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());

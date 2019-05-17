@@ -364,9 +364,13 @@
       "type": "string",
       "value": "[variables('functionAppNameCourse')]"
     },
-	"functionAppNameReservation": {
+    "functionAppNameReservation": {
       "type": "string",
       "value": "[variables('functionAppNameReservation')]"
+    },
+    "functionAppNameLegalEntities": {
+      "type": "string",
+      "value": "[variables('functionAppNameLegalEntities')]"
     }
   }
 }

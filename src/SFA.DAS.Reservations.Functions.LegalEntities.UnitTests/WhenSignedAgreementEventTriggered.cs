@@ -10,14 +10,14 @@ using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
 {
-    public class WhenSignedAgreementEventTiggered
+    public class WhenSignedAgreementEventTriggered
     {
         [Test]
         public async Task ThenQueueMessageWillBeCreated()
         {
             //Arrange
             var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>(typeof(SignedAgreementEvent).ToString(), "");
+            var message = new KeyValuePair<string, string>("SFA.DAS.EmployerAccounts.Messages.Events.SignedAgreementEvent", "");
 
             //Act
             await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
@@ -31,7 +31,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
         {
             //Arrange
             var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>(typeof(WhenSignedAgreementEventTiggered).ToString(), "");
+            var message = new KeyValuePair<string, string>(typeof(WhenSignedAgreementEventTriggered).ToString(), "");
 
             //Act
             await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
