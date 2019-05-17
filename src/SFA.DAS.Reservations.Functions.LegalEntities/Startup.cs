@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
@@ -18,8 +16,8 @@ using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
-using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.LegalEntities;
+using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
@@ -71,6 +69,8 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             services.AddSingleton(_ =>
                 _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
+
+            services.AddTransient<IAzureQueueService, AzureQueueService>();
 
             //services.AddTransient<ICreateLegalEntitiyHandler, ConfirmReservationHandler>();
             //services.AddTransient<IReservationService, ReservationService>();
