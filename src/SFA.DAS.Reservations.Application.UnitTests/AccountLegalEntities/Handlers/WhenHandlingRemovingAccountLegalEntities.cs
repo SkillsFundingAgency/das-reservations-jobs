@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
             var accountLegalEntityRemovedEvent = new AccountLegalEntityRemovedEvent { AccountLegalEntityId = 5 };
 
             //Act
-            await _handler.Handler(accountLegalEntityRemovedEvent);
+            await _handler.Handle(accountLegalEntityRemovedEvent);
 
             //Assert
             _service.Verify(x=>x.RemoveAccountLegalEntity(It.Is<AccountLegalEntityRemovedEvent>(

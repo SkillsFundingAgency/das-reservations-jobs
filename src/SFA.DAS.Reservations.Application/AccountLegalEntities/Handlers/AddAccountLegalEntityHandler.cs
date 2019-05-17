@@ -3,7 +3,7 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
 {
-    public class AddAccountLegalEntityHandler
+    public class AddAccountLegalEntityHandler : IAddAccountLegalEntityHandler
     {
         private readonly IAccountLegalEntitiesService _service;
 

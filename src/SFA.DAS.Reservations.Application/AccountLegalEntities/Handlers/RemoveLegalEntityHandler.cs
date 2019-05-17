@@ -3,7 +3,7 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
 {
-    public class RemoveLegalEntityHandler
+    public class RemoveLegalEntityHandler : RemoveLegalEntityHandler
     {
         private readonly IAccountLegalEntitiesService _service;
 
@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             _service = service;
         }
 
-        public async Task Handler(AccountLegalEntityRemovedEvent accountLegalEntityRemovedEvent)
+        public async Task Handle(AccountLegalEntityRemovedEvent accountLegalEntityRemovedEvent)
         {
             await _service.RemoveAccountLegalEntity(accountLegalEntityRemovedEvent);
         }

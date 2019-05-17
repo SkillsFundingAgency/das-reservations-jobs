@@ -32,7 +32,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
             };
 
             //Act
-            await _handler.Handler(accountLegalEntityAddedEvent);
+            await _handler.Handle(accountLegalEntityAddedEvent);
 
             //Assert
             _service.Verify(x => x.AddAccountLegalEntity(It.Is<AccountLegalEntityAddedEvent>(

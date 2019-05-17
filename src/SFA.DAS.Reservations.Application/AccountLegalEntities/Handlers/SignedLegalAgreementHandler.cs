@@ -3,7 +3,7 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
 {
-    public class SignedLegalAgreementHandler
+    public class SignedLegalAgreementHandler : ISignedLegalAgreementHandler
     {
         private readonly IAccountLegalEntitiesService _service;
 
@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             _service = service;
         }
 
-        public async Task Handler(SignedAgreementEvent signedAgreementEvent)
+        public async Task Handle(SignedAgreementEvent signedAgreementEvent)
         {
             await _service.SignAgreementForAccountLegalEntity(signedAgreementEvent);
         }
