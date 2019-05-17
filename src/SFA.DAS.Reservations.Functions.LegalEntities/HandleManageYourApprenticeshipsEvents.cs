@@ -22,23 +22,23 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             if (message.Key.Equals("SFA.DAS.EmployerAccounts.Messages.Events.AddedLegalEntityEvent"))
             {
-                var entityAddedEvent = JsonConvert.DeserializeObject<AccountLegalEntityAddedEvent>(message.Value);
+                var accountLegalEntityAddedEvent = JsonConvert.DeserializeObject<AccountLegalEntityAddedEvent>(message.Value);
 
-                await queueService.SendMessage(entityAddedEvent, QueueNames.LegalEntityAdded);
+                await queueService.SendMessage(accountLegalEntityAddedEvent, QueueNames.LegalEntityAdded);
             }
             
             if (message.Key.Equals("SFA.DAS.EmployerAccounts.Messages.Events.RemovedLegalEntityEvent"))
             {
-                var entityAddedEvent = JsonConvert.DeserializeObject<AccountLegalEntityRemovedEvent>(message.Value);
+                var accountLegalEntityRemovedEvent = JsonConvert.DeserializeObject<AccountLegalEntityRemovedEvent>(message.Value);
 
-                await queueService.SendMessage(entityAddedEvent, QueueNames.RemovedLegalEntity);
+                await queueService.SendMessage(accountLegalEntityRemovedEvent, QueueNames.RemovedLegalEntity);
             }
             
             if (message.Key.Equals("SFA.DAS.EmployerAccounts.Messages.Events.SignedAgreementEvent"))
             {
-                var entityAddedEvent = JsonConvert.DeserializeObject<SignedAgreementEvent>(message.Value);
+                var signedAgreementEvent = JsonConvert.DeserializeObject<SignedAgreementEvent>(message.Value);
 
-                await queueService.SendMessage(entityAddedEvent, QueueNames.SignedAgreement);
+                await queueService.SendMessage(signedAgreementEvent, QueueNames.SignedAgreement);
             }
 
             log.LogInformation($"{message.Key} with: {message.Value}");

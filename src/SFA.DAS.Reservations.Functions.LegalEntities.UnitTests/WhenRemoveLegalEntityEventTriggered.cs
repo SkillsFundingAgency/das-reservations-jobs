@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
     public class WhenRemoveLegalEntityEventTriggered
     {
         [Test]
-        public async Task ThenQueueMessageWillBeCreated()
+        public async Task Then_Queue_Message_Will_Be_Created()
         {
             //Arrange
             var queueService = new Mock<IAzureQueueService>();
@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
         }
 
         [Test]
-        public async Task ThenQueueMessageWillNotBeCreatedIfNotOfExpectedType()
+        public async Task Then_Queue_Message_Will_Not_Be_Created_If_Not_Of_Expected_Type()
         {
             //Arrange
             var queueService = new Mock<IAzureQueueService>();
