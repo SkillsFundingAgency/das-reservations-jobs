@@ -8,7 +8,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SFA.DAS.Apprenticeships.Api.Client;
+using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Data.Repository;
+using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Functions.LegalEntities;
@@ -69,7 +74,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             //services.AddTransient<ICreateLegalEntitiyHandler, ConfirmReservationHandler>();
             //services.AddTransient<IReservationService, ReservationService>();
-            //services.AddTransient<IReservationRepository, ReservationRepository>();
+            services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());

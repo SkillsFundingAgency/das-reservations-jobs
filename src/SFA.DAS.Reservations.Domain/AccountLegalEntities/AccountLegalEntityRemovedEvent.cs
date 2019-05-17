@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Reservations.Domain.Events
+﻿namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
 {
     public class AccountLegalEntityRemovedEvent
     {

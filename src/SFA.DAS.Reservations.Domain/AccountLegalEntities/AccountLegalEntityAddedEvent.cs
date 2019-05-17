@@ -1,4 +1,5 @@
-﻿namespace SFA.DAS.Reservations.Domain.Reservations
+﻿
+namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
 {
     public class AccountLegalEntityAddedEvent
     {
