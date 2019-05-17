@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Apprenticeships.Api.Client;
+using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
+using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
@@ -70,14 +72,17 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddSingleton(_ =>
                 _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
-            services.AddTransient<IAzureQueueService, AzureQueueService>();
-
-            //services.AddTransient<ICreateLegalEntitiyHandler, ConfirmReservationHandler>();
-            //services.AddTransient<IReservationService, ReservationService>();
-            services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
-
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
+
+            services.AddTransient<IAzureQueueService, AzureQueueService>();
+            services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
+            services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
+
+            services.AddTransient<IAddAccountLegalEntityHandler, AddAccountLegalEntityHandler>();
+            services.AddTransient<IRemoveLegalEntityHandler, RemoveLegalEntityHandler>();
+            services.AddTransient<ISignedLegalAgreementHandler, SignedLegalAgreementHandler>();
+
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
             return services.BuildServiceProvider();
