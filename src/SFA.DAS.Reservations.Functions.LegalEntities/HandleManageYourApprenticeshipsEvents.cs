@@ -15,7 +15,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
     public class HandleManageYourApprenticeshipsEvents
     {
         [FunctionName("HandleManageYourApprenticeshipsEvents")]
-        public static async Task Run([NServiceBusTrigger(QueueName = QueueNames.AccountsEndpoint)] KeyValuePair<string,string> message, IAzureQueueService queueService, ILogger log)//, [Inject] IAddedLegalEntityEventHandler handler)
+        public static async Task Run([NServiceBusTrigger(QueueName = QueueNames.AccountsEndpoint)] KeyValuePair<string,string> message, IAzureQueueService queueService, ILogger log)
         {
             log.LogInformation($"NServiceBus {message.Key} trigger function executed at: {DateTime.Now}");
 
