@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Azure;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
@@ -23,7 +22,7 @@ namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
             var cloudMessage = new CloudQueueMessage(JsonConvert.SerializeObject(message));
 
             // Retrieve storage account from connection string.
-            var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting(_configuration.AzureServiceBusConnectionString));
+            var storageAccount = CloudStorageAccount.Parse(_configuration.AzureServiceBusConnectionString);
 
             // Create the queue client.
             var queueClient = storageAccount.CreateCloudQueueClient();

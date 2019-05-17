@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             _service = service;
         }
 
-        public async Task Handler(AccountLegalEntityAddedEvent accountLegalEntityAddedEvent)
+        public async Task Handle(AccountLegalEntityAddedEvent accountLegalEntityAddedEvent)
         {
             await _service.AddAccountLegalEntity(accountLegalEntityAddedEvent);
         }

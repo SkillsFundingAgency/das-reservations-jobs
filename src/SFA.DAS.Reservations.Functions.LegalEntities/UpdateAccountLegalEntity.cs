@@ -10,7 +10,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
     public class UpdateAccountLegalEntity
     {
         [FunctionName("UpdateAccountLegalEntity")]
-        public static async Task Run([QueueTrigger(QueueNames.LegalEntityAdded)]SignedAgreementEvent signedAgreementEvent, ILogger log, [Inject]ISignedLegalAgreementHandler handler)
+        public static async Task Run([QueueTrigger(QueueNames.SignedAgreement)]SignedAgreementEvent signedAgreementEvent, ILogger log, [Inject]ISignedLegalAgreementHandler handler)
         {
             log.LogInformation("C# Queue trigger function processed UpdateAccountLegalEntity");
             await handler.Handle(signedAgreementEvent);
