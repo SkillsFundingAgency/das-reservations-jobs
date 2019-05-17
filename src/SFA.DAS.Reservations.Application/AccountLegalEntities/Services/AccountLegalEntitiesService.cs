@@ -5,7 +5,7 @@ using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
 {
-    public class AccountLegalEntitiesService
+    public class AccountLegalEntitiesService : IAccountLegalEntitiesService
     {
         private readonly IAccountLegalEntityRepository _repository;
 
