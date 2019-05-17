@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
@@ -17,7 +18,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
         {
             log.LogInformation($"NServiceBus {message.Key} trigger function executed at: {DateTime.Now}");
 
-            if (message.Key == typeof(LegalEntityAddedEvent).ToString())
+            if (message.Key == typeof(AccountLegalEntityAddedEvent).ToString())
             {
                 //add to queue
             }

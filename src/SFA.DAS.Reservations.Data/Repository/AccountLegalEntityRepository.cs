@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class AccountLegalEntityRepository
+    public class AccountLegalEntityRepository : IAccountLegalEntityRepository
     {
         private readonly IReservationsDataContext _dataContext;
 
@@ -28,7 +29,8 @@ namespace SFA.DAS.Reservations.Data.Repository
             using (var transaction = _dataContext.Database.BeginTransaction())
             {
                 var entity = await _dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
-                    c.AccountLegalEntityId.Equals(accountLegalEntity.AccountLegalEntityId));
+                    c.AccountId.Equals(accountLegalEntity.AccountId) &&
+                    c.LegalEntityId.Equals(accountLegalEntity.LegalEntityId));
 
                 if (entity != null)
                 {
@@ -44,7 +46,6 @@ namespace SFA.DAS.Reservations.Data.Repository
         {
             using (var transaction = _dataContext.Database.BeginTransaction())
             {
-
                 var entity = await _dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
                     c.AccountLegalEntityId.Equals(accountLegalEntity.AccountLegalEntityId));
 
@@ -53,6 +54,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                     _dataContext.AccountLegalEntities.Remove(entity);
                     _dataContext.SaveChanges();
                 }
+
                 transaction.Commit();
             }
         }

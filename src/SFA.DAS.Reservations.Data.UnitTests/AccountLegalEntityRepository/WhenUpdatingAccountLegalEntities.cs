@@ -28,8 +28,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
             _accountLegalEntity = new AccountLegalEntity
             {
                 Id = Guid.NewGuid(),
-                AccountLegalEntityId = 8376234,
-                AgreementSigned = false
+                AccountId = 8376234,
+                AgreementSigned = false,
+                LegalEntityId = 4
             };
             _dbContextTransaction = new Mock<IDbContextTransaction>();
             _dbContext = new Mock<DbContext>();
