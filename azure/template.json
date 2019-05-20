@@ -135,6 +135,26 @@
     },
     {
       "apiVersion": "2017-05-10",
+      "name": "function-app-insights-lgle",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('functionAppNameLegalEntities')]"
+          },
+          "attachedService": {
+            "value": "[variables('functionAppNameLegalEntities')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
       "name": "storage-account",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -342,7 +362,7 @@
               },
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('function-app-insights-rsrv').outputs.InstrumentationKey.value]"
+                "value": "[reference('function-app-insights-lgle').outputs.InstrumentationKey.value]"
               },
               {
                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -354,7 +374,7 @@
       },
       "dependsOn": [
         "worker-app-service-plan",
-        "function-app-insights-rsrv",
+        "function-app-insights-lgle",
         "storage-account"
       ]
     }
