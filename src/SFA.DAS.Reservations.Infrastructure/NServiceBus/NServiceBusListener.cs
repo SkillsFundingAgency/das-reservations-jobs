@@ -5,6 +5,8 @@ using Microsoft.Azure.WebJobs.Host.Listeners;
 using NServiceBus;
 using NServiceBus.Transport;
 using NServiceBus.Raw;
+using SFA.DAS.NServiceBus;
+using SFA.DAS.NServiceBus.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 
 namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
@@ -17,6 +19,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
         private readonly ITriggeredFunctionExecutor _executor;
         private readonly NServiceBusTriggerAttribute _attribute;
         private IReceivingRawEndpoint _endpoint;
+        private IEndpointInstance _endpointInstance;
         private CancellationTokenSource _cancellationTokenSource;
 
         public NServiceBusListener(ITriggeredFunctionExecutor executor, NServiceBusTriggerAttribute attribute)
@@ -27,20 +30,39 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
       
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var endpointConfiguration = RawEndpointConfiguration.Create(_attribute.QueueName, OnMessage, PoisonMessageQueue);
-            
-            endpointConfiguration.UseTransport<AzureServiceBusTransport>()
+
+            await ConfigureEndpoint();
+
+            var endpointConfigurationRaw = RawEndpointConfiguration.Create(_attribute.EndPoint, OnMessage, PoisonMessageQueue);
+
+            endpointConfigurationRaw.UseTransport<AzureServiceBusTransport>()
                 .ConnectionString(_attribute.Connection)
-                .Transactions(TransportTransactionMode.None);
+                .Transactions(TransportTransactionMode.ReceiveOnly);
+
+            if (!string.IsNullOrEmpty(EnvironmentVariables.NServiceBusLicense))
+            {
+                endpointConfigurationRaw.License(EnvironmentVariables.NServiceBusLicense);
+            }
+            endpointConfigurationRaw.DefaultErrorHandlingPolicy(PoisonMessageQueue, ImmediateRetryCount);
+
+            _endpoint = await RawEndpoint.Start(endpointConfigurationRaw).ConfigureAwait(false);
+
+        }
+
+        private async Task ConfigureEndpoint()
+        {
+            var endpointConfiguration = new EndpointConfiguration(_attribute.EndPoint)
+                .UseAzureServiceBusTransport(_attribute.Connection, r => { })
+                .UseInstallers()
+                .UseMessageConventions();
 
             if (!string.IsNullOrEmpty(EnvironmentVariables.NServiceBusLicense))
             {
                 endpointConfiguration.License(EnvironmentVariables.NServiceBusLicense);
             }
 
-            endpointConfiguration.DefaultErrorHandlingPolicy(PoisonMessageQueue, ImmediateRetryCount);
-
-            _endpoint = await RawEndpoint.Start(endpointConfiguration).ConfigureAwait(false);
+            _endpointInstance = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
+            await _endpointInstance.Stop().ConfigureAwait(false);
         }
 
         protected async Task OnMessage(MessageContext context, IDispatchMessages dispatcher)
@@ -78,6 +100,43 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         public void Dispose()
         {
+        }
+    }
+}
+
+
+namespace SFA.DAS.EmployerAccounts.Messages.Events
+{
+    public class AddedLegalEntityEvent : IEvent
+    {
+    }
+
+    public class RemovedLegalEntityEvent : IEvent
+    {
+    }
+
+    public class SignedAgreementEvent : IEvent
+    {
+    }
+    public class HandlerOne : IHandleMessages<AddedLegalEntityEvent>
+    {
+        public async Task Handle(AddedLegalEntityEvent message, IMessageHandlerContext context)
+        {
+            return;
+        }
+    }
+    public class HandlerTwo : IHandleMessages<RemovedLegalEntityEvent>
+    {
+        public async Task Handle(RemovedLegalEntityEvent message, IMessageHandlerContext context)
+        {
+            return;
+        }
+    }
+    public class HandlerThree : IHandleMessages<SignedAgreementEvent>
+    {
+        public async Task Handle(SignedAgreementEvent message, IMessageHandlerContext context)
+        {
+            return;
         }
     }
 }

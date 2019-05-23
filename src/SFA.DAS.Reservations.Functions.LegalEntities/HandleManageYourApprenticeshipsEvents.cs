@@ -16,32 +16,29 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
     public class HandleManageYourApprenticeshipsEvents
     {
         [FunctionName("HandleManageYourApprenticeshipsEvents")]
-        public static async Task Run([NServiceBusTrigger(QueueName = QueueNames.AccountsEndpoint)] KeyValuePair<string,string> message, [Inject]IAzureQueueService queueService, ILogger log)
+        public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.AccountsEndpoint, 
+            EndPointConfigurationTypes = "SFA.DAS.EmployerAccounts.Messages.Events.AddedLegalEntityEvent,SFA.DAS.EmployerAccounts.Messages.Events.RemovedLegalEntityEvent,SFA.DAS.EmployerAccounts.Messages.Events.SignedAgreementEvent")] KeyValuePair<string,string> message, [Inject]IAzureQueueService queueService, ILogger log)
         {
             log.LogInformation($"NServiceBus {message.Key} trigger function executed at: {DateTime.Now}");
 
-            if (message.Key.Equals("SFA.DAS.EmployerAccounts.Messages.Events.AddedLegalEntityEvent"))
+            switch (message.Key)
             {
-                var accountLegalEntityAddedEvent = JsonConvert.DeserializeObject<AccountLegalEntityAddedEvent>(message.Value);
-
-                await queueService.SendMessage(accountLegalEntityAddedEvent, QueueNames.LegalEntityAdded);
+                case "SFA.DAS.EmployerAccounts.Messages.Events.AddedLegalEntityEvent":
+                    var accountLegalEntityAddedEvent = JsonConvert.DeserializeObject<AccountLegalEntityAddedEvent>(message.Value);
+                    await queueService.SendMessage(accountLegalEntityAddedEvent, QueueNames.LegalEntityAdded);
+                    break;
+                case "SFA.DAS.EmployerAccounts.Messages.Events.RemovedLegalEntityEvent":
+                    var accountLegalEntityRemovedEvent = JsonConvert.DeserializeObject<AccountLegalEntityRemovedEvent>(message.Value);
+                    await queueService.SendMessage(accountLegalEntityRemovedEvent, QueueNames.RemovedLegalEntity);
+                    break;
+                case "SFA.DAS.EmployerAccounts.Messages.Events.SignedAgreementEvent":
+                    var signedAgreementEvent = JsonConvert.DeserializeObject<SignedAgreementEvent>(message.Value);
+                    await queueService.SendMessage(signedAgreementEvent, QueueNames.SignedAgreement);
+                    break;
+                default:
+                    log.LogInformation($"No mapping to process message of type:{message.Key}");
+                    break;
             }
-            
-            if (message.Key.Equals("SFA.DAS.EmployerAccounts.Messages.Events.RemovedLegalEntityEvent"))
-            {
-                var accountLegalEntityRemovedEvent = JsonConvert.DeserializeObject<AccountLegalEntityRemovedEvent>(message.Value);
-
-                await queueService.SendMessage(accountLegalEntityRemovedEvent, QueueNames.RemovedLegalEntity);
-            }
-            
-            if (message.Key.Equals("SFA.DAS.EmployerAccounts.Messages.Events.SignedAgreementEvent"))
-            {
-                var signedAgreementEvent = JsonConvert.DeserializeObject<SignedAgreementEvent>(message.Value);
-
-                await queueService.SendMessage(signedAgreementEvent, QueueNames.SignedAgreement);
-            }
-
-            log.LogInformation($"{message.Key} with: {message.Value}");
         }
     }
 }
