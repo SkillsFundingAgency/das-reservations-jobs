@@ -10,7 +10,5 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
     {
         public string EndPoint { get; set; }
         public string Connection { get; set; }
-
-        public string EndPointConfigurationTypes { get; set; }
     }
 }

@@ -90,7 +90,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         public Task<IListener> CreateListenerAsync(ListenerFactoryContext context)
         {
-            return Task.FromResult<IListener>(new NServiceBusListener(context.Executor, Attribute));
+            return Task.FromResult<IListener>(new NServiceBusListener(context.Executor, Attribute, Parameter));
         }
 
         public ParameterDescriptor ToParameterDescriptor()

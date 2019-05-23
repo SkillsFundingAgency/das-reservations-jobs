@@ -1,11 +1,14 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Executors;
 using Microsoft.Azure.WebJobs.Host.Listeners;
 using NServiceBus;
+using NServiceBus.Extensibility;
 using NServiceBus.Transport;
 using NServiceBus.Raw;
-using SFA.DAS.NServiceBus;
 using SFA.DAS.NServiceBus.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 
@@ -18,24 +21,24 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         private readonly ITriggeredFunctionExecutor _executor;
         private readonly NServiceBusTriggerAttribute _attribute;
+        private readonly ParameterInfo _parameter;
         private IReceivingRawEndpoint _endpoint;
-        private IEndpointInstance _endpointInstance;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public NServiceBusListener(ITriggeredFunctionExecutor executor, NServiceBusTriggerAttribute attribute)
+        public NServiceBusListener(ITriggeredFunctionExecutor executor, NServiceBusTriggerAttribute attribute,ParameterInfo parameter)
         {
             _executor = executor;
             _attribute = attribute;
+            _parameter = parameter;
         }
       
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-
-            await ConfigureEndpoint();
-
+            var nameShortener = new RuleNameShortener();
             var endpointConfigurationRaw = RawEndpointConfiguration.Create(_attribute.EndPoint, OnMessage, PoisonMessageQueue);
 
-            endpointConfigurationRaw.UseTransport<AzureServiceBusTransport>()
+            endpointConfigurationRaw.UseTransport<AzureServiceBusTransport>().RuleNameShortener(nameShortener.Shorten)
+                
                 .ConnectionString(_attribute.Connection)
                 .Transactions(TransportTransactionMode.ReceiveOnly);
 
@@ -44,27 +47,15 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
                 endpointConfigurationRaw.License(EnvironmentVariables.NServiceBusLicense);
             }
             endpointConfigurationRaw.DefaultErrorHandlingPolicy(PoisonMessageQueue, ImmediateRetryCount);
+            endpointConfigurationRaw.AutoCreateQueue();
 
             _endpoint = await RawEndpoint.Start(endpointConfigurationRaw).ConfigureAwait(false);
+            
+            await _endpoint.SubscriptionManager.Subscribe(_parameter.ParameterType, new ContextBag());
+            
 
         }
-
-        private async Task ConfigureEndpoint()
-        {
-            var endpointConfiguration = new EndpointConfiguration(_attribute.EndPoint)
-                .UseAzureServiceBusTransport(_attribute.Connection, r => { })
-                .UseInstallers()
-                .UseMessageConventions();
-
-            if (!string.IsNullOrEmpty(EnvironmentVariables.NServiceBusLicense))
-            {
-                endpointConfiguration.License(EnvironmentVariables.NServiceBusLicense);
-            }
-
-            _endpointInstance = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
-            await _endpointInstance.Stop().ConfigureAwait(false);
-        }
-
+        
         protected async Task OnMessage(MessageContext context, IDispatchMessages dispatcher)
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -100,43 +91,6 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         public void Dispose()
         {
-        }
-    }
-}
-
-
-namespace SFA.DAS.EmployerAccounts.Messages.Events
-{
-    public class AddedLegalEntityEvent : IEvent
-    {
-    }
-
-    public class RemovedLegalEntityEvent : IEvent
-    {
-    }
-
-    public class SignedAgreementEvent : IEvent
-    {
-    }
-    public class HandlerOne : IHandleMessages<AddedLegalEntityEvent>
-    {
-        public async Task Handle(AddedLegalEntityEvent message, IMessageHandlerContext context)
-        {
-            return;
-        }
-    }
-    public class HandlerTwo : IHandleMessages<RemovedLegalEntityEvent>
-    {
-        public async Task Handle(RemovedLegalEntityEvent message, IMessageHandlerContext context)
-        {
-            return;
-        }
-    }
-    public class HandlerThree : IHandleMessages<SignedAgreementEvent>
-    {
-        public async Task Handle(SignedAgreementEvent message, IMessageHandlerContext context)
-        {
-            return;
         }
     }
 }
