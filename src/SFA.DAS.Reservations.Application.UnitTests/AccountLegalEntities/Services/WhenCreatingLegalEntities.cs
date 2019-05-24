@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Entities;
@@ -26,7 +27,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
         public async Task Then_The_Event_Is_Mapped_To_The_Entity_And_Repository_Called()
         {
             //Arrange
-            var accountLegalEntityAddedEvent = new AccountLegalEntityAddedEvent
+            var accountLegalEntityAddedEvent = new AddedLegalEntityEvent
             {
                 AccountLegalEntityId = 23432,
                 AccountId = 9786,

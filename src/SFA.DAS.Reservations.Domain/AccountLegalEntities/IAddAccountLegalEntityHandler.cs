@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 
 namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
 {
     public interface IAddAccountLegalEntityHandler
     {
-        Task Handle(AccountLegalEntityAddedEvent accountLegalEntityAddedEvent);
+        Task Handle(AddedLegalEntityEvent accountLegalEntityAddedEvent);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
@@ -23,13 +24,13 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
         public async Task Then_The_Service_Is_Called_To_Remove_The_Entity()
         {
             //Arrange
-            var accountLegalEntityRemovedEvent = new AccountLegalEntityRemovedEvent { AccountLegalEntityId = 5 };
+            var accountLegalEntityRemovedEvent = new RemovedLegalEntityEvent { AccountLegalEntityId = 5 };
 
             //Act
             await _handler.Handle(accountLegalEntityRemovedEvent);
 
             //Assert
-            _service.Verify(x=>x.RemoveAccountLegalEntity(It.Is<AccountLegalEntityRemovedEvent>(
+            _service.Verify(x=>x.RemoveAccountLegalEntity(It.Is<RemovedLegalEntityEvent>(
                 c=>c.AccountLegalEntityId.Equals(accountLegalEntityRemovedEvent.AccountLegalEntityId))));
         }
     }

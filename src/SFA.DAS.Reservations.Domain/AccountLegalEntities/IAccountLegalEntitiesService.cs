@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 
 namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
 {
     public interface IAccountLegalEntitiesService
     {
-        Task AddAccountLegalEntity(AccountLegalEntityAddedEvent accountLegalEntity);
-        Task SignAgreementForAccountLegalEntity(SignedAgreementEvent signedAgreementEvent);
-        Task RemoveAccountLegalEntity(AccountLegalEntityRemovedEvent accountLegalEntityRemovedEvent);
+        Task AddAccountLegalEntity(AddedLegalEntityEvent accountLegalEntity);
+        Task SignAgreementForAccountLegalEntity(EmployerAccounts.Messages.Events.SignedAgreementEvent signedAgreementEvent);
+        Task RemoveAccountLegalEntity(RemovedLegalEntityEvent accountLegalEntityRemovedEvent);
     }
 }

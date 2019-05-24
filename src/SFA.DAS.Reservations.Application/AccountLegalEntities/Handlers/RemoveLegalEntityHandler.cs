@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
@@ -12,7 +13,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             _service = service;
         }
 
-        public async Task Handle(AccountLegalEntityRemovedEvent accountLegalEntityRemovedEvent)
+        public async Task Handle(RemovedLegalEntityEvent accountLegalEntityRemovedEvent)
         {
             await _service.RemoveAccountLegalEntity(accountLegalEntityRemovedEvent);
         }
