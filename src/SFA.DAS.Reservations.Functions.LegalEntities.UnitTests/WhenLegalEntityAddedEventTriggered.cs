@@ -1,42 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
-using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
 {
     public class WhenLegalEntityAddedEventTriggered
     {
         [Test]
-        public async Task Then_Queue_Message_Will_Be_Created()
+        public async Task Then_Message_Will_Be_Handled()
         {
             //Arrange
-            var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>("SFA.DAS.EmployerAccounts.Messages.Events.AddedLegalEntityEvent", "");
+            var handler = new Mock<IAddAccountLegalEntityHandler>();
+            var message = new AddedLegalEntityEvent{AccountId = 123};
 
             //Act
-            await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
+            await HandleAddedLegalEntityEvent.Run(message, handler.Object, Mock.Of<ILogger>());
 
             //Assert
-            queueService.Verify(s => s.SendMessage(It.IsAny<AccountLegalEntityAddedEvent>(), QueueNames.LegalEntityAdded), Times.Once);
+            handler.Verify(s => s.Handle(It.Is<AddedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);
         }
-
-        [Test]
-        public async Task Then_Queue_Message_Will_Not_Be_Created_If_Not_Of_Expected_Type()
-        {
-            //Arrange
-            var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>(typeof(WhenLegalEntityAddedEventTriggered).ToString(), "");
-
-            //Act
-            await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
-
-            //Assert
-            queueService.Verify(s => s.SendMessage(It.IsAny<AccountLegalEntityAddedEvent>(), QueueNames.LegalEntityAdded), Times.Never);
-        }
+        
     }
 }

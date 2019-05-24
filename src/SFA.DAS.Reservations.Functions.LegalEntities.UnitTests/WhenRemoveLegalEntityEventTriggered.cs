@@ -1,42 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
-using SFA.DAS.Reservations.Domain.Infrastructure;
-using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
 {
     public class WhenRemoveLegalEntityEventTriggered
     {
         [Test]
-        public async Task Then_Queue_Message_Will_Be_Created()
+        public async Task Then_Queue_Message_Will_Be_Handled()
         {
             //Arrange
-            var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>("SFA.DAS.EmployerAccounts.Messages.Events.RemovedLegalEntityEvent", "");
+            var handle = new Mock<IRemoveLegalEntityHandler>();
+            var message = new RemovedLegalEntityEvent{AccountId = 5432};
 
             //Act
-            await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
+            await HandleRemovedLegalEntityEvent.Run(message, handle.Object, Mock.Of<ILogger>());
 
             //Assert
-            queueService.Verify(s => s.SendMessage(It.IsAny<AccountLegalEntityRemovedEvent>(), QueueNames.RemovedLegalEntity), Times.Once);
+            handle.Verify(s => s.Handle(It.Is<RemovedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);
         }
-
-        [Test]
-        public async Task Then_Queue_Message_Will_Not_Be_Created_If_Not_Of_Expected_Type()
-        {
-            //Arrange
-            var queueService = new Mock<IAzureQueueService>();
-            var message = new KeyValuePair<string, string>(typeof(WhenRemoveLegalEntityEventTriggered).ToString(), "");
-
-            //Act
-            await HandleManageYourApprenticeshipsEvents.Run(message, queueService.Object, Mock.Of<ILogger>());
-
-            //Assert
-            queueService.Verify(s => s.SendMessage(It.IsAny<AccountLegalEntityRemovedEvent>(), QueueNames.RemovedLegalEntity), Times.Never);
-        }
+        
     }
 }
