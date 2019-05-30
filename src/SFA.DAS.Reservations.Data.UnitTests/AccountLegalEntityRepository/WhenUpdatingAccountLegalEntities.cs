@@ -58,5 +58,14 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
             //Assert
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
         }
+
+        [Test]
+        public void Then_If_The_Entity_Does_Not_Exist_An_Exception_Is_Thrown()
+        {
+            Assert.ThrowsAsync<DbUpdateException>(() => _accountLegalEntityRepository.UpdateAgreementStatus(new AccountLegalEntity{AccountId = 54, LegalEntityId = 2}));
+
+            //Assert
+            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Entities;
@@ -37,6 +38,11 @@ namespace SFA.DAS.Reservations.Data.Repository
                     entity.AgreementSigned = true;
                     _dataContext.SaveChanges();
                 }
+                else
+                {
+                    throw new DbUpdateException($"Record not found AccountId:{accountLegalEntity.AccountId} LegalEntityId:{accountLegalEntity.LegalEntityId}", (Exception) null);
+                }
+                
 
                 transaction.Commit();
             }
