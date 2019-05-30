@@ -54,7 +54,6 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
             try
             {
                 var messageText = Encoding.UTF8.GetString(triggerData.Data);
-               
                 //TODO: work out why we are getting a rogue chara at the start of the message 
                 //Remove all extra invalid starting characters that have come from decoding bytes
                 while (messageText.Length > 2 && messageText[0] != '{')
@@ -62,7 +61,16 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
                     messageText = messageText.Remove(0, 1);
                 }
 
-                argument = JsonConvert.DeserializeObject(messageText, Parameter.ParameterType);
+                if (Parameter.ParameterType == typeof(KeyValuePair<string,string>))
+                {
+                    argument = new KeyValuePair<string,string>(triggerData.Headers["NServiceBus.EnclosedMessageTypes"].Split(',')[0],messageText);
+                }
+                else
+                {
+                    argument = JsonConvert.DeserializeObject(messageText, Parameter.ParameterType);
+                }
+
+                
             }
             catch (Exception e)
             {
@@ -82,7 +90,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
 
         public Task<IListener> CreateListenerAsync(ListenerFactoryContext context)
         {
-            return Task.FromResult<IListener>(new NServiceBusListener(context.Executor, Attribute));
+            return Task.FromResult<IListener>(new NServiceBusListener(context.Executor, Attribute, Parameter));
         }
 
         public ParameterDescriptor ToParameterDescriptor()

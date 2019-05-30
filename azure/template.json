@@ -59,6 +59,7 @@
     "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
     "functionAppNameCourse": "[concat(variables('resourcePrefix'),'-refcrs-fa')]",
     "functionAppNameReservation": "[concat(variables('resourcePrefix'),'-rsrv-fa')]",
+    "functionAppNameLegalEntities": "[concat(variables('resourcePrefix'),'-rsrv-le')]",
     "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
   },
   "resources": [
@@ -112,7 +113,7 @@
         }
       }
     },
-	{
+    {
       "apiVersion": "2017-05-10",
       "name": "function-app-insights-rsrv",
       "type": "Microsoft.Resources/deployments",
@@ -128,6 +129,26 @@
           },
           "attachedService": {
             "value": "[variables('functionAppNameReservation')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "function-app-insights-lgle",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('functionAppNameLegalEntities')]"
+          },
+          "attachedService": {
+            "value": "[variables('functionAppNameLegalEntities')]"
           }
         }
       }
@@ -213,7 +234,7 @@
         "storage-account"
       ]
     },
-	{
+    {
       "apiVersion": "2017-05-10",
       "name": "function-app-rsrv",
       "type": "Microsoft.Resources/deployments",
@@ -239,11 +260,11 @@
                 "name": "ConfigurationStorageConnectionString",
                 "value": "[parameters('configurationStorageConnectionString')]"
               },
-               {
+              {
                 "name": "NServiceBusConnectionString",
                 "value": "[parameters('nServiceBusConnectionString')]"
               },
-               {
+              {
                 "name": "NServiceBusLicense",
                 "value": "[parameters('nServiceBusLicense')]"
               },
@@ -284,6 +305,78 @@
         "function-app-insights-rsrv",
         "storage-account"
       ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "function-app-legalentities",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "functionAppName": {
+            "value": "[variables('functionAppNameLegalEntities')]"
+          },
+          "appServicePlanName": {
+            "value": "[variables('appServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[resourceGroup().name]"
+          },
+          "functionAppAppSettings": {
+            "value": [
+              {
+                "name": "ConfigurationStorageConnectionString",
+                "value": "[parameters('configurationStorageConnectionString')]"
+              },
+              {
+                "name": "NServiceBusConnectionString",
+                "value": "[parameters('nServiceBusConnectionString')]"
+              },
+              {
+                "name": "NServiceBusLicense",
+                "value": "[parameters('nServiceBusLicense')]"
+              },
+              {
+                "name": "ConfigNames",
+                "value": "[parameters('configNames')]"
+              },
+              {
+                "name": "EnvironmentName",
+                "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "Version",
+                "value": "[parameters('version')]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "AzureWebJobsDashboard",
+                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference('function-app-insights-lgle').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~2"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "worker-app-service-plan",
+        "function-app-insights-lgle",
+        "storage-account"
+      ]
     }
   ],
   "outputs": {
@@ -291,9 +384,13 @@
       "type": "string",
       "value": "[variables('functionAppNameCourse')]"
     },
-	"functionAppNameReservation": {
+    "functionAppNameReservation": {
       "type": "string",
       "value": "[variables('functionAppNameReservation')]"
+    },
+    "functionAppNameLegalEntities": {
+      "type": "string",
+      "value": "[variables('functionAppNameLegalEntities')]"
     }
   }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Azure.WebJobs.Description;
 
 namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
@@ -7,7 +8,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
     [Binding]
     public sealed class NServiceBusTriggerAttribute : Attribute
     {
-        public string QueueName { get; set; }
+        public string EndPoint { get; set; }
         public string Connection { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Executors;
@@ -7,6 +8,7 @@ using Moq;
 using NServiceBus.Extensibility;
 using NServiceBus.Transport;
 using NUnit.Framework;
+using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
@@ -17,13 +19,14 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
         private NServiceBusTriggerAttribute _attribute;
         private TestListener _listener;
         private MessageContext _messageContext;
+        private ParameterInfo _parameter;
 
         [SetUp]
         public void Arrange()
         {
             _executor = new Mock<ITriggeredFunctionExecutor>();
             _attribute = new NServiceBusTriggerAttribute();
-            _listener = new TestListener(_executor.Object, _attribute);
+            _listener = new TestListener(_executor.Object, _attribute, _parameter);
             _messageContext = new MessageContext("1", new Dictionary<string, string>(), new byte[]{1,2,3}, new TransportTransaction(), new CancellationTokenSource(), new ContextBag());
 
             _executor.Setup(e => e.TryExecuteAsync(It.IsAny<TriggeredFunctionData>(), It.IsAny<CancellationToken>()))
@@ -53,7 +56,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.NServiceBus
 
         private class TestListener : NServiceBusListener
         {
-            public TestListener(ITriggeredFunctionExecutor contextExecutor, NServiceBusTriggerAttribute attribute) : base(contextExecutor, attribute)
+            public TestListener(ITriggeredFunctionExecutor contextExecutor, NServiceBusTriggerAttribute attribute, ParameterInfo parameter ) : base(contextExecutor, attribute, parameter)
             {
             }
 

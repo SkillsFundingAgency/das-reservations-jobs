@@ -10,7 +10,7 @@ namespace SFA.DAS.Reservations.Infrastructure.NServiceBus
         public void Initialize(ExtensionConfigContext context)
         {
             context.AddBindingRule<NServiceBusTriggerAttribute>()
-                   .BindToTrigger<ConfirmReservationMessage>(new NServiceBusTriggerBindingProvider());
+                .BindToTrigger(new NServiceBusTriggerBindingProvider());
         }
     }
 }
