@@ -229,7 +229,7 @@
               },
               {
                 "name": "AppName",
-                "value": "sfa-reservations-jobs-refresh-course"
+                "value": "das-reservations-jobs-refresh-course"
               },
               {
                 "name": "LoggingRedisConnectionString",
@@ -309,7 +309,7 @@
               },
               {
                 "name": "AppName",
-                "value": "sfa-reservations-jobs-reservation-status"
+                "value": "das-reservations-jobs-reservation-status"
               },
               {
                 "name": "LoggingRedisConnectionString",
@@ -389,7 +389,7 @@
               },
               {
                 "name": "AppName",
-                "value": "sfa-reservations-jobs-legal-entities"
+                "value": "das-reservations-jobs-legal-entities"
               },
               {
                 "name": "LoggingRedisConnectionString",
