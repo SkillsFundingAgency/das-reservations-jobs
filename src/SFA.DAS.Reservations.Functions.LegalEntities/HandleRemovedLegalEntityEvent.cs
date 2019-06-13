@@ -13,9 +13,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
     public class HandleRemovedLegalEntityEvent
     {
         [FunctionName("HandleRemovedLegalEntityEvent")]
-        public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.RemovedLegalEntity)] RemovedLegalEntityEvent message, [Inject]IRemoveLegalEntityHandler handler, ILogger log)
+        public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.RemovedLegalEntity)] RemovedLegalEntityEvent message, [Inject]IRemoveLegalEntityHandler handler, [Inject]ILogger<RemovedLegalEntityEvent> log)
         {
-            log.LogInformation($"NServiceBus RemovedLegalEntity trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"NServiceBus RemovedLegalEntity trigger function executed at: {DateTime.Now} for ${message.AccountLegalEntityId}:${message.OrganisationName}");
             await handler.Handle(message);
         }
     }

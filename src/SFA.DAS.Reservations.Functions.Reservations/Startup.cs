@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SFA.DAS.Apprenticeships.Api.Client;
+using NLog.Extensions.Logging;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
@@ -20,6 +20,7 @@ using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
+using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 
@@ -68,8 +69,26 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var config = serviceProvider.GetService<ReservationsJobs>();
 
-            services.AddSingleton(_ =>
-                _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
+            var nLogConfiguration = new NLogConfiguration();
+
+            services.AddLogging((options) =>
+            {
+                options.AddConfiguration(Configuration.GetSection("Logging"));
+                options.SetMinimumLevel(LogLevel.Trace);
+                options.AddNLog(new NLogProviderOptions
+                {
+                    CaptureMessageTemplates = true,
+                    CaptureMessageProperties = true
+                });
+                options.AddConsole();
+                options.AddDebug();
+
+                nLogConfiguration.ConfigureNLog(Configuration);
+            });
+
+            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+
+            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IReservationService,ReservationService>();
@@ -81,5 +100,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             return services.BuildServiceProvider();
         }
+        
     }
 }

@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
             var message = new AddedLegalEntityEvent{AccountId = 123};
 
             //Act
-            await HandleAddedLegalEntityEvent.Run(message, handler.Object, Mock.Of<ILogger>());
+            await HandleAddedLegalEntityEvent.Run(message, handler.Object, Mock.Of<ILogger<AddedLegalEntityEvent>>());
 
             //Assert
             handler.Verify(s => s.Handle(It.Is<AddedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);

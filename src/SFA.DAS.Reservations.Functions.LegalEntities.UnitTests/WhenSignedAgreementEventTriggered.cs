@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
             var message = new SignedAgreementEvent{AccountId = 432};
 
             //Act
-            await HandleSignedAgreementEvent.Run(message, handler.Object, Mock.Of<ILogger>());
+            await HandleSignedAgreementEvent.Run(message, handler.Object, Mock.Of<ILogger<SignedAgreementEvent>>());
 
             //Assert
             handler.Verify(s => s.Handle(It.Is<SignedAgreementEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);

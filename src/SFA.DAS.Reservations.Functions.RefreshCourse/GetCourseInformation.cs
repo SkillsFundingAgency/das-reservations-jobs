@@ -10,7 +10,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
     {
         [FunctionName("GetCourseInformation")]
         
-        public static void Run([QueueTrigger(QueueNames.GetCourses)]string message, ILogger log, [Inject]IGetCoursesHandler handler, [Queue(QueueNames.StoreCourse)]ICollector<Course> outputQueue)
+        public static void Run([QueueTrigger(QueueNames.GetCourses)]string message, [Inject]ILogger<string> log, [Inject]IGetCoursesHandler handler, [Queue(QueueNames.StoreCourse)]ICollector<Course> outputQueue)
         {
             var courses = handler.Handle();
 

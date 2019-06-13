@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
             var message = new RemovedLegalEntityEvent{AccountId = 5432};
 
             //Act
-            await HandleRemovedLegalEntityEvent.Run(message, handle.Object, Mock.Of<ILogger>());
+            await HandleRemovedLegalEntityEvent.Run(message, handle.Object, Mock.Of<ILogger<RemovedLegalEntityEvent>>());
 
             //Assert
             handle.Verify(s => s.Handle(It.Is<RemovedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Client;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
@@ -22,6 +23,7 @@ using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
+using SFA.DAS.Reservations.Infrastructure.Logging;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 [assembly: WebJobsStartup(typeof(Startup))]
@@ -69,8 +71,26 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             var config = serviceProvider.GetService<ReservationsJobs>();
 
-            services.AddSingleton(_ =>
-                _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
+            var nLogConfiguration = new NLogConfiguration();
+
+            services.AddLogging((options) =>
+            {
+                options.AddConfiguration(Configuration.GetSection("Logging"));
+                options.SetMinimumLevel(LogLevel.Trace);
+                options.AddNLog(new NLogProviderOptions
+                {
+                    CaptureMessageTemplates = true,
+                    CaptureMessageProperties = true
+                });
+                options.AddConsole();
+                options.AddDebug();
+
+                nLogConfiguration.ConfigureNLog(Configuration);
+            });
+
+            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+
+            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
