@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Infrastructure;
+using SFA.DAS.Reservations.Infrastructure.Attributes;
 
 namespace SFA.DAS.Reservations.Functions.RefreshCourse
 {
@@ -11,9 +12,9 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
         [FunctionName("RefreshCourseHttp")]
         [return: Queue(QueueNames.GetCourses)]
         public static string Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [Inject]ILogger<string> log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("C# RefreshCourseHttp trigger function processed a request.");
 
             return "store";
         }
