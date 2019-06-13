@@ -1,8 +1,7 @@
 {
   "profiles": {
     "SFA.DAS.Reservations.Functions.RefreshCourse": {
-      "commandName": "Project",
-      "commandLineArgs": "host start --pause-on-error"
+      "commandName": "Project"
     }
   }
 }
