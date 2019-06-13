@@ -31,10 +31,10 @@
     "configurationStorageConnectionString": {
       "type": "string"
     },
-      "nServiceBusConnectionString": {
+    "nServiceBusConnectionString": {
       "type": "string"
     },
-      "nServiceBusLicense": {
+    "nServiceBusLicense": {
       "type": "string"
     },
     "configNames": {
@@ -51,6 +51,9 @@
     "appServicePlanInstances": {
       "type": "int",
       "defaultValue": 2
+    },
+    "loggingRedisConnectionString": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -223,6 +226,14 @@
               {
                 "name": "FUNCTIONS_EXTENSION_VERSION",
                 "value": "~2"
+              },
+              {
+                "name": "AppName",
+                "value": "sfa-reservations-jobs-refresh-course"
+              },
+              {
+                "name": "LoggingRedisConnectionString",
+                "value": "[parameters('loggingRedisConnectionString')]"
               }
             ]
           }
@@ -295,6 +306,14 @@
               {
                 "name": "FUNCTIONS_EXTENSION_VERSION",
                 "value": "~2"
+              },
+              {
+                "name": "AppName",
+                "value": "sfa-reservations-jobs-reservation-status"
+              },
+              {
+                "name": "LoggingRedisConnectionString",
+                "value": "[parameters('loggingRedisConnectionString')]"
               }
             ]
           }
@@ -367,6 +386,14 @@
               {
                 "name": "FUNCTIONS_EXTENSION_VERSION",
                 "value": "~2"
+              },
+              {
+                "name": "AppName",
+                "value": "sfa-reservations-jobs-legal-entities"
+              },
+              {
+                "name": "LoggingRedisConnectionString",
+                "value": "[parameters('loggingRedisConnectionString')]"
               }
             ]
           }
