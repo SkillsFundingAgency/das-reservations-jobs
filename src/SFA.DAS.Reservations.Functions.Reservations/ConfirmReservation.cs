@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Logging;
 using NLog;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
@@ -13,18 +14,18 @@ namespace SFA.DAS.Reservations.Functions.Reservations
     public class ConfirmReservation
     {
         [FunctionName("ConfirmReservation")]
-        public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.ConfirmReservation)] DraftApprenticeshipCreatedEvent message, ILogger log, [Inject] IConfirmReservationHandler handler)
+        public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.ConfirmReservation)] DraftApprenticeshipCreatedEvent message, ILogger<DraftApprenticeshipCreatedEvent> log, [Inject] IConfirmReservationHandler handler)
         {
-            log.Info($"NServiceBus Confirm Reservation trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"NServiceBus Confirm Reservation trigger function executed at: {DateTime.Now}");
 
             if (message.ReservationId.HasValue)
             {
                 await handler.Handle(message.ReservationId.Value);
-                log.Info($"Confirmed Reservation with ID: {message.ReservationId}");
+                log.LogInformation($"Confirmed Reservation with ID: {message.ReservationId}");
             }
             else
             {
-                log.Info($"No reservation confirmed, no reservation Id provided");
+                log.LogInformation($"No reservation confirmed, no reservation Id provided");
             }
         }
     }
