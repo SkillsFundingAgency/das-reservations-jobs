@@ -6,7 +6,6 @@ using SFA.DAS.NServiceBus.AzureServiceBus;
 using SFA.DAS.NServiceBus.NewtonsoftJsonSerializer;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
-using SFA.DAS.Reservations.Infrastructure.Configuration;
 
 namespace SFA.DAS.Reservations.TestConsole
 {
@@ -14,8 +13,9 @@ namespace SFA.DAS.Reservations.TestConsole
     {
         public async Task Run()
         {
+            var connectionString = NServiceBus.AzureFunction.Infrastructure.EnvironmentVariables.NServiceBusConnectionString;
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Reservations.TestConsole")
-                .UseAzureServiceBusTransport(EnvironmentVariables.NServiceBusConnectionString, r =>
+                .UseAzureServiceBusTransport(connectionString, r =>
                 {
                     r.RouteToEndpoint(typeof(ConfirmReservationMessage), QueueNames.ConfirmReservation);
                 })
