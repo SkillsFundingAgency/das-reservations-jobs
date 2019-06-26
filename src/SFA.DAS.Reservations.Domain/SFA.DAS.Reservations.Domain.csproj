@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="2.1.1507" />
     <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.577" />
   </ItemGroup>
   <ItemGroup>
