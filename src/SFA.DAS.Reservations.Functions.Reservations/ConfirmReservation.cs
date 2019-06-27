@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using NLog;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Domain.Reservations;
