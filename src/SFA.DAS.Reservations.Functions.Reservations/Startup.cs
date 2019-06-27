@@ -101,6 +101,5 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             return services.BuildServiceProvider();
         }
-        
     }
 }
