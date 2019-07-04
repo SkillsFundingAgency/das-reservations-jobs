@@ -13,16 +13,15 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         {
             _reservationService = reservationService;
         }
-        public Task Handle(DraftApprenticeshipDeletedEvent apprenticeshipDeletedEvent)
+        public async Task Handle(DraftApprenticeshipDeletedEvent apprenticeshipDeletedEvent)
         {
             if (!apprenticeshipDeletedEvent.ReservationId.HasValue)
                 throw new ArgumentException($"ReservationId is missing from DraftApprenticeshipDeletedEvent, DraftApprenticeshipId:[{apprenticeshipDeletedEvent.DraftApprenticeshipId}].");
 
-            _reservationService.UpdateReservationStatus(
+            await _reservationService.UpdateReservationStatus(
                 apprenticeshipDeletedEvent.ReservationId.Value, 
                 ReservationStatus.Pending);
-
-            return Task.CompletedTask;
+           
         }
     }
 }
