@@ -20,15 +20,16 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         {
             log.LogInformation($"NServiceBus Apprenticeship Deleted trigger function executed at: {DateTime.Now}");
 
-            try
+            if (message.ReservationId.HasValue)
             {
-                await handler.Handle(message);
-                log.LogInformation($"Updated Reservation with ID: {message.ReservationId}");
+                await handler.Handle(message.ReservationId.Value);
+                log.LogInformation($"Set Reservation with ID: {message.ReservationId} to pending");
             }
-            catch (Exception e)
+            else
             {
-                log.LogError(e, e.Message, message);
+                log.LogInformation($"No reservation set to pending, no reservation Id provided");
             }
+
         }
     }
 }

@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
                 handler.Object);
 
             //Assert
-            handler.Verify(s => s.Handle(It.Is<DraftApprenticeshipDeletedEvent>(c=>c.ReservationId.Equals(message.ReservationId))), Times.Once);
+            handler.Verify(s => s.Handle(message.ReservationId.Value), Times.Once);
         }
     }
 }

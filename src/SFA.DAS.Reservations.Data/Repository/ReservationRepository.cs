@@ -17,17 +17,22 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task SaveStatus(Guid reservationId, ReservationStatus status)
         {
-            
-            var reservation = await _dataContext.Reservations.FindAsync(reservationId);
-
-            if (reservation == null)
+            using (var transaction = _dataContext.Database.BeginTransaction())
             {
-                throw new InvalidOperationException($"Reservation not found in database with Id: {reservationId}");
+                var reservation = await _dataContext.Reservations.FindAsync(reservationId);
+
+                if (reservation == null)
+                {
+                    throw new InvalidOperationException($"Reservation not found in database with Id: {reservationId}");
+                }
+
+                reservation.Status = (short)status;
+
+                _dataContext.SaveChanges();
+                transaction.Commit();
             }
 
-            reservation.Status = (short)status;
-
-            _dataContext.SaveChanges();
+            
         }
     }
 }

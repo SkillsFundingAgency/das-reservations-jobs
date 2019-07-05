@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
@@ -13,13 +12,10 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         {
             _reservationService = reservationService;
         }
-        public async Task Handle(DraftApprenticeshipDeletedEvent apprenticeshipDeletedEvent)
+        public async Task Handle(Guid reservationId)
         {
-            if (!apprenticeshipDeletedEvent.ReservationId.HasValue)
-                throw new ArgumentException($"ReservationId is missing from DraftApprenticeshipDeletedEvent, DraftApprenticeshipId:[{apprenticeshipDeletedEvent.DraftApprenticeshipId}].");
-
             await _reservationService.UpdateReservationStatus(
-                apprenticeshipDeletedEvent.ReservationId.Value, 
+                reservationId, 
                 ReservationStatus.Pending);
            
         }
