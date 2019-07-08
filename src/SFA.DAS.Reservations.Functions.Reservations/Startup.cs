@@ -91,6 +91,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
+            services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
 
@@ -100,6 +101,5 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             return services.BuildServiceProvider();
         }
-        
     }
 }

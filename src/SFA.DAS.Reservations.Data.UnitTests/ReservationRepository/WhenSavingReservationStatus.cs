@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
@@ -14,6 +17,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
     {
         private Repository.ReservationRepository _reservationRepository;
         private Mock<IReservationsDataContext> _dataContext;
+        private Mock<DatabaseFacade> _dataFacade;
+        private Mock<DbContext> _dbContext;
+        private Mock<IDbContextTransaction> _dbContextTransaction;
         private Reservation _reservationEntity;
 
         [SetUp]
@@ -24,9 +30,13 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
                Id = Guid.NewGuid(),
                 Status = 1
             };
-           
+
+            _dbContextTransaction = new Mock<IDbContextTransaction>();
+            _dbContext = new Mock<DbContext>();
             _dataContext = new Mock<IReservationsDataContext>();
-           
+            _dataFacade = new Mock<DatabaseFacade>(_dbContext.Object);
+            _dataFacade.Setup(x => x.BeginTransaction()).Returns(_dbContextTransaction.Object);
+
             _dataContext.Setup(x => x.Reservations).ReturnsDbSet(new List<Reservation>
             {
                 _reservationEntity
@@ -34,7 +44,10 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
 
             _dataContext.Setup(x => x.Reservations.FindAsync(_reservationEntity.Id))
                 .ReturnsAsync(_reservationEntity);
-           
+
+            _dataContext.Setup(x => x.Database)
+                .Returns(_dataFacade.Object);
+
             _reservationRepository = new Repository.ReservationRepository(_dataContext.Object);
         }
 
