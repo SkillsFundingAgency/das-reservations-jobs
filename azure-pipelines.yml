@@ -14,13 +14,10 @@ variables:
   buildPlatform: 'anycpu'
 
 pool:
-  name: 'Continuous Integration 02 - SSD - 160ACU'
-  demands: 
-  - msbuild
-  - visualstudio
+  name: 'DAS - Continuous Integration'
 
 steps:
-- task: gittools.gitversion.gitversion-task.GitVersion@3
+- task: gittools.gitversion-preview.gitversion-task.GitVersion@5
   displayName: GitVersion
   inputs:
     updateAssemblyInfo: true
@@ -50,7 +47,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: 'src\SFA.DAS.Reservations.Functions.RefreshCourse\SFA.DAS.Reservations.Functions.RefreshCourse.csproj'
+    projects: 'src/SFA.DAS.Reservations.Functions.RefreshCourse/SFA.DAS.Reservations.Functions.RefreshCourse.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
 
 - task: DotNetCoreCLI@2
@@ -58,7 +55,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: 'src\SFA.DAS.Reservations.Functions.Reservations\SFA.DAS.Reservations.Functions.Reservations.csproj'
+    projects: 'src/SFA.DAS.Reservations.Functions.Reservations/SFA.DAS.Reservations.Functions.Reservations.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
 
 - task: DotNetCoreCLI@2
@@ -66,14 +63,14 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: 'src\SFA.DAS.Reservations.Functions.LegalEntities\SFA.DAS.Reservations.Functions.LegalEntities.csproj'
+    projects: 'src/SFA.DAS.Reservations.Functions.LegalEntities/SFA.DAS.Reservations.Functions.LegalEntities.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
     Contents: |
-     azure\**
+     azure/**
     TargetFolder: '$(build.artifactstagingdirectory)/publish'
     OverWrite: true
 
