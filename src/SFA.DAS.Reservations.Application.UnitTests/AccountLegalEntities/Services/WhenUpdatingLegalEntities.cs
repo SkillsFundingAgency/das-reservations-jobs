@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
@@ -27,7 +28,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
             var signedAgreementEvent = new SignedAgreementEvent
             {
                 AccountId = 9786,
-                LegalEntityId = 543
+                LegalEntityId = 543,
+                AgreementType = AgreementType.NoneLevyExpressionOfInterest
             };
 
             //Act
@@ -35,8 +37,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
 
             //Assert
             _repository.Verify(x=>x.UpdateAgreementStatus(
-                It.Is<AccountLegalEntity>(c=>c.AccountId.Equals(signedAgreementEvent.AccountId) 
-                                             && c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId))));
+                It.Is<AccountLegalEntity>(c=>c.AccountId.Equals(signedAgreementEvent.AccountId) && 
+                                             c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId) && 
+                                             c.AgreementType.Equals(signedAgreementEvent.AgreementType))));
         }
     }
 }

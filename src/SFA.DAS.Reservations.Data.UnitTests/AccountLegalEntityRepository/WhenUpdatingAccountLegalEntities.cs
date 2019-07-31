@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
 using SFA.DAS.Reservations.Domain.Entities;
 
@@ -15,7 +16,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
 {
     public class WhenUpdatingAccountLegalEntities
     {
-        private AccountLegalEntity _accountLegalEntity;
+        private AccountLegalEntity _dbAccountLegalEntity;
+        private AccountLegalEntity _updatedAccountLegalEntity;
         private Mock<IReservationsDataContext> _dataContext;
         private Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
         private Mock<IDbContextTransaction> _dbContextTransaction;
@@ -25,13 +27,24 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
         [SetUp]
         public void Arrange()
         {
-            _accountLegalEntity = new AccountLegalEntity
+            _dbAccountLegalEntity = new AccountLegalEntity
             {
                 Id = Guid.NewGuid(),
                 AccountId = 8376234,
                 AgreementSigned = false,
-                LegalEntityId = 4
+                LegalEntityId = 4,
+                AgreementType = AgreementType.Levy
             };
+
+            _updatedAccountLegalEntity = new AccountLegalEntity
+            {
+                Id = Guid.NewGuid(),
+                AccountId = 8376234,
+                AgreementSigned = false,
+                LegalEntityId = 4,
+                AgreementType = AgreementType.NoneLevyExpressionOfInterest
+            };
+
             _dbContextTransaction = new Mock<IDbContextTransaction>();
             _dbContext = new Mock<DbContext>();
             _dataContext = new Mock<IReservationsDataContext>();
@@ -42,7 +55,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
 
             _dataContext.Setup(x => x.AccountLegalEntities).ReturnsDbSet(new List<AccountLegalEntity>
             {
-                _accountLegalEntity
+                _dbAccountLegalEntity
             });
 
 
@@ -53,10 +66,32 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
         public async Task Then_The_LegalEntity_Is_Updated_If_It_Exists_With_The_Agreement_Signed_Flag()
         {
             //Act
-            await _accountLegalEntityRepository.UpdateAgreementStatus(_accountLegalEntity);
+            await _accountLegalEntityRepository.UpdateAgreementStatus(
+                _updatedAccountLegalEntity);
             
             //Assert
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+        }
+
+        [Test]
+        public async Task ThenWillMarkTheAgreementAsSigned()
+        {
+            //Act
+            await _accountLegalEntityRepository.UpdateAgreementStatus(
+                _updatedAccountLegalEntity);
+            
+            //Assert
+            Assert.IsTrue(_dbAccountLegalEntity.AgreementSigned);
+        }
+
+        [Test]
+        public async Task ThenWillUpdateTheAgreementType()
+        {
+            //Act
+            await _accountLegalEntityRepository.UpdateAgreementStatus(_updatedAccountLegalEntity);
+            
+            //Assert
+            Assert.AreEqual(AgreementType.NoneLevyExpressionOfInterest, _dbAccountLegalEntity.AgreementType);
         }
 
         [Test]

@@ -42,7 +42,8 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
             return new AccountLegalEntity
             {
                 AccountId = signedAgreementEvent.AccountId,
-                LegalEntityId = signedAgreementEvent.LegalEntityId
+                LegalEntityId = signedAgreementEvent.LegalEntityId,
+                AgreementType = signedAgreementEvent.AgreementType
             };
         }
 
