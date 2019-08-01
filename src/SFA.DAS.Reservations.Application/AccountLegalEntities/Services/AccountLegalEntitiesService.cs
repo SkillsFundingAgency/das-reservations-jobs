@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using SFA.DAS.EmployerAccounts.Messages.Events;
+using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Entities;
 
@@ -28,6 +29,11 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
         public async Task RemoveAccountLegalEntity(RemovedLegalEntityEvent accountLegalEntityRemovedEvent)
         {
             await _repository.Remove(MapAccountLegalEntity(accountLegalEntityRemovedEvent));
+        }
+
+        public async Task UpdateAccountToLevy(LevyAddedToAccount levyAddedToAccountEvent)
+        {
+            await _repository.UpdateAccountToLevy(MapAccountLegalEntity(levyAddedToAccountEvent));
         }
 
         private AccountLegalEntity MapAccountLegalEntity(RemovedLegalEntityEvent removedLegalEntityEvent)
@@ -58,5 +64,15 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
                 AccountLegalEntityName = accountLegalEntity.OrganisationName
             };
         }
+
+        private AccountLegalEntity MapAccountLegalEntity(LevyAddedToAccount levyAddedToAccountEvent)
+        {
+            return new AccountLegalEntity
+            {
+                AccountId = levyAddedToAccountEvent.AccountId
+            };
+        }
+
+
     }
 }
