@@ -9,6 +9,6 @@ namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
         Task AddAccountLegalEntity(AddedLegalEntityEvent accountLegalEntity);
         Task SignAgreementForAccountLegalEntity(EmployerAccounts.Messages.Events.SignedAgreementEvent signedAgreementEvent);
         Task RemoveAccountLegalEntity(RemovedLegalEntityEvent accountLegalEntityRemovedEvent);
-        Task UpdateAccountToLevy(LevyAddedToAccount levyAddedToAccountEvent);
+        Task UpdateAccountLegalEntitiesToLevy(LevyAddedToAccount levyAddedToAccountEvent);
     }
 }

@@ -47,10 +47,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
             LevyAddedToAccount levyAddedToAccountEvent)
         {
             //Act
-            await _service.UpdateAccountToLevy(levyAddedToAccountEvent);
+            await _service.UpdateAccountLegalEntitiesToLevy(levyAddedToAccountEvent);
 
             //Assert
-            _repository.Verify(repository =>  repository.UpdateAccountToLevy(It.Is<AccountLegalEntity>(
+            _repository.Verify(repository =>  repository.UpdateAccountLegalEntitiesToLevy(It.Is<AccountLegalEntity>(
                 entity => entity.AccountId == levyAddedToAccountEvent.AccountId)),Times.Once);
 
         }
