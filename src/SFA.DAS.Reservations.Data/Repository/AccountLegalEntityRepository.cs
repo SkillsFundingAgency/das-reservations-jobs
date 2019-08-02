@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
@@ -60,6 +61,30 @@ namespace SFA.DAS.Reservations.Data.Repository
                 {
                     _dataContext.AccountLegalEntities.Remove(entity);
                     _dataContext.SaveChanges();
+                }
+
+                transaction.Commit();
+            }
+        }
+
+        public async Task UpdateAccountLegalEntitiesToLevy(AccountLegalEntity accountLegalEntity)
+        {
+            using (var transaction = _dataContext.Database.BeginTransaction())
+            {
+                var accountLegalEntitiesList = await _dataContext.AccountLegalEntities
+                    .Where(x => x.AccountId.Equals(accountLegalEntity.AccountId))
+                    .ToListAsync();
+
+                if (accountLegalEntitiesList != null &&
+                    accountLegalEntitiesList.Any())
+                {
+                    accountLegalEntitiesList.ForEach(entity => entity.IsLevy = true);
+                    _dataContext.AccountLegalEntities.UpdateRange(accountLegalEntitiesList);
+                    _dataContext.SaveChanges();
+                }
+                else
+                {
+                    throw new DbUpdateException($"Record not found AccountId:{accountLegalEntity.AccountId}", (Exception)null);
                 }
 
                 transaction.Commit();

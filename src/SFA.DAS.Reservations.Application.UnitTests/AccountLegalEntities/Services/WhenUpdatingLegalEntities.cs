@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.EmployerAccounts.Messages.Events;
+using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Entities;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Services
 {
@@ -40,6 +43,19 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
                 It.Is<AccountLegalEntity>(c=>c.AccountId.Equals(signedAgreementEvent.AccountId) && 
                                              c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId) && 
                                              c.AgreementType.Equals(signedAgreementEvent.AgreementType))));
+        }
+
+        [Test, MoqAutoData]
+        public async Task AndUpdatingAccountToLevy_ThenServiceCalledToUpdate(
+            LevyAddedToAccount levyAddedToAccountEvent)
+        {
+            //Act
+            await _service.UpdateAccountLegalEntitiesToLevy(levyAddedToAccountEvent);
+
+            //Assert
+            _repository.Verify(repository =>  repository.UpdateAccountLegalEntitiesToLevy(It.Is<AccountLegalEntity>(
+                entity => entity.AccountId == levyAddedToAccountEvent.AccountId)),Times.Once);
+
         }
     }
 }

@@ -11,6 +11,7 @@ using NUnit.Framework;
 using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
 using SFA.DAS.Reservations.Domain.Entities;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
 {
@@ -98,6 +99,33 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
         public void Then_If_The_Entity_Does_Not_Exist_An_Exception_Is_Thrown()
         {
             Assert.ThrowsAsync<DbUpdateException>(() => _accountLegalEntityRepository.UpdateAgreementStatus(new AccountLegalEntity{AccountId = 54, LegalEntityId = 2}));
+
+            //Assert
+            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
+        }
+
+        [Test,MoqAutoData]
+        public async Task AndUpdatingAccountToLevy_ThenEntityIsUpdatedIfItExists(
+            AccountLegalEntity accountLegalEntity)
+        {
+            _dataContext.Setup(x => x.AccountLegalEntities).ReturnsDbSet(new List<AccountLegalEntity>
+            {
+                accountLegalEntity
+            });
+
+            //Act
+            await _accountLegalEntityRepository.UpdateAccountLegalEntitiesToLevy(accountLegalEntity);
+
+            //Assert
+            _dataContext.Verify(x => x.SaveChanges(),Times.Once);
+        }
+
+        [Test, MoqAutoData]
+        public void AndUpdatingAccountToLevy_ThenExceptionThrownIfEntityDoesExist(
+            AccountLegalEntity accountLegalEntity)
+        {
+            //Act
+            Assert.ThrowsAsync<DbUpdateException>( () => _accountLegalEntityRepository.UpdateAccountLegalEntitiesToLevy(accountLegalEntity));
 
             //Assert
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);

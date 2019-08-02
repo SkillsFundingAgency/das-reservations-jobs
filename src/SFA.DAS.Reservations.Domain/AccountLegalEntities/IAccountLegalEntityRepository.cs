@@ -11,5 +11,6 @@ namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
         Task Add(AccountLegalEntity accountLegalEntity);
         Task UpdateAgreementStatus(AccountLegalEntity accountLegalEntity);
         Task Remove(AccountLegalEntity accountLegalEntity);
+        Task UpdateAccountLegalEntitiesToLevy(AccountLegalEntity accountLegalEntity);
     }
 }

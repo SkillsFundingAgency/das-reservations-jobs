@@ -13,5 +13,6 @@ namespace SFA.DAS.Reservations.Domain.Entities
         public int? ReservationLimit { get; set; }
         public bool AgreementSigned { get; set; }
         public AgreementType AgreementType { get; set; }
+        public bool IsLevy { get; set; }
     }
 }
