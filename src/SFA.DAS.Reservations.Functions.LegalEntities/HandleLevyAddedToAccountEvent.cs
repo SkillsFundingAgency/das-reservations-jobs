@@ -15,8 +15,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
         [FunctionName("LevyAddedToAccount")]
         public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.LevyAddedToAccount)]LevyAddedToAccount message, [Inject] ILevyAddedToAccountHandler handler,[Inject] ILogger<LevyAddedToAccount> log)
         {
-            log.LogInformation($"NServiceBus LevyAddedToAccount trigger function executed at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
+            log.LogInformation($"NServiceBus LevyAddedToAccount trigger function started execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
             await handler.Handle(message);
+            log.LogInformation($"NServiceBus LevyAddedToAccount trigger function finished execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
         }
     }
 }
