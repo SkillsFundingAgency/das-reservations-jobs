@@ -37,6 +37,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 if (entity != null)
                 {
                     entity.AgreementSigned = true;
+                    entity.AgreementType = accountLegalEntity.AgreementType;
                     _dataContext.SaveChanges();
                 }
                 else
