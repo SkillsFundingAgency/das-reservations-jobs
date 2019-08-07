@@ -99,6 +99,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddTransient<IAddAccountLegalEntityHandler, AddAccountLegalEntityHandler>();
             services.AddTransient<IRemoveLegalEntityHandler, RemoveLegalEntityHandler>();
             services.AddTransient<ISignedLegalAgreementHandler, SignedLegalAgreementHandler>();
+            services.AddTransient<ILevyAddedToAccountHandler, LevyAddedToAccountHandler>();
 
             //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 

@@ -5,11 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="2.1.1507" />
-    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.577" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.1623" />
+    <PackageReference Include="SFA.DAS.EmployerFinance.Messages" Version="1.6.1639" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
-  
 
 </Project>
