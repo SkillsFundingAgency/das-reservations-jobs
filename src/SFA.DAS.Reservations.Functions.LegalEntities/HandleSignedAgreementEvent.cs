@@ -15,8 +15,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
         [FunctionName("HandleSignedAgreementEvent")]
         public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.SignedAgreement)] SignedAgreementEvent message, [Inject]ISignedLegalAgreementHandler handler, [Inject]ILogger<SignedAgreementEvent> log)
         {
-            log.LogInformation($"NServiceBus RemovedLegalEntity trigger function executed at: {DateTime.Now} for account ${message.AccountId}-${message.LegalEntityId}:${message.OrganisationName}");
+            log.LogInformation($"NServiceBus HandleSignedAgreementEvent trigger function executed at: {DateTime.Now} for account:{message.AccountId}-legal entity id:{message.LegalEntityId} - {message.OrganisationName} - agreement type:{message.AgreementType}");
             await handler.Handle(message);
+            log.LogInformation($"NServiceBus HandleSignedAgreementEvent trigger function finished");
         }
     }
 }

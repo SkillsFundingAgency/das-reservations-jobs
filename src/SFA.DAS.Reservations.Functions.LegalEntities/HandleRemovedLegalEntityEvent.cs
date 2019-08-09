@@ -17,6 +17,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
         {
             log.LogInformation($"NServiceBus RemovedLegalEntity trigger function executed at: {DateTime.Now} for ${message.AccountLegalEntityId}:${message.OrganisationName}");
             await handler.Handle(message);
+            log.LogInformation($"NServiceBus RemovedLegalEntity trigger function finished at: {DateTime.Now} for ${message.AccountLegalEntityId}:${message.OrganisationName}");
         }
     }
 }
