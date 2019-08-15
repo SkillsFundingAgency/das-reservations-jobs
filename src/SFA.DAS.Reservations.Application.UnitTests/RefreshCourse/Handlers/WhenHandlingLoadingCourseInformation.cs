@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
@@ -15,7 +16,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Handlers
         public void Arrange()
         {
             _service = new Mock<IApprenticeshipCourseService>();
-            _service.Setup(x => x.GetCourseInformation()).Returns(new List<Course> {new Course("", "", 1)});
+            _service.Setup(x => x.GetCourseInformation()).Returns(new List<Course> {new Course("", "", 1, DateTime.Today)});
             _handler = new GetCoursesHandler(_service.Object);
         }
 

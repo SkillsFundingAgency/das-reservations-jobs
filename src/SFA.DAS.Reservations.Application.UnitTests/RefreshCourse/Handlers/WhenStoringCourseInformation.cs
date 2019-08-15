@@ -25,7 +25,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Handlers
         public async Task Then_The_Service_Is_Called_With_The_Course()
         {
             //Arrange
-            var course = new Course("1-9-a","Test",3);
+            var course = new Course("1-9-a","Test",3, DateTime.Today);
 
             //Act
             await _handler.Handle(course);
