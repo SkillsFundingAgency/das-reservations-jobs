@@ -24,7 +24,8 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
             {
                 CourseId = course.Id,
                 Title = course.Title,
-                Level = course.Level
+                Level = course.Level,
+                EffectiveTo = course.EffectiveTo
             };
         }
 
