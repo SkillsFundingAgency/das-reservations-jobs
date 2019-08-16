@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 
@@ -10,30 +9,36 @@ namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
 {
     public class AzureQueueService : IAzureQueueService
     {
+        private readonly ICacheStorageService _memoryCache;
         private readonly ReservationsJobs _configuration;
 
-        public AzureQueueService(IOptions<ReservationsJobs> options)
+        public AzureQueueService(IOptions<ReservationsJobs> options, ICacheStorageService memoryCache)
         {
+            _memoryCache = memoryCache;
             _configuration = options.Value;
         }
 
-        public async Task SendMessage<T>(T message, string queueName) where T : class
+        public async Task<IList<QueueMonitor>> GetQueuesToMonitor()
         {
-            var cloudMessage = new CloudQueueMessage(JsonConvert.SerializeObject(message));
+            var queuesToMonitor = await _memoryCache.RetrieveFromCache<List<QueueMonitor>>(nameof(QueueMonitor));
 
-            // Retrieve storage account from connection string.
-            var storageAccount = CloudStorageAccount.Parse(_configuration.AzureWebJobsStorage);
+            if (queuesToMonitor == default(List<QueueMonitor>))
+            {
+                queuesToMonitor = _configuration.QueueMonitorItems.ToList();
+                await _memoryCache.SaveToCache(nameof(QueueMonitor), queuesToMonitor, 12);
+            }
 
-            // Create the queue client.
-            var queueClient = storageAccount.CreateCloudQueueClient();
+            return queuesToMonitor;
+        }
 
-            // Retrieve a reference to a container.
-            var queue = queueClient.GetQueueReference(queueName);
+        public Task<bool> GetQueueStatus(string expectedQueueName)
+        {
+            throw new System.NotImplementedException();
+        }
 
-            // Create the queue if it doesn’t already exist
-            await queue.CreateIfNotExistsAsync();
-
-            await queue.AddMessageAsync(cloudMessage);
+        public Task SaveQueueStatus(IList<QueueMonitor> queueMonitors)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
