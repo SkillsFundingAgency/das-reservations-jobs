@@ -4,7 +4,7 @@
     {
         public string QueueName { get; }
 
-        public bool? IsError { get; }
+        public bool? IsError { get; set; }
         public string QueueErrorMessage { get; }
         public string QueueNoErrorMessage { get; }
 
@@ -15,5 +15,6 @@
             QueueErrorMessage = $"{QueueName} has entered an error state";
             QueueNoErrorMessage = $"{QueueName} has no errors";
         }
+
     }
 }

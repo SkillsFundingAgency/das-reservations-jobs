@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.ServiceBus.Management;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
@@ -31,14 +32,20 @@ namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
             return queuesToMonitor;
         }
 
-        public Task<bool> GetQueueStatus(string expectedQueueName)
+        public async Task<bool> IsQueueHealthy(string queueName)
         {
-            throw new System.NotImplementedException();
+            var client = new ManagementClient(_configuration.NServiceBusConnectionString);
+            var queue = await client.GetQueueRuntimeInfoAsync(queueName);
+
+            return queue.MessageCount == 0;
         }
 
-        public Task SaveQueueStatus(IList<QueueMonitor> queueMonitors)
+        public async Task SaveQueueStatus(IList<QueueMonitor> queuesToMonitor)
         {
-            throw new System.NotImplementedException();
+            if (queuesToMonitor != null && queuesToMonitor.Any())
+            {
+                await _memoryCache.SaveToCache(nameof(QueueMonitor), queuesToMonitor, 12);
+            }
         }
     }
 }
