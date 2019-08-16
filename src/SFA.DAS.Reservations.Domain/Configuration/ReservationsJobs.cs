@@ -10,6 +10,8 @@ namespace SFA.DAS.Reservations.Domain.Configuration
         public string ConnectionString { get; set; }
         public string NServiceBusConnectionString { get; set; }
         public string AzureWebJobsStorage { get; set; }
-        public virtual IList<QueueMonitor> QueueMonitorItems { get; set; }
+        public virtual string QueueMonitorItems { get; set; }
+        public string SlackChannelUrl { get; set; }
+        public string SlackSecret { get; set; }
     }
 }
