@@ -63,7 +63,9 @@
     "functionAppNameCourse": "[concat(variables('resourcePrefix'),'-refcrs-fa')]",
     "functionAppNameReservation": "[concat(variables('resourcePrefix'),'-rsrv-fa')]",
     "functionAppNameLegalEntities": "[concat(variables('resourcePrefix'),'-rsrv-le')]",
-    "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
+    "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
+    "workerAppServiceName": "[concat(variables('resourcePrefix'), '-rsrv-wkr-as')]",
+    "workerAppServicePlanName": "[concat(variables('resourcePrefix'), '-rsrv-wkr-asp')]"
   },
   "resources": [
     {
@@ -404,6 +406,102 @@
         "function-app-insights-lgle",
         "storage-account"
       ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "worker-app-service",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[variables('workerAppServiceName')]"
+          },
+          "appServicePlanName": {
+            "value": "[variables('workerAppServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[resourceGroup().name]"
+          },
+          "deployStagingSlot": {
+            "value": false
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "ConfigurationStorageConnectionString",
+                "value": "[parameters('configurationStorageConnectionString')]"
+              },
+              {
+                "name": "NServiceBusConnectionString",
+                "value": "[parameters('nServiceBusConnectionString')]"
+              },
+              {
+                "name": "NServiceBusLicense",
+                "value": "[parameters('nServiceBusLicense')]"
+              },
+              {
+                "name": "ConfigNames",
+                "value": "[parameters('configNames')]"
+              },
+              {
+                "name": "EnvironmentName",
+                "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "Version",
+                "value": "[parameters('version')]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "AzureWebJobsDashboard",
+                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference('function-app-insights-lgle').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~2"
+              },
+              {
+                "name": "AppName",
+                "value": "das-reservations-jobs-monitor"
+              },
+              {
+                "name": "LoggingRedisConnectionString",
+                "value": "[parameters('loggingRedisConnectionString')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "AzureWebJobsDashboard",
+                "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
+                "type": "Custom"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "connectionString": "[reference('storage-account').outputs.storageConnectionString.value]",
+                "type": "Custom"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "worker-app-insights",
+        "worker-app-service-plan"
+      ]
     }
   ],
   "outputs": {
@@ -418,6 +516,10 @@
     "functionAppNameLegalEntities": {
       "type": "string",
       "value": "[variables('functionAppNameLegalEntities')]"
+    },
+    "WorkerAppServiceName": {
+      "type": "string",
+      "value": "[variables('workerAppServiceName')]"
     }
   }
 }
