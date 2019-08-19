@@ -16,8 +16,8 @@ namespace SFA.DAS.Reservations.Domain.Infrastructure
             QueueName = queueName;
             IsHealthy = isHealthy;
             Environment = environment;
-            QueueErrorMessage = $"`{QueueName}` in *{environment}* has entered an error state :red_circle: \nat {DateTime.Now:dd MMMM yyyy HH:mm}";
-            QueueNoErrorMessage = $"`{QueueName}` in *{environment}* has no errors :heavy_check_mark: \nat {DateTime.Now:dd MMMM yyyy HH:mm}";
+            QueueErrorMessage = $"`{QueueName}` in *{environment}* has entered an error state :red_circle: {System.Environment.NewLine}at {DateTime.Now:dd MMMM yyyy HH:mm}";
+            QueueNoErrorMessage = $"`{QueueName}` in *{environment}* has no errors :heavy_check_mark: {System.Environment.NewLine}at {DateTime.Now:dd MMMM yyyy HH:mm}";
         }
 
     }

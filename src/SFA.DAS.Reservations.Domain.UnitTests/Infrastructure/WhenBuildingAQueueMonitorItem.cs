@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 
 namespace SFA.DAS.Reservations.Domain.UnitTests.Infrastructure
@@ -12,8 +13,8 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Infrastructure
             var actual = new QueueMonitor("queue.name", true, "LOCAL");
 
             //Assert
-            Assert.IsTrue(actual.QueueErrorMessage.StartsWith("`queue.name` in *LOCAL* has entered an error state :red_circle: at "));
-            Assert.IsTrue(actual.QueueNoErrorMessage.StartsWith("`queue.name` in *LOCAL* has no errors :heavy_check_mark: at "));
+            Assert.IsTrue(actual.QueueErrorMessage.StartsWith($"`queue.name` in *LOCAL* has entered an error state :red_circle: {Environment.NewLine}at "));
+            Assert.IsTrue(actual.QueueNoErrorMessage.StartsWith($"`queue.name` in *LOCAL* has no errors :heavy_check_mark: {Environment.NewLine}at "));
         }
     }
 }
