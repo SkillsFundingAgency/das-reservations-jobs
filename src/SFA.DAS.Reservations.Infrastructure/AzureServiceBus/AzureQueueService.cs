@@ -11,11 +11,13 @@ namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
     public class AzureQueueService : IAzureQueueService
     {
         private readonly ICacheStorageService _memoryCache;
+        private readonly JobEnvironment _jobEnvironment;
         private readonly ReservationsJobs _configuration;
 
-        public AzureQueueService(IOptions<ReservationsJobs> options, ICacheStorageService memoryCache)
+        public AzureQueueService(IOptions<ReservationsJobs> options, ICacheStorageService memoryCache, JobEnvironment jobEnvironment)
         {
             _memoryCache = memoryCache;
+            _jobEnvironment = jobEnvironment;
             _configuration = options.Value;
         }
 
@@ -25,7 +27,10 @@ namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
 
             if (queuesToMonitor == default(List<QueueMonitor>))
             {
-                queuesToMonitor = _configuration.QueueMonitorItems.ToList();
+                queuesToMonitor = _configuration
+                    .QueueMonitorItems.Split(',')
+                    .Select(c=> new QueueMonitor(c, null, _jobEnvironment.EnvironmentName))
+                    .ToList();
                 await _memoryCache.SaveToCache(nameof(QueueMonitor), queuesToMonitor, 12);
             }
 
@@ -36,7 +41,7 @@ namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
         {
             var client = new ManagementClient(_configuration.NServiceBusConnectionString);
             var queue = await client.GetQueueRuntimeInfoAsync(queueName);
-
+            
             return queue.MessageCount == 0;
         }
 

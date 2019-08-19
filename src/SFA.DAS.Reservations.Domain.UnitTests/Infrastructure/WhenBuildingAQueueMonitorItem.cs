@@ -9,11 +9,11 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Infrastructure
         public void Then_The_Messages_Are_Set_On_The_Model()
         {
             //Act
-            var actual = new QueueMonitor("queue.name", true);
+            var actual = new QueueMonitor("queue.name", true, "LOCAL");
 
             //Assert
-            Assert.AreEqual("queue.name has entered an error state", actual.QueueErrorMessage);
-            Assert.AreEqual("queue.name has no errors", actual.QueueNoErrorMessage);
+            Assert.IsTrue(actual.QueueErrorMessage.StartsWith("`queue.name` in *LOCAL* has entered an error state :red_circle: at "));
+            Assert.IsTrue(actual.QueueNoErrorMessage.StartsWith("`queue.name` in *LOCAL* has no errors :heavy_check_mark: at "));
         }
     }
 }
