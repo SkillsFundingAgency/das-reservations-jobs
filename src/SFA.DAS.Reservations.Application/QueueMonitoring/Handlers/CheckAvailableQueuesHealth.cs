@@ -25,8 +25,8 @@ namespace SFA.DAS.Reservations.Application.QueueMonitoring.Handlers
                 {
                     continue;
                 }
-
-                queues[queues.IndexOf(queue)].IsHealthy = queueStatus;
+                
+                queue.IsHealthy = queueStatus;
 
                 if (queueStatus)
                 {
