@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.CourseRepository
             {
                 CourseId = "2-2",
                 Title = "First Title",
-                Level = 2
+                Level = 2,
+                EffectiveTo = DateTime.Today.AddDays(-1)
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -59,7 +61,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.CourseRepository
             {
                 CourseId="1",
                 Title = "Title1",
-                Level = 1
+                Level = 1,
+                EffectiveTo = DateTime.Today
             };
 
             //Act
@@ -83,7 +86,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.CourseRepository
             {
                 CourseId = "2-2",
                 Title = "Title",
-                Level = 1
+                Level = 1,
+                EffectiveTo = DateTime.Today
             };
 
             //Act

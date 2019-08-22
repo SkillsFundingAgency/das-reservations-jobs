@@ -23,6 +23,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 {
                     courseStored.Level = course.Level;
                     courseStored.Title = course.Title;
+                    courseStored.EffectiveTo = course.EffectiveTo;
                 }
                 else
                 {

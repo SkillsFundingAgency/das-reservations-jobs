@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
@@ -26,14 +27,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
                     Id = "1",
                     Title = "Some Standard",
                     Level = 1,
-                    IsActiveStandard = true
+                    IsActiveStandard = true,
+                    EffectiveTo = DateTime.Today.AddDays(-1)
                 },
                 new StandardSummary
                 {
                     Id = "2",
                     Title = "Some Standard 2",
                     Level = 1,
-                    IsActiveStandard = false
+                    IsActiveStandard = false,
+                    EffectiveTo = DateTime.Today.AddDays(-1)
                 }
             });
             _frameworkApiClient = new Mock<IFrameworkApiClient>();
@@ -44,14 +47,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
                     Id="1-2-3",
                     Title = "Some Framework",
                     Level = 2,
-                    IsActiveFramework = true
+                    IsActiveFramework = true,
+                    EffectiveTo = DateTime.Today.AddDays(-1)
                 },
                 new FrameworkSummary
                 {
                     Id="8-8-8",
                     Title = "Some Framework 2",
                     Level = 2,
-                    IsActiveFramework = false
+                    IsActiveFramework = false,
+                    EffectiveTo = DateTime.Today.AddDays(-1)
                 }
             });
 

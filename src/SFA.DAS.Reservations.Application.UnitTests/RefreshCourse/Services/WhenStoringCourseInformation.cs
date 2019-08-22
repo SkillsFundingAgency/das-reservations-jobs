@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
@@ -23,13 +24,17 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
         public async Task Then_The_Repository_Is_Called_With_The_Mapped_Entity()
         {
             //Arrange
-            var course = new Course("1-3-4","My Course", 1);
+            var course = new Course("1-3-4","My Course", 1, DateTime.Today);
             
             //Act
             await _service.Store(course);
 
             //Act
-            _repository.Verify(x=>x.Add(It.Is<Domain.Entities.Course>(c=>c.CourseId.Equals(course.Id) && c.Level.Equals(course.Level) && c.Title.Equals(course.Title))), Times.Once);
+            _repository.Verify(x=>x.Add(It.Is<Domain.Entities.Course>(
+                c=>c.CourseId.Equals(course.Id) &&
+                   c.Level.Equals(course.Level) &&
+                   c.Title.Equals(course.Title) &&
+                   c.EffectiveTo.Equals(course.EffectiveTo))), Times.Once);
         }
     }
 }

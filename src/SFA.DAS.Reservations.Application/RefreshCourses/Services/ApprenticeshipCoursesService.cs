@@ -39,7 +39,7 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 
             foreach (var framework in frameworks.Where(c=>c.IsActiveFramework))
             {
-                courses.Add(new Course(framework.Id,framework.Title,framework.Level));
+                courses.Add(new Course(framework.Id,framework.Title,framework.Level, framework.EffectiveTo));
             }
         }
 
@@ -49,7 +49,7 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 
             foreach (var standard in standards.Where(c=>c.IsActiveStandard))
             {
-                courses.Add(new Course(standard.Id, standard.Title, standard.Level));
+                courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo));
             }
         }
     }
