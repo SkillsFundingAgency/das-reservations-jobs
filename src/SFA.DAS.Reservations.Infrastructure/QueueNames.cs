@@ -10,5 +10,6 @@
         public const string SignedAgreement = "SFA.DAS.Reservations.Jobs.SignedAgreement";
         public const string DraftApprenticeshipDeleted = "SFA.DAS.Reservations.Jobs.ApprenticeshipDeleted";
         public const string LevyAddedToAccount = "SFA.DAS.Reservations.Jobs.LevyAddedToAccount";
+        public const string ReservationCreated = "SFA.DAS.Reservations.Jobs.ReservationCreated";//todo: is this correct??
     }
 }

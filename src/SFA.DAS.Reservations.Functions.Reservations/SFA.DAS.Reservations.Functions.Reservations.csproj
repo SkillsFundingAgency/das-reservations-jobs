@@ -14,6 +14,7 @@
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="2.1.1507" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.NServiceBus.AzureFunction" Version="12.0.4" />
+    <PackageReference Include="SFA.DAS.Reservations.Messages" Version="0.1.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Reservations.Data\SFA.DAS.Reservations.Data.csproj" />
