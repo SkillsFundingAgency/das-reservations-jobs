@@ -3,6 +3,7 @@ using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
