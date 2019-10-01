@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         }
 
         [Test, MoqAutoData]
-        public async Task And_Has_ProviderId_Then_Gets_ProviderName(
+        public async Task Then_Gets_ProviderName(
             ReservationCreatedEvent createdEvent,
             [Frozen] Mock<IProviderService> mockProviderService,
             ReservationCreatedHandler handler)
@@ -36,5 +36,13 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             mockProviderService.Verify(service => service.GetDetails(createdEvent.ProviderId.Value), 
                 Times.Once);
         }
+
+        // then gets template id from config
+
+        // then gets all employer users for account 
+
+        // and not subscribed then skips user
+
+        // then sends message to account email address
     }
 }
