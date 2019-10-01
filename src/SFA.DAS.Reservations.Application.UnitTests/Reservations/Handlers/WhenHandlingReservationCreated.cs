@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Messages;
 using SFA.DAS.Testing.AutoFixture;
@@ -37,12 +39,66 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 Times.Once);
         }
 
+        [Test, MoqAutoData]
+        public async Task Then_Gets_All_Users_For_Account(
+            ReservationCreatedEvent createdEvent,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            ReservationCreatedHandler handler)
+        {
+            await handler.Handle(createdEvent);
+
+            mockAccountsService.Verify(service => service.GetAccountUsers(createdEvent.AccountId), 
+                Times.Once);
+        }
+
+        [Test, MoqAutoData]
+        public async Task Then_Sends_Message_For_Each_User(
+            ReservationCreatedEvent createdEvent,
+            List<UserDetails> users,//todo setup users allowed notify
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            ReservationCreatedHandler handler)
+        {
+            mockAccountsService
+                .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
+                .ReturnsAsync(users);
+                
+            await handler.Handle(createdEvent);
+
+            // todo: assert messages sent
+        }
+
+        [Test, MoqAutoData]
+        public async Task And_User_Not_Subscribed_Then_Skips(
+            ReservationCreatedEvent createdEvent,
+            List<UserDetails> users,//todo setup 1 user not allowed notify
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            ReservationCreatedHandler handler)
+        {
+            mockAccountsService
+                .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
+                .ReturnsAsync(users);
+
+            await handler.Handle(createdEvent);
+
+            //todo: assert message not sent to user
+        }
+
+        [Test, MoqAutoData]
+        public async Task And_User_Not_In_Owner_Role_Then_Skips(
+            ReservationCreatedEvent createdEvent,
+            List<UserDetails> users,//todo setup 1 user in each role
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            ReservationCreatedHandler handler)
+        {
+            mockAccountsService
+                .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
+                .ReturnsAsync(users);
+
+            await handler.Handle(createdEvent);
+
+            //todo: assert message not sent to user specific roles
+        }
+
         // then gets template id from config
-
-        // then gets all employer users for account 
-
-        // and not subscribed then skips user
-
-        // then sends message to account email address
     }
 }
