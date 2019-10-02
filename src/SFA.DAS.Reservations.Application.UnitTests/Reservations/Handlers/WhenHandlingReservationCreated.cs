@@ -57,7 +57,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task Then_Sends_Message_For_Each_User(
             ReservationCreatedEvent createdEvent,
-            [AllUsersCanReceiveNotifications] List<UserDetails> users,
+            [UsersCanReceiveNotificationsAndWithRole(Role = "Owner")] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
@@ -77,38 +77,75 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task And_User_Not_Subscribed_Then_Skips(
             ReservationCreatedEvent createdEvent,
-            List<UserDetails> users,//defaults alternating bool value for CanReceiveNotifications
+            [UsersCanReceiveNotificationsAndWithRole(Role = "Owner")] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
         {
+            users[0].CanReceiveNotifications = false;
             mockAccountsService
                 .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
                 .ReturnsAsync(users);
 
             await handler.Handle(createdEvent);
 
-            users.Where(user => !user.CanReceiveNotifications).ToList().ForEach(user => 
+            mockNotificationsService.Verify(service => 
+                service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                    message.RecipientsAddress == users[0].Email)), Times.Never);
+            users.Where(user => user.CanReceiveNotifications).ToList().ForEach(user => 
                 mockNotificationsService.Verify(service => 
                     service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
-                        message.RecipientsAddress == user.Email)), Times.Never));
+                        message.RecipientsAddress == user.Email)), Times.Once));
         }
 
         [Test, MoqAutoData]
         public async Task And_User_Not_In_Owner_Role_Then_Skips(
             ReservationCreatedEvent createdEvent,
-            List<UserDetails> users,//todo setup 1 user in each role
+            string otherRole,
+            [UsersCanReceiveNotificationsAndWithRole(Role = "Owner")] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
         {
+            users[0].Role = otherRole;
             mockAccountsService
                 .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
                 .ReturnsAsync(users);
 
             await handler.Handle(createdEvent);
 
-            //todo: assert message not sent to user specific roles
+            mockNotificationsService.Verify(service => 
+                service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                    message.RecipientsAddress == users[0].Email)), Times.Never);
+            users.Where(user => user.Role == "Owner").ToList().ForEach(user => 
+                mockNotificationsService.Verify(service => 
+                    service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                        message.RecipientsAddress == user.Email)), Times.Once));
+        }
+
+        [Test, MoqAutoData]
+        public async Task And_User_Not_In_Transactor_Role_Then_Skips(
+            ReservationCreatedEvent createdEvent,
+            string otherRole,
+            [UsersCanReceiveNotificationsAndWithRole(Role = "Transactor")] List<UserDetails> users,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            ReservationCreatedHandler handler)
+        {
+            users[0].Role = otherRole;
+            mockAccountsService
+                .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
+                .ReturnsAsync(users);
+
+            await handler.Handle(createdEvent);
+
+            mockNotificationsService.Verify(service => 
+                service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                    message.RecipientsAddress == users[0].Email)), Times.Never);
+            users.Where(user => user.Role == "Transactor").ToList().ForEach(user => 
+                mockNotificationsService.Verify(service => 
+                    service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                        message.RecipientsAddress == user.Email)), Times.Once));
         }
 
         // then gets template id from config

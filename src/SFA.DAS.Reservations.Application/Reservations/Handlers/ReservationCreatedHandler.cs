@@ -12,6 +12,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         private readonly IProviderService _providerService;
         private readonly IAccountsService _accountsService;
         private readonly INotificationsService _notificationsService;
+        private readonly string[] _permittedRoles = {"Owner", "Transactor"};
 
         public ReservationCreatedHandler(
             IProviderService providerService,
@@ -32,7 +33,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
             var users = await _accountsService.GetAccountUsers(createdEvent.AccountId);
 
-            var filteredUsers = users.Where(user => user.CanReceiveNotifications);
+            var filteredUsers = users.Where(user => 
+                user.CanReceiveNotifications && 
+                _permittedRoles.Contains(user.Role));
 
             foreach (var user in filteredUsers)
             {
