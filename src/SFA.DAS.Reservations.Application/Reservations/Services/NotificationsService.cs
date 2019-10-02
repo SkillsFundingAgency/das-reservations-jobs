@@ -4,11 +4,11 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
-    public class NotificationService : INotificationService
+    public class NotificationsService : INotificationsService
     {
         private readonly INotificationsApi _notificationsApi;
 
-        public NotificationService(INotificationsApi notificationsApi)
+        public NotificationsService(INotificationsApi notificationsApi)
         {
             _notificationsApi = notificationsApi;
         }

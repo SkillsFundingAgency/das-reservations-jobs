@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public async Task Then_Sends_To_Notifications_Api(
             ReservationCreatedMessage createdMessage,
             [Frozen] Mock<INotificationsApi> mockNotificationClient,
-            NotificationService service)
+            NotificationsService service)
         {
             Dictionary<string, string> expectedTokens = null;
 

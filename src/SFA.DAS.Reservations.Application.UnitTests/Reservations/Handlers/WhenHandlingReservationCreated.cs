@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Providers;
+using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -54,8 +57,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task Then_Sends_Message_For_Each_User(
             ReservationCreatedEvent createdEvent,
-            List<UserDetails> users,//todo setup users allowed notify
+            [AllUsersCanReceiveNotifications] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
         {
             mockAccountsService
@@ -64,14 +68,18 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 
             await handler.Handle(createdEvent);
 
-            // todo: assert messages sent
+            users.ForEach(user => 
+                mockNotificationsService.Verify(service => 
+                    service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                        message.RecipientsAddress == user.Email)), Times.Once));
         }
 
         [Test, MoqAutoData]
         public async Task And_User_Not_Subscribed_Then_Skips(
             ReservationCreatedEvent createdEvent,
-            List<UserDetails> users,//todo setup 1 user not allowed notify
+            List<UserDetails> users,//defaults alternating bool value for CanReceiveNotifications
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
         {
             mockAccountsService
@@ -80,7 +88,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 
             await handler.Handle(createdEvent);
 
-            //todo: assert message not sent to user
+            users.Where(user => !user.CanReceiveNotifications).ToList().ForEach(user => 
+                mockNotificationsService.Verify(service => 
+                    service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message => 
+                        message.RecipientsAddress == user.Email)), Times.Never));
         }
 
         [Test, MoqAutoData]
@@ -88,6 +99,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             ReservationCreatedEvent createdEvent,
             List<UserDetails> users,//todo setup 1 user in each role
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
         {
             mockAccountsService
