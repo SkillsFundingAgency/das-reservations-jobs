@@ -5,7 +5,7 @@ using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Reservations.Domain.Accounts;
 
-namespace SFA.DAS.Reservations.Application.UnitTests.Accounts.Services
+namespace SFA.DAS.Reservations.Application.Accounts.Services
 {
     public class AccountsService : IAccountsService
     {
