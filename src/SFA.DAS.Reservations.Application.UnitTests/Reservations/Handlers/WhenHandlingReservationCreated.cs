@@ -57,7 +57,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task Then_Sends_Message_For_Each_User(
             ReservationCreatedEvent createdEvent,
-            [UsersCanReceiveNotificationsAndWithRole(Role = "Owner")] List<UserDetails> users,
+            [ArrangeUsers] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
@@ -77,7 +77,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task And_User_Not_Subscribed_Then_Skips(
             ReservationCreatedEvent createdEvent,
-            [UsersCanReceiveNotificationsAndWithRole(Role = "Owner")] List<UserDetails> users,
+            [ArrangeUsers] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
@@ -102,7 +102,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_User_Not_In_Owner_Role_Then_Skips(
             ReservationCreatedEvent createdEvent,
             string otherRole,
-            [UsersCanReceiveNotificationsAndWithRole(Role = "Owner")] List<UserDetails> users,
+            [ArrangeUsers] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)
@@ -127,7 +127,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_User_Not_In_Transactor_Role_Then_Skips(
             ReservationCreatedEvent createdEvent,
             string otherRole,
-            [UsersCanReceiveNotificationsAndWithRole(Role = "Transactor")] List<UserDetails> users,
+            [ArrangeUsers(Role = "Transactor")] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             ReservationCreatedHandler handler)

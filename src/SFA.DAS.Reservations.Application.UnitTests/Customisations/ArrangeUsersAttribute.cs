@@ -7,9 +7,10 @@ using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Customisations
 {
-    public class UsersCanReceiveNotificationsAndWithRoleAttribute : CustomizeAttribute
+    public class ArrangeUsersAttribute : CustomizeAttribute
     {
-        public string Role { get; set; }
+        public string Role { get; set; } = "Owner";
+        public bool CanReceiveNotifications { get; set; } = true;
 
         public override ICustomization GetCustomization(ParameterInfo parameter)
         {
@@ -23,7 +24,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Customisations
                 throw new ArgumentException(nameof(parameter));
             }
 
-            return new UsersCanReceiveNotificationsAndWithRoleCustomisation(Role);
+            return new ArrangeUsersCustomisation(Role, CanReceiveNotifications);
         }
     }
 }
