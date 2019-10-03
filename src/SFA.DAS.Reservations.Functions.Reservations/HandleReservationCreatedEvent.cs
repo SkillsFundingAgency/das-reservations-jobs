@@ -18,11 +18,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             [Inject] ILogger<ReservationCreatedEvent> log,
             [Inject] IReservationCreatedHandler handler)
         {
-            log.LogInformation($"NServiceBus Reservation Created function executed at: {DateTime.Now}");
+            log.LogInformation($"NServiceBus Reservation Created function executing at : [{DateTime.UtcNow}] UTC.");
 
             await handler.Handle(message);
 
-            log.LogInformation($"Reservation with ID: {message.Id} has been created.");
+            log.LogInformation($"Reservation Created event with ID: [{message.Id}] has been handled.");
         }
     }
 }
