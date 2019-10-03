@@ -9,13 +9,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
+using SFA.DAS.EAS.Account.Api.Client;
+using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
+using SFA.DAS.Providers.Api.Client;
+using SFA.DAS.Reservations.Application.Accounts.Services;
+using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Repository;
+using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
@@ -92,8 +99,18 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
+            services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
+
             services.AddTransient<IReservationService,ReservationService>();
+            services.AddTransient<IProviderService, ProviderService>();
+            services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<INotificationsService, NotificationsService>();
+
             services.AddTransient<IReservationRepository,ReservationRepository>();
+
+            services.AddTransient<IProviderApiClient, ProviderApiClient>();//todo: config?
+            services.AddTransient<IAccountApiClient, AccountApiClient>();//todo: config?
+            services.AddTransient<INotificationsApi, NotificationsApi>();//todo: config?
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
