@@ -2,11 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
+using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
@@ -28,18 +31,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 
             mockProviderService.Verify(service => service.GetDetails(It.IsAny<uint>()),
                 Times.Never);
-        }
-
-        [Test, MoqAutoData]
-        public async Task Then_Gets_ProviderName(
-            ReservationCreatedEvent createdEvent,
-            [Frozen] Mock<IProviderService> mockProviderService,
-            ReservationCreatedHandler handler)
-        {
-            await handler.Handle(createdEvent);
-
-            mockProviderService.Verify(service => service.GetDetails(createdEvent.ProviderId.Value), 
-                Times.Once);
         }
 
         [Test, MoqAutoData]
@@ -148,6 +139,32 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                         message.RecipientsAddress == user.Email)), Times.Once));
         }
 
-        // then gets template id from config
+        [Test, MoqAutoData]
+        public async Task Then_Sends_Message_With_Correct_Values(
+            ReservationCreatedEvent createdEvent,
+            Dictionary<string, string> tokens,
+            [ArrangeUsers] List<UserDetails> users,
+            [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
+            [Frozen] Mock<IOptions<ReservationsJobs>> mockConfig,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            ReservationCreatedHandler handler)
+        {
+            mockAccountsService
+                .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
+                .ReturnsAsync(users);
+            mockTokenBuilder
+                .Setup(builder => builder.BuildTokens(createdEvent))
+                .ReturnsAsync(tokens);
+            
+            await handler.Handle(createdEvent);
+
+            mockNotificationsService.Verify(service =>
+                service.SendNewReservationMessage(It.Is<ReservationCreatedMessage>(message =>
+                    message.RecipientsAddress == users[0].Email &&
+                    message.TemplateId == mockConfig.Object.Value.ReservationCreatedEmailTemplateId &&
+                    message.Tokens == tokens))
+                , Times.Once);
+        }
     }
 }

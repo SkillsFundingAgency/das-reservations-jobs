@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         public void SendNewReservationMessage(ReservationCreatedMessage createdMessage)
         {
             var email = new Email(
-                createdMessage.SystemId,
+                null,
                 createdMessage.TemplateId, 
                 null, 
                 createdMessage.RecipientsAddress, 

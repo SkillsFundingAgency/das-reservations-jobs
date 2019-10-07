@@ -27,7 +27,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 email.RecipientsAddress == createdMessage.RecipientsAddress &&
                 //email.ReplyToAddress == "todo" && //todo: already set in template?
                 //email.Subject == "Apprenticeship service: funding reservation made on your behalf" && //todo: needed?
-                email.SystemId == createdMessage.SystemId &&
+                //email.SystemId == createdMessage.SystemId &&
                 email.TemplateId == createdMessage.TemplateId &&
                 email.Tokens ==  createdMessage.Tokens)));
         }
