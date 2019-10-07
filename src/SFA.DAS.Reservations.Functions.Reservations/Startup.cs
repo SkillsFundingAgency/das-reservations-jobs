@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.EAS.Account.Api.Client;
+using SFA.DAS.Encoding;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Providers.Api.Client;
@@ -106,11 +107,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IAccountsService, AccountsService>();
             services.AddTransient<INotificationsService, NotificationsService>();
 
+            services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
+
+            //todo: get encoding config.
 
             services.AddTransient<IProviderApiClient, ProviderApiClient>();//todo: config?
             services.AddTransient<IAccountApiClient, AccountApiClient>();//todo: config?
             services.AddTransient<INotificationsApi, NotificationsApi>();//todo: config?
+            services.AddTransient<IEncodingService, EncodingService>();//todo: config?
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
