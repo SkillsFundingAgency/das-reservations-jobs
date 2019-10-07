@@ -22,8 +22,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         public async Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent)
         {
             var provider = await _providerService.GetDetails(createdEvent.ProviderId.Value);
-            var startDateDescription = "todo";
-            var courseDescription = "todo";
+            var startDateDescription = $"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}";
+            var courseDescription = $"{createdEvent.CourseName} level {createdEvent.CourseLevel}";
             var manageUrl = "todo";
 
             return new Dictionary<string, string>
