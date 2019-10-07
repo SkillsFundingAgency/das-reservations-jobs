@@ -3,7 +3,7 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Messages;
@@ -30,7 +30,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test, MoqAutoData]
-        public async Task Then_Adds_StartDate_Description_To_Tokens(
+        public async Task Then_Adds_StartDateDescription_To_Tokens(
             ReservationCreatedEvent createdEvent,
             NotificationTokenBuilder builder)
         {
@@ -41,7 +41,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test, MoqAutoData]
-        public async Task Then_Adds_Course_Description_To_Tokens(
+        public async Task Then_Adds_CourseDescription_To_Tokens(
             ReservationCreatedEvent createdEvent,
             NotificationTokenBuilder builder)
         {
@@ -51,17 +51,20 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 .Be($"{createdEvent.CourseName} level {createdEvent.CourseLevel}");
         }
 
-        [Test, MoqAutoData, Ignore("todo")]
-        public async Task Then_Adds_Manage_Url_To_Tokens(
+        [Test, MoqAutoData]
+        public async Task Then_Adds_HashedAccountId_To_Tokens(
             ReservationCreatedEvent createdEvent,
             string encodedAccountId,
-            //[Frozen] Mock<IEncodingService> mockEncodingService,
+            [Frozen] Mock<IEncodingService> mockEncodingService,
             NotificationTokenBuilder builder)
         {
+            mockEncodingService
+                .Setup(service => service.Encode(createdEvent.AccountId, EncodingType.AccountId))
+                .Returns(encodedAccountId);
+
             var tokens = await builder.BuildTokens(createdEvent);
 
-            tokens[TokenKeyNames.ManageUrl].Should()
-                .Be($"{encodedAccountId}");
+            tokens[TokenKeyNames.HashedAccountId].Should().Be(encodedAccountId);
         }
     }
 }
