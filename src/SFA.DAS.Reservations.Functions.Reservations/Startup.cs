@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
@@ -77,6 +78,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var config = serviceProvider.GetService<ReservationsJobs>();
 
+            var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
+            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+            services.AddSingleton(encodingConfig);
+
+            services.AddTransient<IAccountApiConfiguration, AccountApiConfiguration>();
+
             var nLogConfiguration = new NLogConfiguration();
 
             services.AddLogging((options) =>
@@ -110,12 +117,10 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
 
-            //todo: get encoding config.
-
-            services.AddTransient<IProviderApiClient, ProviderApiClient>();//todo: config?
-            services.AddTransient<IAccountApiClient, AccountApiClient>();//todo: config?
-            services.AddTransient<INotificationsApi, NotificationsApi>();//todo: config?
-            services.AddTransient<IEncodingService, EncodingService>();//todo: config?
+            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(config.ApprenticeshipBaseUrl));
+            services.AddTransient<IAccountApiClient, AccountApiClient>();//todo: IAccountApiConfiguration?
+            services.AddTransient<INotificationsApi, NotificationsApi>();//todo: HttpClient client, INotificationsApiClientConfiguration configuration
+            services.AddTransient<IEncodingService, EncodingService>();
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());

@@ -2,7 +2,7 @@
     "IsEncrypted": false,
   "Values": {
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
-    "ConfigNames": "SFA.DAS.Reservations.Jobs",
+    "ConfigNames": "SFA.DAS.Reservations.Jobs,SFA.DAS.Encoding",
     "EnvironmentName": "LOCAL",
     "Version": "1.0",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
