@@ -13,6 +13,7 @@ using NLog.Extensions.Logging;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Notifications.Api.Client;
+using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Application.Accounts.Services;
@@ -74,15 +75,19 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
+            services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
+            services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
+
+            services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApiClientConfiguration"));
+            services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
+
             var serviceProvider = services.BuildServiceProvider();
 
-            var config = serviceProvider.GetService<ReservationsJobs>();
+            var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
             var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
             var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
             services.AddSingleton(encodingConfig);
-
-            services.AddTransient<IAccountApiConfiguration, AccountApiConfiguration>();
 
             var nLogConfiguration = new NLogConfiguration();
 
@@ -117,12 +122,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
 
-            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(config.ApprenticeshipBaseUrl));
-            services.AddTransient<IAccountApiClient, AccountApiClient>();//todo: IAccountApiConfiguration?
+            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
+            services.AddTransient<IAccountApiClient, AccountApiClient>();
             services.AddTransient<INotificationsApi, NotificationsApi>();//todo: HttpClient client, INotificationsApiClientConfiguration configuration
             services.AddTransient<IEncodingService, EncodingService>();
 
-            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
+            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
 
             return services.BuildServiceProvider();
