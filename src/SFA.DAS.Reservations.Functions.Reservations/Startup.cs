@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
@@ -12,6 +13,8 @@ using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
+using SFA.DAS.Http;
+using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
@@ -83,6 +86,17 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var serviceProvider = services.BuildServiceProvider();
 
+            var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
+
+            var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
+
+            var httpClient = new HttpClientBuilder()
+                .WithBearerAuthorisationHeader(bearerToken)
+                .WithDefaultHeaders()
+                .Build();
+            services.AddTransient(provider => httpClient);
+
+
             var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
             var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
@@ -124,7 +138,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
             services.AddTransient<IAccountApiClient, AccountApiClient>();
-            services.AddTransient<INotificationsApi, NotificationsApi>();//todo: HttpClient client, INotificationsApiClientConfiguration configuration
+            services.AddTransient<INotificationsApi, NotificationsApi>();
             services.AddTransient<IEncodingService, EncodingService>();
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
