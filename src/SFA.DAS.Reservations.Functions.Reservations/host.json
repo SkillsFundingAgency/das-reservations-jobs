@@ -1,21 +1,3 @@
 {
-  "version": "2.0",
-  "logging": {
-    "debug": {
-      "logLevel": {
-        "default": "Trace"
-      }
-    },
-    "fileLoggingMode": "debugOnly",
-    "logLevel": {
-      "SFA.DAS.Reservations.Infrastructure": "Trace",
-      "default": "Trace"
-    },
-    "console": {
-      "isEnabled": "true",
-      "logLevel": {
-        "default":  "Trace" 
-      }
-    }
-  }
+  "version": "2.0"
 }
