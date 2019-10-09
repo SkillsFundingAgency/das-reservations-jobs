@@ -81,7 +81,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
             services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
 
-            services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApiClientConfiguration"));
+            services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotifyServiceConfiguration"));
             services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
 
             var serviceProvider = services.BuildServiceProvider();

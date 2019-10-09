@@ -50,9 +50,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
             var filteredUsers = users.Where(user => 
                 user.CanReceiveNotifications && 
-                _permittedRoles.Contains(user.Role));
+                _permittedRoles.Contains(user.Role)).ToList();
 
-            _logger.LogDebug($"Account [{createdEvent.AccountId}] has [{users.Count()}] users with correct role and subscription.");
+            _logger.LogDebug($"Account [{createdEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
             var tokens = await _notificationTokenBuilder.BuildTokens(createdEvent);
