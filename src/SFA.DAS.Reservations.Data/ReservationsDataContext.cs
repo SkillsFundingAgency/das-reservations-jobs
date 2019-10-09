@@ -10,6 +10,7 @@ namespace SFA.DAS.Reservations.Data
         DbSet<Reservation> Reservations { get; set; }
         DbSet<Course> Apprenticeships { get; set; }
         DbSet<AccountLegalEntity> AccountLegalEntities { get; set; }
+        DbSet<ProviderPermission> ProviderPermissions { get; set; }
         DatabaseFacade Database { get; }
         int SaveChanges();
     }
@@ -22,6 +23,7 @@ namespace SFA.DAS.Reservations.Data
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Course> Apprenticeships { get; set; }
         public DbSet<AccountLegalEntity> AccountLegalEntities { get; set; }
+        public DbSet<ProviderPermission> ProviderPermissions { get; set; }
         public ReservationsDataContext()
         {
         }
@@ -44,6 +46,7 @@ namespace SFA.DAS.Reservations.Data
             modelBuilder.ApplyConfiguration(new Configuration.Course());
             modelBuilder.ApplyConfiguration(new Configuration.Reservation());
             modelBuilder.ApplyConfiguration(new Configuration.AccountLegalEntity());
+            modelBuilder.ApplyConfiguration(new Configuration.ProviderPermission());
 
             base.OnModelCreating(modelBuilder);
         }
