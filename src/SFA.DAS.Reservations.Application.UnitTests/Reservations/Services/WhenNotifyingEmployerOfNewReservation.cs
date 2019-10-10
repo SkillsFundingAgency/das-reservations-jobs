@@ -19,15 +19,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             [Frozen] Mock<INotificationsApi> mockNotificationClient,
             NotificationsService service)
         {
-            Dictionary<string, string> expectedTokens = null;
-
             service.SendNewReservationMessage(createdMessage);
             
             mockNotificationClient.Verify(api => api.SendEmail(It.Is<Email>(email => 
                 email.RecipientsAddress == createdMessage.RecipientsAddress &&
-                //email.ReplyToAddress == "todo" && //todo: already set in template?
-                //email.Subject == "Apprenticeship service: funding reservation made on your behalf" && //todo: needed?
-                //email.SystemId == createdMessage.SystemId &&
+                email.Subject == "x" && 
+                email.SystemId == "x" &&
                 email.TemplateId == createdMessage.TemplateId &&
                 email.Tokens ==  createdMessage.Tokens)));
         }

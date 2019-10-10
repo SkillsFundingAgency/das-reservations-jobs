@@ -7,6 +7,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
     public class NotificationsService : INotificationsService
     {
         private readonly INotificationsApi _notificationsApi;
+        private const string Placeholder = "x";
 
         public NotificationsService(INotificationsApi notificationsApi)
         {
@@ -16,9 +17,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         public void SendNewReservationMessage(ReservationCreatedMessage createdMessage)
         {
             var email = new Email(
-                null,
+                Placeholder,
                 createdMessage.TemplateId, 
-                null, 
+                Placeholder, 
                 createdMessage.RecipientsAddress, 
                 null, 
                 createdMessage.Tokens);
