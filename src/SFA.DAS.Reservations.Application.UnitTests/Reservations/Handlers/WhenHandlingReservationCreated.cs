@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -10,7 +11,6 @@ using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 using SFA.DAS.Testing.AutoFixture;
@@ -22,14 +22,29 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task And_No_ProviderId_Then_No_Further_Processing(
             ReservationCreatedEvent createdEvent,
-            [Frozen] Mock<IProviderService> mockProviderService,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
             ReservationCreatedHandler handler)
         {
             createdEvent.ProviderId = null;
 
             await handler.Handle(createdEvent);
 
-            mockProviderService.Verify(service => service.GetDetails(It.IsAny<uint>()),
+            mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
+                Times.Never);
+        }
+
+        [Test, MoqAutoData]
+        public async Task And_Not_Levy_Then_No_Further_Processing(
+            ReservationCreatedEvent createdEvent,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            ReservationCreatedHandler handler)
+        {
+            createdEvent.CourseId = null;
+            createdEvent.StartDate = DateTime.MinValue;
+
+            await handler.Handle(createdEvent);
+
+            mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
                 Times.Never);
         }
 

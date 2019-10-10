@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -38,9 +39,15 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         {
             _logger.LogDebug($"Handling Reservation Created, Id [{createdEvent.Id}].");
 
-            if (!createdEvent.ProviderId.HasValue)
+            if (EventIsNotFromProvider(createdEvent))
             {
                 _logger.LogDebug("Reservation is not created by provider, no further processing.");
+                return;
+            }
+
+            if (EventIsFromLevyAccount(createdEvent))
+            {
+                _logger.LogDebug("Reservation is from levy account, no further processing.");
                 return;
             }
 
@@ -70,6 +77,16 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             }
 
             _logger.LogDebug($"Finished handling Reservation Created, [{sendCount}] email(s) sent.");
+        }
+
+        private static bool EventIsNotFromProvider(ReservationCreatedEvent createdEvent)
+        {
+            return !createdEvent.ProviderId.HasValue;
+        }
+
+        private static bool EventIsFromLevyAccount(ReservationCreatedEvent createdEvent)
+        {
+            return createdEvent.CourseId == null && createdEvent.StartDate == DateTime.MinValue;
         }
     }
 }
