@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 
@@ -68,7 +69,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 var message = new ReservationCreatedMessage
                 {
                     RecipientsAddress = user.Email,
-                    TemplateId = _config.ReservationCreatedEmailTemplateId,
+                    TemplateId = TemplateIds.ReservationCreated,
                     Tokens = tokens
                 };
 
