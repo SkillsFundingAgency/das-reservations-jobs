@@ -25,6 +25,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 email.RecipientsAddress == createdMessage.RecipientsAddress &&
                 email.Subject == "x" && 
                 email.SystemId == "x" &&
+                email.ReplyToAddress == "noreply@sfa.gov.uk" &&
                 email.TemplateId == createdMessage.TemplateId &&
                 email.Tokens ==  createdMessage.Tokens)));
         }

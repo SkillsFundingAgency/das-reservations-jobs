@@ -8,6 +8,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
     {
         private readonly INotificationsApi _notificationsApi;
         private const string Placeholder = "x";
+        private const string DummyReplyAddress = "noreply@sfa.gov.uk";
 
         public NotificationsService(INotificationsApi notificationsApi)
         {
@@ -21,7 +22,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 createdMessage.TemplateId, 
                 Placeholder, 
                 createdMessage.RecipientsAddress, 
-                null, 
+                DummyReplyAddress, 
                 createdMessage.Tokens);
             _notificationsApi.SendEmail(email);
         }
