@@ -22,8 +22,4 @@
     <ProjectReference Include="..\SFA.DAS.Reservations.Domain\SFA.DAS.Reservations.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ProviderPermission\Service\" />
-  </ItemGroup>
-
 </Project>

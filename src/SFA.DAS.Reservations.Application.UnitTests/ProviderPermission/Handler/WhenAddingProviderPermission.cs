@@ -23,7 +23,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Handler
         }
 
         [Test]
-        public async Task ThenAddsProviderPermissionToDatabase()
+        public async Task ThenCallsServiceToAddPermission()
         {
             //Arrange
             var permissionEvent = new UpdatedPermissionsEvent(
