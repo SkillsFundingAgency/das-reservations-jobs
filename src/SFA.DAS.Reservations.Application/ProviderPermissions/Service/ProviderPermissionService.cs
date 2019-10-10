@@ -34,21 +34,21 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
                     nameof(UpdatedPermissionsEvent));
             }
 
-            if (updateEvent.AccountId.Equals(default))
+            if (updateEvent.AccountId.Equals(default(long)))
             {
                 throw new ArgumentException(
                     "Account ID must be set in event", 
                     nameof(updateEvent.AccountId));
             }
 
-            if (updateEvent.AccountLegalEntityId.Equals(default))
+            if (updateEvent.AccountLegalEntityId.Equals(default(long)))
             {
                 throw new ArgumentException(
                     "Account legal entity ID must be set in event", 
                     nameof(updateEvent.AccountLegalEntityId));
             }
 
-            if (updateEvent.Ukprn.Equals(default))
+            if (updateEvent.Ukprn.Equals(default(long)))
             {
                 throw new ArgumentException(
                     "UKPRN must be set in event", 
