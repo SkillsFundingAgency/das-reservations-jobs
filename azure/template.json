@@ -54,12 +54,6 @@
     },
     "loggingRedisConnectionString": {
       "type": "securestring"
-    },
-    "notificationsBaseUrl": {
-      "type": "string"
-    },
-    "notificationsClientToken": {
-      "type": "string"
     }
   },
   "variables": {
@@ -320,14 +314,6 @@
               {
                 "name": "LoggingRedisConnectionString",
                 "value": "[parameters('loggingRedisConnectionString')]"
-              },
-              {
-                "name": "NotificationsBaseUrl",
-                "value": "[parameters('notificationsBaseUrl')]"
-              },
-              {
-                "name": "NotificationsClientToken",
-                "value": "[parameters('notificationsClientToken')]"
               }
             ]
           }
