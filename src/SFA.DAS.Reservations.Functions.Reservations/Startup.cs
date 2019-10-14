@@ -76,13 +76,28 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             var services = new ServiceCollection();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+            services.AddSingleton(cfg =>
+            {
+                var config = cfg.GetService<IOptions<ReservationsJobs>>().Value;
+                if (config == null) throw new NullReferenceException("ReservationsJobs config is null");
+                return config;
+            });
 
             services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
-            services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
+            services.AddSingleton<IAccountApiConfiguration>(cfg =>
+            {
+                var config = cfg.GetService<IOptions<AccountApiConfiguration>>().Value;
+                if (config == null) throw new NullReferenceException("AccountApiConfiguration config is null");
+                return config;
+            });
 
             services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
-            services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
+            services.AddSingleton<INotificationsApiClientConfiguration>(cfg =>
+            {
+                var config = cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value;
+                if (config == null) throw new NullReferenceException("NotificationsApi config is null");
+                return config;
+            });
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -90,10 +105,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
 
-            var httpClient = new HttpClientBuilder()
-                .WithBearerAuthorisationHeader(bearerToken)
-                .WithDefaultHeaders()
-                .Build();
+            if (bearerToken == null) throw new NullReferenceException("bearer token is null");
+
+            var httpClientBuilder = new HttpClientBuilder();
+            httpClientBuilder = httpClientBuilder.WithBearerAuthorisationHeader(bearerToken);
+            httpClientBuilder = httpClientBuilder.WithDefaultHeaders();
+            var httpClient = httpClientBuilder.Build();
             services.AddTransient(provider => httpClient);
 
 
