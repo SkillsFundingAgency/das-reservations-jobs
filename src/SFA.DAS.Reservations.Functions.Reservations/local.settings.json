@@ -2,7 +2,7 @@
     "IsEncrypted": false,
   "Values": {
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
-    "ConfigNames": "SFA.DAS.Reservations.Jobs,SFA.DAS.Encoding,SFA.DAS.EmployerAccountAPI:AccountApiConfiguration,SFA.DAS.Notifications:NotificationsApiClientConfiguration",
+    "ConfigNames": "SFA.DAS.Reservations.Jobs,SFA.DAS.Encoding,SFA.DAS.EmployerAccountAPI:AccountApiConfiguration",
     "EnvironmentName": "LOCAL",
     "Version": "1.0",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",

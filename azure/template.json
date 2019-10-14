@@ -39,7 +39,7 @@
     },
     "configNames": {
       "type": "string",
-      "defaultValue": "SFA.DAS.Reservations.Jobs"
+      "defaultValue": "SFA.DAS.Reservations.Jobs,SFA.DAS.Encoding,SFA.DAS.EmployerAccountAPI:AccountApiConfigurations"
     },
     "environmentName": {
       "type": "string"
@@ -54,6 +54,12 @@
     },
     "loggingRedisConnectionString": {
       "type": "securestring"
+    },
+    "notificationsBaseUrl": {
+      "type": "string"
+    },
+    "notificationsClientToken": {
+      "type": "string"
     }
   },
   "variables": {
@@ -314,6 +320,14 @@
               {
                 "name": "LoggingRedisConnectionString",
                 "value": "[parameters('loggingRedisConnectionString')]"
+              },
+              {
+                "name": "NotificationsBaseUrl",
+                "value": "[parameters('notificationsBaseUrl')]"
+              },
+              {
+                "name": "NotificationsClientToken",
+                "value": "[parameters('notificationsClientToken')]"
               }
             ]
           }
