@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
@@ -73,6 +74,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         public IServiceProvider Build()
         {
+            Console.WriteLine($"running Startup.Build() at [{DateTime.UtcNow} utc]");
+            Debug.WriteLine("hello from debug");
+
             var services = new ServiceCollection();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
@@ -106,6 +110,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
 
             if (bearerToken == null) throw new NullReferenceException("bearer token is null");
+            Console.WriteLine($"token created with [{notificationsConfig.ApiBaseUrl}]");
 
             var httpClientBuilder = new HttpClientBuilder();
             httpClientBuilder = httpClientBuilder.WithBearerAuthorisationHeader(bearerToken);
