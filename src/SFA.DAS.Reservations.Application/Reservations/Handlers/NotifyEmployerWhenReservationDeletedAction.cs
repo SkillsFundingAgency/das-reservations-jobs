@@ -55,13 +55,13 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
             var users = await _accountsService.GetAccountUsers(deletedEvent.AccountId);
 
-            _logger.LogInformation($"Account [{deletedEvent.AccountId}] has [{users.Count()}] users in total.");
+            _logger.LogInformation($"Reservation [{deletedEvent.Id}], Account [{deletedEvent.AccountId}] has [{users.Count()}] users in total.");
 
             var filteredUsers = users.Where(user => 
                 user.CanReceiveNotifications && 
                 _permittedRoles.Contains(user.Role)).ToList();
 
-            _logger.LogInformation($"Account [{deletedEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
+            _logger.LogInformation($"Reservation [{deletedEvent.Id}], Account [{deletedEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
             var tokens = await _notificationTokenBuilder.BuildReservationDeletedTokens(deletedEvent);

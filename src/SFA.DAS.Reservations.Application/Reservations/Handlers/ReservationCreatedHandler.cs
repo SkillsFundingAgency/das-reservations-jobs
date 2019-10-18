@@ -38,23 +38,23 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
         public async Task Handle(ReservationCreatedEvent createdEvent)
         {
-            _logger.LogDebug($"Handling Reservation Created, Reservation Id [{createdEvent.Id}].");
+            _logger.LogInformation($"Handling Reservation Created, Reservation Id [{createdEvent.Id}].");
 
             if (EventIsNotFromProvider(createdEvent))
             {
-                _logger.LogDebug("Reservation is not created by provider, no further processing.");
+                _logger.LogInformation($"Reservation [{createdEvent.Id}] is not created by provider, no further processing.");
                 return;
             }
 
             if (EventIsFromLevyAccount(createdEvent))
             {
-                _logger.LogDebug("Reservation is from levy account, no further processing.");
+                _logger.LogInformation($"Reservation [{createdEvent.Id}] is from levy account, no further processing.");
                 return;
             }
 
             var users = await _accountsService.GetAccountUsers(createdEvent.AccountId);
 
-            _logger.LogDebug($"Account [{createdEvent.AccountId}] has [{users.Count()}] users in total.");
+            _logger.LogInformation($"Account [{createdEvent.AccountId}] has [{users.Count()}] users in total.");
 
             var filteredUsers = users.Where(user => 
                 user.CanReceiveNotifications && 
