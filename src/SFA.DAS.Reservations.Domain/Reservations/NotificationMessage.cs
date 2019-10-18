@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
-    public class ReservationCreatedMessage
+    public class NotificationMessage
     {
         public string RecipientsAddress { get; set; }
         public Dictionary<string, string> Tokens { get; set; }

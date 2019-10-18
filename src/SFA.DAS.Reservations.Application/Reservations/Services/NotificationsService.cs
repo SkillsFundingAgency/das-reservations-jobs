@@ -16,15 +16,15 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _notificationsApi = notificationsApi;
         }
 
-        public async Task SendNewReservationMessage(ReservationCreatedMessage createdMessage)
+        public async Task SendNewReservationMessage(NotificationMessage message)
         {
             var email = new Email(
                 Placeholder,
-                createdMessage.TemplateId, 
+                message.TemplateId, 
                 Placeholder, 
-                createdMessage.RecipientsAddress, 
+                message.RecipientsAddress, 
                 DummyReplyAddress, 
-                createdMessage.Tokens);
+                message.Tokens);
             await _notificationsApi.SendEmail(email);
         }
     }

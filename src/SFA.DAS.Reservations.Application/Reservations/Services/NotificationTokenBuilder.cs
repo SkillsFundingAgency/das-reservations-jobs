@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _encodingService = encodingService;
         }
 
-        public async Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent)
+        public async Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent)//todo: change param to common 
         {
             var provider = await _providerService.GetDetails(createdEvent.ProviderId.Value);
             var startDateDescription = $"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}";

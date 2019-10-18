@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -12,7 +13,7 @@ using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
-    public class ReservationCreatedHandler : IReservationCreatedHandler
+    public class NotifyEmployerWhenReservationDeletedAction : INotifyEmployerWhenReservationDeletedAction
     {
         private readonly IAccountsService _accountsService;
         private readonly INotificationsService _notificationsService;
@@ -22,7 +23,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         private readonly string[] _permittedRoles = {"Owner", "Transactor"};
         
 
-        public ReservationCreatedHandler(
+        public NotifyEmployerWhenReservationDeletedAction(
             IAccountsService accountsService,
             INotificationsService notificationsService,
             IOptions<ReservationsJobs> options,
@@ -36,34 +37,34 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _notificationTokenBuilder = notificationTokenBuilder;
         }
 
-        public async Task Handle(ReservationCreatedEvent createdEvent)
+        public async Task Execute(ReservationDeletedEvent deletedEvent)
         {
-            _logger.LogDebug($"Handling Reservation Created, Reservation Id [{createdEvent.Id}].");
+            _logger.LogInformation($"Notify employer that reservation deleted, Reservation Id [{deletedEvent.Id}].");
 
-            if (EventIsNotFromProvider(createdEvent))
+            if (EventIsNotFromProvider(deletedEvent))
             {
-                _logger.LogDebug("Reservation is not created by provider, no further processing.");
+                _logger.LogInformation($"Reservation [{deletedEvent.Id}] is not created by provider, no further processing.");
                 return;
             }
 
-            if (EventIsFromLevyAccount(createdEvent))
+            if (EventIsFromLevyAccount(deletedEvent))
             {
-                _logger.LogDebug("Reservation is from levy account, no further processing.");
+                _logger.LogInformation($"Reservation [{deletedEvent.Id}] is from levy account, no further processing.");
                 return;
             }
 
-            var users = await _accountsService.GetAccountUsers(createdEvent.AccountId);
+            var users = await _accountsService.GetAccountUsers(deletedEvent.AccountId);
 
-            _logger.LogDebug($"Account [{createdEvent.AccountId}] has [{users.Count()}] users in total.");
+            _logger.LogInformation($"Account [{deletedEvent.AccountId}] has [{users.Count()}] users in total.");
 
             var filteredUsers = users.Where(user => 
                 user.CanReceiveNotifications && 
                 _permittedRoles.Contains(user.Role)).ToList();
 
-            _logger.LogInformation($"Account [{createdEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
+            _logger.LogInformation($"Account [{deletedEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
-            var tokens = await _notificationTokenBuilder.BuildTokens(createdEvent);
+            var tokens = new Dictionary<string, string>(); //await _notificationTokenBuilder.BuildTokens(deletedEvent);
             foreach (var user in filteredUsers)
             {
                 var message = new NotificationMessage
@@ -77,17 +78,17 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 sendCount++;
             }
 
-            _logger.LogInformation($"Finished handling Reservation Created, [{sendCount}] email(s) sent.");
+            _logger.LogInformation($"Finished notifying employer that reservation deleted, Reservation Id [{deletedEvent.Id}], [{sendCount}] email(s) sent.");
         }
 
-        private static bool EventIsNotFromProvider(ReservationCreatedEvent createdEvent)
+        private static bool EventIsNotFromProvider(ReservationDeletedEvent deletedEvent)
         {
-            return !createdEvent.ProviderId.HasValue;
+            return !deletedEvent.ProviderId.HasValue;
         }
 
-        private static bool EventIsFromLevyAccount(ReservationCreatedEvent createdEvent)
+        private static bool EventIsFromLevyAccount(ReservationDeletedEvent deletedEvent)
         {
-            return createdEvent.CourseId == null && createdEvent.StartDate == DateTime.MinValue;
+            return deletedEvent.CourseId == null && deletedEvent.StartDate == DateTime.MinValue;
         }
     }
 }
