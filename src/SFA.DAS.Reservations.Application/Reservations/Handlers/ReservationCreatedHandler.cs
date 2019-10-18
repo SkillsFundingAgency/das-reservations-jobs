@@ -60,7 +60,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 user.CanReceiveNotifications && 
                 _permittedRoles.Contains(user.Role)).ToList();
 
-            _logger.LogDebug($"Account [{createdEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
+            _logger.LogInformation($"Account [{createdEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
             var tokens = await _notificationTokenBuilder.BuildTokens(createdEvent);
@@ -73,11 +73,11 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                     Tokens = tokens
                 };
 
-                _notificationsService.SendNewReservationMessage(message);
+                await _notificationsService.SendNewReservationMessage(message);
                 sendCount++;
             }
 
-            _logger.LogDebug($"Finished handling Reservation Created, [{sendCount}] email(s) sent.");
+            _logger.LogInformation($"Finished handling Reservation Created, [{sendCount}] email(s) sent.");
         }
 
         private static bool EventIsNotFromProvider(ReservationCreatedEvent createdEvent)

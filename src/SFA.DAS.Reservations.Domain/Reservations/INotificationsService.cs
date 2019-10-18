@@ -1,7 +1,9 @@
-﻿namespace SFA.DAS.Reservations.Domain.Reservations
+﻿using System.Threading.Tasks;
+
+namespace SFA.DAS.Reservations.Domain.Reservations
 {
     public interface INotificationsService
     {
-        void SendNewReservationMessage(ReservationCreatedMessage createdMessage);
+        Task SendNewReservationMessage(ReservationCreatedMessage createdMessage);
     }
 }

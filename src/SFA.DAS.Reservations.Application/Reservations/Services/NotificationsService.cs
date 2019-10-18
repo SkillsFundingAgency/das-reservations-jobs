@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Notifications.Api.Client;
+﻿using System.Threading.Tasks;
+using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Reservations.Domain.Reservations;
 
@@ -15,7 +16,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _notificationsApi = notificationsApi;
         }
 
-        public void SendNewReservationMessage(ReservationCreatedMessage createdMessage)
+        public async Task SendNewReservationMessage(ReservationCreatedMessage createdMessage)
         {
             var email = new Email(
                 Placeholder,
@@ -24,7 +25,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 createdMessage.RecipientsAddress, 
                 DummyReplyAddress, 
                 createdMessage.Tokens);
-            _notificationsApi.SendEmail(email);
+            await _notificationsApi.SendEmail(email);
         }
     }
 }
