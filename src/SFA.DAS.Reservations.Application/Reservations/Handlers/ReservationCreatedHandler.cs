@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
         public async Task Handle(ReservationCreatedEvent createdEvent)
         {
-            _logger.LogInformation($"Handling Reservation Created, Reservation Id [{createdEvent.Id}].");
+            _logger.LogInformation($"Notify employer that reservation created, Reservation Id [{createdEvent.Id}].");
 
             if (EventIsNotFromProvider(createdEvent))
             {
@@ -54,13 +54,13 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
             var users = await _accountsService.GetAccountUsers(createdEvent.AccountId);
 
-            _logger.LogInformation($"Account [{createdEvent.AccountId}] has [{users.Count()}] users in total.");
+            _logger.LogInformation($"Reservation [{createdEvent.Id}], Account [{createdEvent.AccountId}] has [{users.Count()}] users in total.");
 
             var filteredUsers = users.Where(user => 
                 user.CanReceiveNotifications && 
                 _permittedRoles.Contains(user.Role)).ToList();
 
-            _logger.LogInformation($"Account [{createdEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
+            _logger.LogInformation($"Reservation [{createdEvent.Id}], Account [{createdEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
             var tokens = await _notificationTokenBuilder.BuildReservationCreatedTokens(createdEvent);
@@ -77,7 +77,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 sendCount++;
             }
 
-            _logger.LogInformation($"Finished handling Reservation Created, [{sendCount}] email(s) sent.");
+            _logger.LogInformation($"Finished notifying employer that reservation created, Reservation Id [{createdEvent.Id}], [{sendCount}] email(s) sent.");
         }
 
         private static bool EventIsNotFromProvider(ReservationCreatedEvent createdEvent)
