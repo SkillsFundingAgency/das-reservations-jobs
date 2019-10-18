@@ -167,7 +167,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
                 .ReturnsAsync(users);
             mockTokenBuilder
-                .Setup(builder => builder.BuildTokens(createdEvent))
+                .Setup(builder => builder.BuildReservationCreatedTokens(createdEvent))
                 .ReturnsAsync(tokens);
             
             await handler.Handle(createdEvent);

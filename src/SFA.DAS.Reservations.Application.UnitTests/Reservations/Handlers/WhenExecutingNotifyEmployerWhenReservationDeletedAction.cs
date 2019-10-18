@@ -153,7 +153,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                         message.RecipientsAddress == user.Email)), Times.Once));
         }
 
-        /*[Test, MoqAutoData] todo: fix this!
+        [Test, MoqAutoData]
         public async Task Then_Sends_Message_With_Correct_Values(
             ReservationDeletedEvent deletedEvent,
             Dictionary<string, string> tokens,
@@ -167,7 +167,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
             mockTokenBuilder
-                .Setup(builder => builder.BuildTokens(deletedEvent))
+                .Setup(builder => builder.BuildReservationDeletedTokens(deletedEvent))
                 .ReturnsAsync(tokens);
             
             await action.Execute(deletedEvent);
@@ -178,6 +178,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                     message.TemplateId == TemplateIds.ReservationCreated &&
                     message.Tokens == tokens))
                 , Times.Once);
-        }*/
+        }
     }
 }

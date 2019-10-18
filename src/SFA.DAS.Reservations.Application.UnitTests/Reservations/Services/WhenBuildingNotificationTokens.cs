@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 .Setup(service => service.GetDetails(createdEvent.ProviderId.Value))
                 .ReturnsAsync(provider);
 
-            var tokens = await builder.BuildTokens(createdEvent);
+            var tokens = await builder.BuildReservationCreatedTokens(createdEvent);
 
             tokens[TokenKeyNames.ProviderName].Should().Be(provider.ProviderName);
         }
@@ -34,7 +34,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             ReservationCreatedEvent createdEvent,
             NotificationTokenBuilder builder)
         {
-            var tokens = await builder.BuildTokens(createdEvent);
+            var tokens = await builder.BuildReservationCreatedTokens(createdEvent);
 
             tokens[TokenKeyNames.StartDateDescription].Should()
                 .Be($"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}");
@@ -45,7 +45,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             ReservationCreatedEvent createdEvent,
             NotificationTokenBuilder builder)
         {
-            var tokens = await builder.BuildTokens(createdEvent);
+            var tokens = await builder.BuildReservationCreatedTokens(createdEvent);
 
             tokens[TokenKeyNames.CourseDescription].Should()
                 .Be($"{createdEvent.CourseName} level {createdEvent.CourseLevel}");
@@ -62,7 +62,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 .Setup(service => service.Encode(createdEvent.AccountId, EncodingType.AccountId))
                 .Returns(encodedAccountId);
 
-            var tokens = await builder.BuildTokens(createdEvent);
+            var tokens = await builder.BuildReservationCreatedTokens(createdEvent);
 
             tokens[TokenKeyNames.HashedAccountId].Should().Be(encodedAccountId);
         }

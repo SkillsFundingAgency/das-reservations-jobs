@@ -8,7 +8,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
     public interface INotificationTokenBuilder
     {
-        Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent);
+        Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent);
+        Task<Dictionary<string, string>> BuildReservationDeletedTokens(ReservationDeletedEvent deletedEvent);
     }
 
     public class NotificationTokenBuilder : INotificationTokenBuilder
@@ -24,7 +25,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _encodingService = encodingService;
         }
 
-        public async Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent)//todo: change param to common 
+        public async Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent)
         {
             var provider = await _providerService.GetDetails(createdEvent.ProviderId.Value);
             var startDateDescription = $"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}";
@@ -38,6 +39,11 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 {TokenKeyNames.CourseDescription, courseDescription},
                 {TokenKeyNames.HashedAccountId, hashedAccountId}
             };
+        }
+
+        public async Task<Dictionary<string, string>> BuildReservationDeletedTokens(ReservationDeletedEvent deletedEvent)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

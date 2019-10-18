@@ -64,7 +64,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _logger.LogInformation($"Account [{deletedEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
-            var tokens = new Dictionary<string, string>(); //await _notificationTokenBuilder.BuildTokens(deletedEvent);
+            var tokens = await _notificationTokenBuilder.BuildReservationDeletedTokens(deletedEvent);
             foreach (var user in filteredUsers)
             {
                 var message = new NotificationMessage
