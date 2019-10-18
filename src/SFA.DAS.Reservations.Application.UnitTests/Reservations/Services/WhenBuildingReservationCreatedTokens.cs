@@ -11,7 +11,7 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
-    public class WhenBuildingNotificationTokens
+    public class WhenBuildingReservationCreatedTokens
     {
         [Test, MoqAutoData]
         public async Task Then_Adds_ProviderName_To_Tokens(

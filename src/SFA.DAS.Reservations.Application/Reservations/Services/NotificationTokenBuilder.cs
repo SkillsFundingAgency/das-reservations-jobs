@@ -43,7 +43,18 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
         public async Task<Dictionary<string, string>> BuildReservationDeletedTokens(ReservationDeletedEvent deletedEvent)
         {
-            throw new System.NotImplementedException();
+            var provider = await _providerService.GetDetails(deletedEvent.ProviderId.Value);
+            var startDateDescription = $"{deletedEvent.StartDate:MMM yyyy} to {deletedEvent.EndDate:MMM yyyy}";
+            var courseDescription = $"{deletedEvent.CourseName} level {deletedEvent.CourseLevel}";
+            var hashedAccountId = _encodingService.Encode(deletedEvent.AccountId, EncodingType.AccountId);
+
+            return new Dictionary<string, string>
+            {
+                {TokenKeyNames.ProviderName,  provider.ProviderName},
+                {TokenKeyNames.StartDateDescription, startDateDescription},
+                {TokenKeyNames.CourseDescription, courseDescription},
+                {TokenKeyNames.HashedAccountId, hashedAccountId}
+            };
         }
     }
 }
