@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Domain.Providers;
@@ -27,34 +28,45 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
         public async Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent)
         {
-            var provider = await _providerService.GetDetails(createdEvent.ProviderId.Value);
-            var startDateDescription = $"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}";
-            var courseDescription = $"{createdEvent.CourseName} level {createdEvent.CourseLevel}";
-            var hashedAccountId = _encodingService.Encode(createdEvent.AccountId, EncodingType.AccountId);
-
             return new Dictionary<string, string>
             {
-                {TokenKeyNames.ProviderName,  provider.ProviderName},
-                {TokenKeyNames.StartDateDescription, startDateDescription},
-                {TokenKeyNames.CourseDescription, courseDescription},
-                {TokenKeyNames.HashedAccountId, hashedAccountId}
+                {TokenKeyNames.ProviderName,  await GetProviderName(createdEvent.ProviderId.Value)},
+                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(createdEvent.StartDate, createdEvent.EndDate)},
+                {TokenKeyNames.CourseDescription, GenerateCourseDescription(createdEvent.CourseName, createdEvent.CourseLevel)},
+                {TokenKeyNames.HashedAccountId, GetHashedAccountId(createdEvent.AccountId)}
             };
         }
 
         public async Task<Dictionary<string, string>> BuildReservationDeletedTokens(ReservationDeletedEvent deletedEvent)
         {
-            var provider = await _providerService.GetDetails(deletedEvent.ProviderId.Value);
-            var startDateDescription = $"{deletedEvent.StartDate:MMM yyyy} to {deletedEvent.EndDate:MMM yyyy}";
-            var courseDescription = $"{deletedEvent.CourseName} level {deletedEvent.CourseLevel}";
-            var hashedAccountId = _encodingService.Encode(deletedEvent.AccountId, EncodingType.AccountId);
-
             return new Dictionary<string, string>
             {
-                {TokenKeyNames.ProviderName,  provider.ProviderName},
-                {TokenKeyNames.StartDateDescription, startDateDescription},
-                {TokenKeyNames.CourseDescription, courseDescription},
-                {TokenKeyNames.HashedAccountId, hashedAccountId}
+                {TokenKeyNames.ProviderName,  await GetProviderName(deletedEvent.ProviderId.Value)},
+                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(deletedEvent.StartDate, deletedEvent.EndDate)},
+                {TokenKeyNames.CourseDescription, GenerateCourseDescription(deletedEvent.CourseName, deletedEvent.CourseLevel)},
+                {TokenKeyNames.HashedAccountId, GetHashedAccountId(deletedEvent.AccountId)}
             };
+        }
+
+        private async Task<string> GetProviderName(uint providerId)
+        {
+            var provider = await _providerService.GetDetails(providerId);
+            return provider.ProviderName;
+        }
+
+        private string GenerateStartDateDescription(DateTime startDate, DateTime endDate)
+        {
+            return $"{startDate:MMM yyyy} to {endDate:MMM yyyy}";
+        }
+
+        private string GenerateCourseDescription(string courseName, string courseLevel)
+        {
+            return $"{courseName} level {courseLevel}";
+        }
+
+        private string GetHashedAccountId(long accountId)
+        {
+            return _encodingService.Encode(accountId, EncodingType.AccountId);
         }
     }
 }
