@@ -33,7 +33,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.Reservations.UnitTests", "SFA.DAS.Reservations.Functions.Reservations.UnitTests\SFA.DAS.Reservations.Functions.Reservations.UnitTests.csproj", "{84F5FC70-32BC-4202-A991-97CD10521E49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Domain.UnitTests", "SFA.DAS.Reservations.Domain.UnitTests\SFA.DAS.Reservations.Domain.UnitTests.csproj", "{76607543-0043-4A09-84A1-DC26C7DBA9DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Domain.UnitTests", "SFA.DAS.Reservations.Domain.UnitTests\SFA.DAS.Reservations.Domain.UnitTests.csproj", "{76607543-0043-4A09-84A1-DC26C7DBA9DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81655BC0-704C-43A8-AE46-8C68365828F2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
