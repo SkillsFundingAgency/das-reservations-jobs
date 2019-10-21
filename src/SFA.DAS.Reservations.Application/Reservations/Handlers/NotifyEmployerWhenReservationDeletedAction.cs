@@ -17,8 +17,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
     {
         private readonly IAccountsService _accountsService;
         private readonly INotificationsService _notificationsService;
-        private readonly ReservationsJobs _config;
-        private readonly ILogger<ReservationCreatedHandler> _logger;
+        private readonly ILogger<NotifyEmployerWhenReservationDeletedAction> _logger;
         private readonly INotificationTokenBuilder _notificationTokenBuilder;
         private readonly string[] _permittedRoles = {"Owner", "Transactor"};
         
@@ -26,18 +25,16 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         public NotifyEmployerWhenReservationDeletedAction(
             IAccountsService accountsService,
             INotificationsService notificationsService,
-            IOptions<ReservationsJobs> options,
-            ILogger<ReservationCreatedHandler> logger, 
+            ILogger<NotifyEmployerWhenReservationDeletedAction> logger, 
             INotificationTokenBuilder notificationTokenBuilder)
         {
             _accountsService = accountsService;
             _notificationsService = notificationsService;
-            _config = options.Value;
             _logger = logger;
             _notificationTokenBuilder = notificationTokenBuilder;
         }
 
-        public async Task Execute(ReservationDeletedEvent deletedEvent)
+        public async Task Execute<T>(T deletedEvent) where T : INotificationEvent
         {
             _logger.LogInformation($"Notify employer that reservation deleted, Reservation Id [{deletedEvent.Id}].");
 
@@ -64,13 +61,13 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _logger.LogInformation($"Reservation [{deletedEvent.Id}], Account [{deletedEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
-            var tokens = await _notificationTokenBuilder.BuildReservationDeletedTokens(deletedEvent);
+            var tokens = await _notificationTokenBuilder.BuildTokens(deletedEvent);
             foreach (var user in filteredUsers)
             {
                 var message = new NotificationMessage
                 {
                     RecipientsAddress = user.Email,
-                    TemplateId = TemplateIds.ReservationCreated,
+                    TemplateId = TemplateIds.ReservationDeleted,
                     Tokens = tokens
                 };
 
@@ -81,12 +78,12 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _logger.LogInformation($"Finished notifying employer that reservation deleted, Reservation Id [{deletedEvent.Id}], [{sendCount}] email(s) sent.");
         }
 
-        private static bool EventIsNotFromProvider(ReservationDeletedEvent deletedEvent)
+        private static bool EventIsNotFromProvider(INotificationEvent deletedEvent)
         {
             return !deletedEvent.ProviderId.HasValue;
         }
 
-        private static bool EventIsFromLevyAccount(ReservationDeletedEvent deletedEvent)
+        private static bool EventIsFromLevyAccount(INotificationEvent deletedEvent)
         {
             return deletedEvent.CourseId == null && deletedEvent.StartDate == DateTime.MinValue;
         }

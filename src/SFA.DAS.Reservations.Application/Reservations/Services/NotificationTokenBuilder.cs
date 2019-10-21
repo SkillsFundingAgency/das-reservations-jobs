@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Messages;
 
@@ -10,7 +11,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
     public interface INotificationTokenBuilder
     {
         Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent);
-        Task<Dictionary<string, string>> BuildReservationDeletedTokens(ReservationDeletedEvent deletedEvent);
+        Task<Dictionary<string, string>> BuildTokens<T>(T notificatinoEvent) where T : INotificationEvent;
     }
 
     public class NotificationTokenBuilder : INotificationTokenBuilder
@@ -37,14 +38,14 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             };
         }
 
-        public async Task<Dictionary<string, string>> BuildReservationDeletedTokens(ReservationDeletedEvent deletedEvent)
+        public async Task<Dictionary<string, string>> BuildTokens<T>(T notificatinoEvent) where T : INotificationEvent
         {
             return new Dictionary<string, string>
             {
-                {TokenKeyNames.ProviderName,  await GetProviderName(deletedEvent.ProviderId.Value)},
-                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(deletedEvent.StartDate, deletedEvent.EndDate)},
-                {TokenKeyNames.CourseDescription, GenerateCourseDescription(deletedEvent.CourseName, deletedEvent.CourseLevel)},
-                {TokenKeyNames.HashedAccountId, GetHashedAccountId(deletedEvent.AccountId)}
+                {TokenKeyNames.ProviderName,  await GetProviderName(notificatinoEvent.ProviderId.Value)},
+                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(notificatinoEvent.StartDate, notificatinoEvent.EndDate)},
+                {TokenKeyNames.CourseDescription, GenerateCourseDescription(notificatinoEvent.CourseName, notificatinoEvent.CourseLevel)},
+                {TokenKeyNames.HashedAccountId, GetHashedAccountId(notificatinoEvent.AccountId)}
             };
         }
 

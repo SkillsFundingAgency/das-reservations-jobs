@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         {
             deletedEvent.ProviderId = null;
 
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
                 Times.Never);
@@ -41,7 +41,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             deletedEvent.CourseId = null;
             deletedEvent.StartDate = DateTime.MinValue;
 
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
                 Times.Never);
@@ -53,7 +53,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [Frozen] Mock<IAccountsService> mockAccountsService,
             NotifyEmployerWhenReservationDeletedAction action)
         {
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(deletedEvent.AccountId), 
                 Times.Once);
@@ -71,7 +71,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
                 
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             users.ForEach(user => 
                 mockNotificationsService.Verify(service => 
@@ -92,7 +92,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
 
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockNotificationsService.Verify(service => 
                 service.SendNewReservationMessage(It.Is<NotificationMessage>(message => 
@@ -117,7 +117,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
 
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockNotificationsService.Verify(service => 
                 service.SendNewReservationMessage(It.Is<NotificationMessage>(message => 
@@ -142,7 +142,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
 
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockNotificationsService.Verify(service => 
                 service.SendNewReservationMessage(It.Is<NotificationMessage>(message => 
@@ -167,15 +167,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
             mockTokenBuilder
-                .Setup(builder => builder.BuildReservationDeletedTokens(deletedEvent))
+                .Setup(builder => builder.BuildTokens(It.IsAny<INotificationEvent>()))
                 .ReturnsAsync(tokens);
             
-            await action.Execute(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
             mockNotificationsService.Verify(service =>
                 service.SendNewReservationMessage(It.Is<NotificationMessage>(message =>
                     message.RecipientsAddress == users[0].Email &&
-                    message.TemplateId == TemplateIds.ReservationCreated &&
+                    message.TemplateId == TemplateIds.ReservationDeleted &&
                     message.Tokens == tokens))
                 , Times.Once);
         }

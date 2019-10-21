@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using SFA.DAS.Reservations.Messages;
+using SFA.DAS.Reservations.Domain.Notifications;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
-    public interface INotifyEmployerWhenReservationDeletedAction
+    public interface INotifyEmployerWhenReservationDeletedAction 
     {
-        Task Execute(ReservationDeletedEvent message);
+        Task Execute<T>(T message) where T : INotificationEvent;
     }
 }
