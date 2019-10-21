@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Accounts;
-using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
-using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
@@ -67,7 +63,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 var message = new NotificationMessage
                 {
                     RecipientsAddress = user.Email,
-                    TemplateId = TemplateIds.ReservationDeleted,
+                    TemplateId = GetTemplateName(deletedEvent),
                     Tokens = tokens
                 };
 
@@ -86,6 +82,17 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         private static bool EventIsFromLevyAccount(INotificationEvent deletedEvent)
         {
             return deletedEvent.CourseId == null && deletedEvent.StartDate == DateTime.MinValue;
+        }
+
+        private string GetTemplateName(INotificationEvent notificationEvent)
+        {
+            switch (notificationEvent.GetType().Name)
+            {
+                case nameof(ReservationCreatedNotificationEvent): return TemplateIds.ReservationCreated;
+                case nameof(ReservationDeletedNotificationEvent): return TemplateIds.ReservationDeleted;
+                default: throw new NotImplementedException("");
+            }
+
         }
     }
 }

@@ -179,5 +179,30 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                     message.Tokens == tokens))
                 , Times.Once);
         }
+
+        [Test, MoqAutoData]
+        public async Task And_Create_Notification_Then_Sends_Message_With_Create_Template(
+            ReservationCreatedEvent createdEvent,
+            Dictionary<string, string> tokens,
+            [ArrangeUsers] List<UserDetails> users,
+            [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            NotifyEmployerWhenReservationDeletedAction action)
+        {
+            mockAccountsService
+                .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
+                .ReturnsAsync(users);
+            mockTokenBuilder
+                .Setup(builder => builder.BuildTokens(It.IsAny<INotificationEvent>()))
+                .ReturnsAsync(tokens);
+            
+            await action.Execute<ReservationCreatedNotificationEvent>(createdEvent);
+
+            mockNotificationsService.Verify(service =>
+                    service.SendNewReservationMessage(It.Is<NotificationMessage>(message =>
+                        message.TemplateId == TemplateIds.ReservationCreated ))
+                , Times.Exactly(users.Count));
+        }
     }
 }
