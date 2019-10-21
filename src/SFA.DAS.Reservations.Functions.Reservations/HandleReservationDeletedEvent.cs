@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         public static async Task Run(
             [NServiceBusTrigger(EndPoint = QueueNames.ReservationDeleted)] ReservationDeletedEvent message,
             [Inject] ILogger<ReservationDeletedEvent> log,
-            [Inject] INotifyEmployerWhenReservationDeletedAction action)
+            [Inject] INotifyEmployerOfReservationEventAction action)
         {
             log.LogInformation($"Reservation Deleted function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
 

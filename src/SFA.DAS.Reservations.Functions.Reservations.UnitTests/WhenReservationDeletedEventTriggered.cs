@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
         {
             ReservationDeletedNotificationEvent actionArgument;
             //Arrange
-            var handler = new Mock<INotifyEmployerWhenReservationDeletedAction>();
+            var handler = new Mock<INotifyEmployerOfReservationEventAction>();
             handler
                 .Setup(action => action.Execute(It.IsAny<ReservationDeletedNotificationEvent>()))
                 .Callback((ReservationDeletedNotificationEvent actualArgument) =>

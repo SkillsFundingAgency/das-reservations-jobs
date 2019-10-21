@@ -3,7 +3,7 @@ using SFA.DAS.Reservations.Domain.Notifications;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
-    public interface INotifyEmployerWhenReservationDeletedAction 
+    public interface INotifyEmployerOfReservationEventAction 
     {
         Task Execute<T>(T notificationEvent) where T : INotificationEvent;
     }

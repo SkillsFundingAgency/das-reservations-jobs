@@ -9,19 +9,19 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
-    public class NotifyEmployerWhenReservationDeletedAction : INotifyEmployerWhenReservationDeletedAction
+    public class NotifyEmployerOfReservationEventAction : INotifyEmployerOfReservationEventAction
     {
         private readonly IAccountsService _accountsService;
         private readonly INotificationsService _notificationsService;
-        private readonly ILogger<NotifyEmployerWhenReservationDeletedAction> _logger;
+        private readonly ILogger<NotifyEmployerOfReservationEventAction> _logger;
         private readonly INotificationTokenBuilder _notificationTokenBuilder;
         private readonly string[] _permittedRoles = {"Owner", "Transactor"};
         
 
-        public NotifyEmployerWhenReservationDeletedAction(
+        public NotifyEmployerOfReservationEventAction(
             IAccountsService accountsService,
             INotificationsService notificationsService,
-            ILogger<NotifyEmployerWhenReservationDeletedAction> logger, 
+            ILogger<NotifyEmployerOfReservationEventAction> logger, 
             INotificationTokenBuilder notificationTokenBuilder)
         {
             _accountsService = accountsService;

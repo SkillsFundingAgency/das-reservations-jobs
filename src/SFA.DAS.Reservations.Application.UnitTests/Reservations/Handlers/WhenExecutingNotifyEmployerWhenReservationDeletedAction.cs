@@ -22,7 +22,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_No_ProviderId_Then_No_Further_Processing(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             deletedEvent.ProviderId = null;
 
@@ -36,7 +36,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_Not_Levy_Then_No_Further_Processing(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             deletedEvent.CourseId = null;
             deletedEvent.StartDate = DateTime.MinValue;
@@ -51,7 +51,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task Then_Gets_All_Users_For_Account(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
@@ -65,7 +65,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [ArrangeUsers] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             mockAccountsService
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
@@ -85,7 +85,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [ArrangeUsers] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             users[0].CanReceiveNotifications = false;
             mockAccountsService
@@ -110,7 +110,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [ArrangeUsers] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             users[0].Role = otherRole;
             mockAccountsService
@@ -135,7 +135,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [ArrangeUsers(Role = "Transactor")] List<UserDetails> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             users[0].Role = otherRole;
             mockAccountsService
@@ -161,7 +161,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             mockAccountsService
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
@@ -188,7 +188,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
-            NotifyEmployerWhenReservationDeletedAction action)
+            NotifyEmployerOfReservationEventAction action)
         {
             mockAccountsService
                 .Setup(service => service.GetAccountUsers(createdEvent.AccountId))
