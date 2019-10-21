@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
@@ -27,6 +26,7 @@ using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;

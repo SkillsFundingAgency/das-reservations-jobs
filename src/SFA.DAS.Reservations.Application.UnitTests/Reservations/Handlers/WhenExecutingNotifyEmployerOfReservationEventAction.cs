@@ -6,7 +6,6 @@ using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
-using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
@@ -16,7 +15,7 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 {
-    public class WhenExecutingNotifyEmployerWhenReservationDeletedAction
+    public class WhenExecutingNotifyEmployerOfReservationEventAction
     {
         [Test, MoqAutoData]
         public async Task And_No_ProviderId_Then_No_Further_Processing(

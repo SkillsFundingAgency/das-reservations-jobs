@@ -8,12 +8,6 @@ using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
-    public interface INotificationTokenBuilder
-    {
-        Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent);
-        Task<Dictionary<string, string>> BuildTokens<T>(T notificatinoEvent) where T : INotificationEvent;
-    }
-
     public class NotificationTokenBuilder : INotificationTokenBuilder
     {
         private readonly IProviderService _providerService;

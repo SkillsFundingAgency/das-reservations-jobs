@@ -7,7 +7,6 @@ using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
-using SFA.DAS.Reservations.Messages;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
