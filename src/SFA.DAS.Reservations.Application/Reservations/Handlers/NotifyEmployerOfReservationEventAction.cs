@@ -89,7 +89,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             {
                 case nameof(ReservationCreatedNotificationEvent): return TemplateIds.ReservationCreated;
                 case nameof(ReservationDeletedNotificationEvent): return TemplateIds.ReservationDeleted;
-                default: throw new NotImplementedException("");
+                default: throw new NotImplementedException("No template found for this event.");
             }
         }
     }

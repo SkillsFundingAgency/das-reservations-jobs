@@ -11,33 +11,33 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
-    public class WhenBuildingReservationDeletedTokens
+    public class WhenBuildingTokens
     {
         [Test, MoqAutoData]
         public async Task Then_Adds_ProviderName_To_Tokens(
-            ReservationDeletedNotificationEvent deletedEvent,
+            ReservationCreatedNotificationEvent createdEvent,
             ProviderDetails provider,
             [Frozen] Mock<IProviderService> mockProviderService,
             NotificationTokenBuilder builder)
         {
             mockProviderService
-                .Setup(service => service.GetDetails(deletedEvent.ProviderId.Value))
+                .Setup(service => service.GetDetails(createdEvent.ProviderId.Value))
                 .ReturnsAsync(provider);
 
-            var tokens = await builder.BuildTokens(deletedEvent);
+            var tokens = await builder.BuildTokens(createdEvent);
 
             tokens[TokenKeyNames.ProviderName].Should().Be(provider.ProviderName);
         }
 
         [Test, MoqAutoData]
         public async Task Then_Adds_StartDateDescription_To_Tokens(
-            ReservationDeletedNotificationEvent deletedEvent,
+            ReservationCreatedNotificationEvent createdEvent,
             NotificationTokenBuilder builder)
         {
-            var tokens = await builder.BuildTokens(deletedEvent);
+            var tokens = await builder.BuildTokens(createdEvent);
 
             tokens[TokenKeyNames.StartDateDescription].Should()
-                .Be($"{deletedEvent.StartDate:MMM yyyy} to {deletedEvent.EndDate:MMM yyyy}");
+                .Be($"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}");
         }
 
         [Test, MoqAutoData]
