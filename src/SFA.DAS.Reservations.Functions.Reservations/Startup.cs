@@ -44,6 +44,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
      {
         public void Configure(IWebJobsBuilder builder)
         {
+
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
@@ -78,6 +79,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             Debug.WriteLine("hello from debug");
 
             var services = new ServiceCollection();
+            services.AddHttpClient();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg =>
@@ -116,7 +118,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             httpClientBuilder = httpClientBuilder.WithBearerAuthorisationHeader(bearerToken);
             httpClientBuilder = httpClientBuilder.WithDefaultHeaders();
             var httpClient = httpClientBuilder.Build();
-            services.AddTransient(provider => httpClient);
+
+
+            var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
+            var newClient = clientFactory.CreateClient();
+            newClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
+            newClient.DefaultRequestHeaders.Add("accept", "application/json");
+
+
+            services.AddTransient(provider => newClient);
 
 
             var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
@@ -138,7 +148,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 });
                 options.AddConsole();
                 options.AddDebug();
-
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
 
