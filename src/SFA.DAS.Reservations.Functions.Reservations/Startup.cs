@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
@@ -133,7 +134,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
-            services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
+            services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
 
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IProviderService, ProviderService>();
@@ -142,11 +143,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
+            services.AddTransient<IEncodingService, EncodingService>();
 
             services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
             services.AddTransient<IAccountApiClient, AccountApiClient>();
             services.AddTransient<INotificationsApi, NotificationsApi>();
-            services.AddTransient<IEncodingService, EncodingService>();
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());

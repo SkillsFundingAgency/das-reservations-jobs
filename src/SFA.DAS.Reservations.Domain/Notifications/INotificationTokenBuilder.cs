@@ -6,7 +6,6 @@ namespace SFA.DAS.Reservations.Domain.Notifications
 {
     public interface INotificationTokenBuilder
     {
-        Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent);
-        Task<Dictionary<string, string>> BuildTokens<T>(T notificatinoEvent) where T : INotificationEvent;
+        Task<Dictionary<string, string>> BuildTokens<T>(T notificationEvent) where T : INotificationEvent;
     }
 }

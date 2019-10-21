@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
-using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
@@ -21,25 +20,14 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _encodingService = encodingService;
         }
 
-        public async Task<Dictionary<string, string>> BuildReservationCreatedTokens(ReservationCreatedEvent createdEvent)
+        public async Task<Dictionary<string, string>> BuildTokens<T>(T notificationEvent) where T : INotificationEvent
         {
             return new Dictionary<string, string>
             {
-                {TokenKeyNames.ProviderName,  await GetProviderName(createdEvent.ProviderId.Value)},
-                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(createdEvent.StartDate, createdEvent.EndDate)},
-                {TokenKeyNames.CourseDescription, GenerateCourseDescription(createdEvent.CourseName, createdEvent.CourseLevel)},
-                {TokenKeyNames.HashedAccountId, GetHashedAccountId(createdEvent.AccountId)}
-            };
-        }
-
-        public async Task<Dictionary<string, string>> BuildTokens<T>(T notificatinoEvent) where T : INotificationEvent
-        {
-            return new Dictionary<string, string>
-            {
-                {TokenKeyNames.ProviderName,  await GetProviderName(notificatinoEvent.ProviderId.Value)},
-                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(notificatinoEvent.StartDate, notificatinoEvent.EndDate)},
-                {TokenKeyNames.CourseDescription, GenerateCourseDescription(notificatinoEvent.CourseName, notificatinoEvent.CourseLevel)},
-                {TokenKeyNames.HashedAccountId, GetHashedAccountId(notificatinoEvent.AccountId)}
+                {TokenKeyNames.ProviderName,  await GetProviderName(notificationEvent.ProviderId.Value)},
+                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(notificationEvent.StartDate, notificationEvent.EndDate)},
+                {TokenKeyNames.CourseDescription, GenerateCourseDescription(notificationEvent.CourseName, notificationEvent.CourseLevel)},
+                {TokenKeyNames.HashedAccountId, GetHashedAccountId(notificationEvent.AccountId)}
             };
         }
 
