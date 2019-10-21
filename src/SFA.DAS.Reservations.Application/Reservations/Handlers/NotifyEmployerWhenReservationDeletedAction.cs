@@ -30,40 +30,40 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _notificationTokenBuilder = notificationTokenBuilder;
         }
 
-        public async Task Execute<T>(T deletedEvent) where T : INotificationEvent
+        public async Task Execute<T>(T notificationEvent) where T : INotificationEvent
         {
-            _logger.LogInformation($"Notify employer that reservation deleted, Reservation Id [{deletedEvent.Id}].");
+            _logger.LogInformation($"Notify employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}].");
 
-            if (EventIsNotFromProvider(deletedEvent))
+            if (EventIsNotFromProvider(notificationEvent))
             {
-                _logger.LogInformation($"Reservation [{deletedEvent.Id}] is not created by provider, no further processing.");
+                _logger.LogInformation($"Reservation [{notificationEvent.Id}] is not created by provider, no further processing.");
                 return;
             }
 
-            if (EventIsFromLevyAccount(deletedEvent))
+            if (EventIsFromLevyAccount(notificationEvent))
             {
-                _logger.LogInformation($"Reservation [{deletedEvent.Id}] is from levy account, no further processing.");
+                _logger.LogInformation($"Reservation [{notificationEvent.Id}] is from levy account, no further processing.");
                 return;
             }
 
-            var users = await _accountsService.GetAccountUsers(deletedEvent.AccountId);
+            var users = await _accountsService.GetAccountUsers(notificationEvent.AccountId);
 
-            _logger.LogInformation($"Reservation [{deletedEvent.Id}], Account [{deletedEvent.AccountId}] has [{users.Count()}] users in total.");
+            _logger.LogInformation($"Reservation [{notificationEvent.Id}], Account [{notificationEvent.AccountId}] has [{users.Count()}] users in total.");
 
             var filteredUsers = users.Where(user => 
                 user.CanReceiveNotifications && 
                 _permittedRoles.Contains(user.Role)).ToList();
 
-            _logger.LogInformation($"Reservation [{deletedEvent.Id}], Account [{deletedEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
+            _logger.LogInformation($"Reservation [{notificationEvent.Id}], Account [{notificationEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
 
             var sendCount = 0;
-            var tokens = await _notificationTokenBuilder.BuildTokens(deletedEvent);
+            var tokens = await _notificationTokenBuilder.BuildTokens(notificationEvent);
             foreach (var user in filteredUsers)
             {
                 var message = new NotificationMessage
                 {
                     RecipientsAddress = user.Email,
-                    TemplateId = GetTemplateName(deletedEvent),
+                    TemplateId = GetTemplateName(notificationEvent),
                     Tokens = tokens
                 };
 
@@ -71,7 +71,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 sendCount++;
             }
 
-            _logger.LogInformation($"Finished notifying employer that reservation deleted, Reservation Id [{deletedEvent.Id}], [{sendCount}] email(s) sent.");
+            _logger.LogInformation($"Finished notifying employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}], [{sendCount}] email(s) sent.");
         }
 
         private static bool EventIsNotFromProvider(INotificationEvent deletedEvent)
@@ -92,7 +92,6 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 case nameof(ReservationDeletedNotificationEvent): return TemplateIds.ReservationDeleted;
                 default: throw new NotImplementedException("");
             }
-
         }
     }
 }

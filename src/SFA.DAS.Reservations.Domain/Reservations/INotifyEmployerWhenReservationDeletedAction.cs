@@ -5,6 +5,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
 {
     public interface INotifyEmployerWhenReservationDeletedAction 
     {
-        Task Execute<T>(T message) where T : INotificationEvent;
+        Task Execute<T>(T notificationEvent) where T : INotificationEvent;
     }
 }
