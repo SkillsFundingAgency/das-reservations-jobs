@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
@@ -14,7 +13,6 @@ using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
-using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
@@ -75,35 +73,18 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         public IServiceProvider Build()
         {
-            Console.WriteLine($"running Startup.Build() at [{DateTime.UtcNow} utc]");
-            Debug.WriteLine("hello from debug");
 
             var services = new ServiceCollection();
             services.AddHttpClient();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
-            services.AddSingleton(cfg =>
-            {
-                var config = cfg.GetService<IOptions<ReservationsJobs>>().Value;
-                if (config == null) throw new NullReferenceException("ReservationsJobs config is null");
-                return config;
-            });
-
+            services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+            
             services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
-            services.AddSingleton<IAccountApiConfiguration>(cfg =>
-            {
-                var config = cfg.GetService<IOptions<AccountApiConfiguration>>().Value;
-                if (config == null) throw new NullReferenceException("AccountApiConfiguration config is null");
-                return config;
-            });
+            services.AddSingleton<IAccountApiConfiguration>(cfg =>  cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
 
             services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
-            services.AddSingleton<INotificationsApiClientConfiguration>(cfg =>
-            {
-                var config = cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value;
-                if (config == null) throw new NullReferenceException("NotificationsApi config is null");
-                return config;
-            });
+            services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -111,21 +92,16 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
 
-            if (bearerToken == null) throw new NullReferenceException("bearer token is null");
-            Console.WriteLine($"token created with [{notificationsConfig.ApiBaseUrl}]");
-
-            var httpClientBuilder = new HttpClientBuilder();
-            httpClientBuilder = httpClientBuilder.WithBearerAuthorisationHeader(bearerToken);
-            httpClientBuilder = httpClientBuilder.WithDefaultHeaders();
-            var httpClient = httpClientBuilder.Build();
-
+            if (bearerToken == null)
+            {
+                throw new NullReferenceException("bearer token is null");
+            }
 
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
             var newClient = clientFactory.CreateClient();
             newClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
             newClient.DefaultRequestHeaders.Add("accept", "application/json");
-
-
+            
             services.AddTransient(provider => newClient);
 
 
