@@ -3,8 +3,8 @@ using SFA.DAS.Reservations.Domain.Notifications;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
-    public interface INotificationsService
+    public interface INotifyEmployerOfReservationEventAction 
     {
-        Task SendNewReservationMessage(NotificationMessage message);
+        Task Execute<T>(T notificationEvent) where T : INotificationEvent;
     }
 }

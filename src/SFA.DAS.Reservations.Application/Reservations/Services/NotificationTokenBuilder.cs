@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
-using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
-    public interface INotificationTokenBuilder
-    {
-        Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent);
-    }
-
     public class NotificationTokenBuilder : INotificationTokenBuilder
     {
         private readonly IProviderService _providerService;
@@ -24,20 +20,36 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _encodingService = encodingService;
         }
 
-        public async Task<Dictionary<string, string>> BuildTokens(ReservationCreatedEvent createdEvent)
+        public async Task<Dictionary<string, string>> BuildTokens<T>(T notificationEvent) where T : INotificationEvent
         {
-            var provider = await _providerService.GetDetails(createdEvent.ProviderId.Value);
-            var startDateDescription = $"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}";
-            var courseDescription = $"{createdEvent.CourseName} level {createdEvent.CourseLevel}";
-            var hashedAccountId = _encodingService.Encode(createdEvent.AccountId, EncodingType.AccountId);
-
             return new Dictionary<string, string>
             {
-                {TokenKeyNames.ProviderName,  provider.ProviderName},
-                {TokenKeyNames.StartDateDescription, startDateDescription},
-                {TokenKeyNames.CourseDescription, courseDescription},
-                {TokenKeyNames.HashedAccountId, hashedAccountId}
+                {TokenKeyNames.ProviderName,  await GetProviderName(notificationEvent.ProviderId.Value)},
+                {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(notificationEvent.StartDate, notificationEvent.EndDate)},
+                {TokenKeyNames.CourseDescription, GenerateCourseDescription(notificationEvent.CourseName, notificationEvent.CourseLevel)},
+                {TokenKeyNames.HashedAccountId, GetHashedAccountId(notificationEvent.AccountId)}
             };
+        }
+
+        private async Task<string> GetProviderName(uint providerId)
+        {
+            var provider = await _providerService.GetDetails(providerId);
+            return provider.ProviderName;
+        }
+
+        private string GenerateStartDateDescription(DateTime startDate, DateTime endDate)
+        {
+            return $"{startDate:MMM yyyy} to {endDate:MMM yyyy}";
+        }
+
+        private string GenerateCourseDescription(string courseName, string courseLevel)
+        {
+            return $"{courseName} level {courseLevel}";
+        }
+
+        private string GetHashedAccountId(long accountId)
+        {
+            return _encodingService.Encode(accountId, EncodingType.AccountId);
         }
     }
 }

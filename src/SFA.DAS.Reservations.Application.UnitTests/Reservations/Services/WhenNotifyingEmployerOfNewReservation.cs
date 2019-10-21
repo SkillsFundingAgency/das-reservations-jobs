@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Reservations.Application.Reservations.Services;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -15,7 +16,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
     {
         [Test, MoqAutoData]
         public async Task Then_Sends_To_Notifications_Api(
-            ReservationCreatedMessage createdMessage,
+            NotificationMessage createdMessage,
             [Frozen] Mock<INotificationsApi> mockNotificationClient,
             NotificationsService service)
         {

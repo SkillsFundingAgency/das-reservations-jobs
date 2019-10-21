@@ -5,17 +5,17 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Reservations.Services;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
-using SFA.DAS.Reservations.Messages;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
-    public class WhenBuildingNotificationTokens
+    public class WhenBuildingTokens
     {
         [Test, MoqAutoData]
         public async Task Then_Adds_ProviderName_To_Tokens(
-            ReservationCreatedEvent createdEvent,
+            ReservationCreatedNotificationEvent createdEvent,
             ProviderDetails provider,
             [Frozen] Mock<IProviderService> mockProviderService,
             NotificationTokenBuilder builder)
@@ -31,7 +31,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
         [Test, MoqAutoData]
         public async Task Then_Adds_StartDateDescription_To_Tokens(
-            ReservationCreatedEvent createdEvent,
+            ReservationCreatedNotificationEvent createdEvent,
             NotificationTokenBuilder builder)
         {
             var tokens = await builder.BuildTokens(createdEvent);
@@ -42,27 +42,27 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
         [Test, MoqAutoData]
         public async Task Then_Adds_CourseDescription_To_Tokens(
-            ReservationCreatedEvent createdEvent,
+            ReservationDeletedNotificationEvent deletedEvent,
             NotificationTokenBuilder builder)
         {
-            var tokens = await builder.BuildTokens(createdEvent);
+            var tokens = await builder.BuildTokens(deletedEvent);
 
             tokens[TokenKeyNames.CourseDescription].Should()
-                .Be($"{createdEvent.CourseName} level {createdEvent.CourseLevel}");
+                .Be($"{deletedEvent.CourseName} level {deletedEvent.CourseLevel}");
         }
 
         [Test, MoqAutoData]
         public async Task Then_Adds_HashedAccountId_To_Tokens(
-            ReservationCreatedEvent createdEvent,
+            ReservationDeletedNotificationEvent deletedEvent,
             string encodedAccountId,
             [Frozen] Mock<IEncodingService> mockEncodingService,
             NotificationTokenBuilder builder)
         {
             mockEncodingService
-                .Setup(service => service.Encode(createdEvent.AccountId, EncodingType.AccountId))
+                .Setup(service => service.Encode(deletedEvent.AccountId, EncodingType.AccountId))
                 .Returns(encodedAccountId);
 
-            var tokens = await builder.BuildTokens(createdEvent);
+            var tokens = await builder.BuildTokens(deletedEvent);
 
             tokens[TokenKeyNames.HashedAccountId].Should().Be(encodedAccountId);
         }
