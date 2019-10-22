@@ -89,23 +89,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var serviceProvider = services.BuildServiceProvider();
 
-            var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
-
-            var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
-
-            if (bearerToken == null)
-            {
-                throw new NullReferenceException("bearer token is null");
-            }
-
-            var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
-            var newClient = clientFactory.CreateClient();
-            newClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
-            newClient.DefaultRequestHeaders.Add("accept", "application/json");
-            
-            services.AddTransient(provider => newClient);
-
-
             var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
             var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
@@ -137,9 +120,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
 
             services.AddTransient<IReservationService,ReservationService>();
-            services.AddTransient<IProviderService, ProviderService>();
-            services.AddTransient<IAccountsService, AccountsService>();
-            services.AddTransient<INotificationsService, NotificationsService>();
+            services.AddHttpClient<IProviderService, ProviderService>();
+            services.AddHttpClient<IAccountsService, AccountsService>();
+            services.AddHttpClient<INotificationsService, NotificationsService>(client =>
+            {
+                var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
+                var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
+                client.DefaultRequestHeaders.Add("accept", "application/json");
+            });
 
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
