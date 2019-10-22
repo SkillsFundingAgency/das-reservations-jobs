@@ -20,6 +20,13 @@ namespace SFA.DAS.Reservations.Data.Repository
         {
             using (var transaction = _dataContext.Database.BeginTransaction())
             {
+                var existingLevyStatus = await _dataContext
+                    .AccountLegalEntities
+                    .Where(c => c.AccountId.Equals(accountLegalEntity.AccountId))
+                    .AnyAsync(c=>c.IsLevy);
+
+                accountLegalEntity.IsLevy = existingLevyStatus;
+
                 await _dataContext.AccountLegalEntities.AddAsync(accountLegalEntity);
                 _dataContext.SaveChanges();
                 transaction.Commit();
