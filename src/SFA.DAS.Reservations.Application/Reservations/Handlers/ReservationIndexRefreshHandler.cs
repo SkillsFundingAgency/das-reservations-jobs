@@ -1,14 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
     public class ReservationIndexRefreshHandler : IReservationIndexRefreshHandler
     {
-        public Task Handle()
+        private readonly IReservationService _service;
+
+        public ReservationIndexRefreshHandler(IReservationService service)
         {
-            throw new NotImplementedException();
+            _service = service;
+        }
+
+        public async Task Handle()
+        {
+            await _service.RefreshReservationIndex();
         }
     }
 }

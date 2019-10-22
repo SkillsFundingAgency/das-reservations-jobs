@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         {
             _repository = new Mock<IReservationRepository>();
 
-            _service = new ReservationService(_repository.Object);
+            _service = new ReservationService(_repository.Object, Mock.Of<IReservationIndexRepository>());
         }
 
         [Test]
