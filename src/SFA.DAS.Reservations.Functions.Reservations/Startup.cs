@@ -129,7 +129,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IEncodingService, EncodingService>();
 
             services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
-            services.AddTransient<IAccountApiClient, AccountApiClient>();
+
+            services.AddHttpClient<IAccountApiClient, AccountApiClient>();
             services.AddHttpClient<INotificationsApi, NotificationsApi>(
                 client =>
                 {
