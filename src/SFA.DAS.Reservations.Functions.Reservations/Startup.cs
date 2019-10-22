@@ -128,14 +128,18 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IReservationRepository,ReservationRepository>();
             services.AddTransient<IEncodingService, EncodingService>();
 
-            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
 
-            services.AddHttpClient<IAccountApiClient, AccountApiClient>();
-            services.AddHttpClient<INotificationsApi, NotificationsApi>(
+            var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
+            var newClient = clientFactory.CreateClient();
+            services.AddSingleton(provider => newClient);
+            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
+            services.AddTransient<IAccountApiClient, AccountApiClient>();
+            services.AddHttpClient<INotificationsService, NotificationsService>(
                 client =>
                 {
                     var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
                     var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
+                    client.BaseAddress = new Uri(notificationsConfig.ApiBaseUrl);
                     client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
                     client.DefaultRequestHeaders.Add("accept", "application/json");
                 });

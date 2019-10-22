@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using SFA.DAS.Notifications.Api.Client;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SFA.DAS.Notifications.Api.Types;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
@@ -8,13 +9,13 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
     public class NotificationsService : INotificationsService
     {
-        private readonly INotificationsApi _notificationsApi;
+        private readonly HttpClient _client;
         private const string Placeholder = "x";
         private const string DummyReplyAddress = "noreply@sfa.gov.uk";
 
-        public NotificationsService(INotificationsApi notificationsApi)
+        public NotificationsService(HttpClient client)
         {
-            _notificationsApi = notificationsApi;
+            _client = client;
         }
 
         public async Task SendNewReservationMessage(NotificationMessage message)
@@ -26,7 +27,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 message.RecipientsAddress, 
                 DummyReplyAddress, 
                 message.Tokens);
-            await _notificationsApi.SendEmail(email);
+
+            await _client.PostAsync("api/email", new StringContent(JsonConvert.SerializeObject(email)));
         }
     }
 }
