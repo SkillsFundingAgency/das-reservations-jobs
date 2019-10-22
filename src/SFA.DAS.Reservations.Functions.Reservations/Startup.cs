@@ -120,15 +120,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
 
             services.AddTransient<IReservationService,ReservationService>();
-            services.AddHttpClient<IProviderService, ProviderService>();
-            services.AddHttpClient<IAccountsService, AccountsService>();
-            services.AddHttpClient<INotificationsService, NotificationsService>(client =>
-            {
-                var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
-                var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
-                client.DefaultRequestHeaders.Add("accept", "application/json");
-            });
+            services.AddTransient<IProviderService, ProviderService>();
+            services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<INotificationsService, NotificationsService>();
 
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
@@ -136,7 +130,14 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
             services.AddTransient<IAccountApiClient, AccountApiClient>();
-            services.AddTransient<INotificationsApi, NotificationsApi>();
+            services.AddHttpClient<INotificationsApi, NotificationsApi>(
+                client =>
+                {
+                    var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
+                    var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
+                    client.DefaultRequestHeaders.Add("accept", "application/json");
+                });
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
