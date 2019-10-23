@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Domain.Entities;
@@ -10,15 +11,26 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
     public class ProviderPermissionService : IProviderPermissionService
     {
         private readonly IProviderPermissionRepository _repository;
+        private readonly ILogger<ProviderPermissionService> _logger;
 
-        public ProviderPermissionService(IProviderPermissionRepository repository)
+        public ProviderPermissionService(IProviderPermissionRepository repository, ILogger<ProviderPermissionService> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task AddProviderPermission(UpdatedPermissionsEvent updateEvent)
         {
-            ValidateEvent(updateEvent);
+            try
+            {
+                ValidateEvent(updateEvent);
+            }
+            catch (ArgumentException e)
+            {
+                _logger.LogWarning($"Cannot process provider permission message due to missing argument {e.ParamName}. " +
+                                   $"Account ID: {updateEvent?.AccountId}, Ukprn: {updateEvent?.Ukprn}, Account legal entity ID:{updateEvent?.AccountLegalEntityId}");
+                return;
+            }
 
             var permission = Map(updateEvent);
 

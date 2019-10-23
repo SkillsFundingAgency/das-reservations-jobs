@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
+using SFA.DAS.Reservations.Application.UnitTests.Extensions;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
@@ -14,12 +16,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
     {
         private ProviderPermissionService _service;
         private Mock<IProviderPermissionRepository> _repo;
+        private Mock<ILogger<ProviderPermissionService>> _logger;
 
         [SetUp]
         public void Arrange()
         {
             _repo = new Mock<IProviderPermissionRepository>();
-            _service = new ProviderPermissionService(_repo.Object);
+            _logger = new Mock<ILogger<ProviderPermissionService>>();
+            _service = new ProviderPermissionService(_repo.Object, _logger.Object);
         }
 
         [Test]
@@ -81,16 +85,17 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
         }
 
         [Test]
-        public void ThenThrowsArgumentExceptionIfEventIsNull()
+        public async Task ThenLogsWarningIfEventIsNull()
         {
-            //Act + Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.AddProviderPermission(null));
+            //Act
+            await _service.AddProviderPermission(null);
 
-            Assert.AreEqual(nameof(UpdatedPermissionsEvent), exception.ParamName);
+            //Assert
+            _logger.VerifyLog(LogLevel.Warning);
         }
 
         [Test]
-        public void ThenThrowsArgumentExceptionIfEventHasNoAccountId()
+        public async Task ThenLogsWarningIfEventHasNoAccountId()
         {
             //Arrange
             var permissionEvent = new UpdatedPermissionsEvent(
@@ -99,14 +104,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
                 "test@example.com", "Test",
                 "Tester", new HashSet<Operation> { Operation.Recruitment }, DateTime.Now);
 
-            //Act + Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.AddProviderPermission(permissionEvent));
+            //Act
+            await _service.AddProviderPermission(permissionEvent);
 
-            Assert.AreEqual(nameof(permissionEvent.AccountId), exception.ParamName);
+            //Assert
+            _logger.VerifyLog(LogLevel.Warning);
         }
 
         [Test]
-        public void ThenThrowsArgumentExceptionIfEventHasNoAccountLegalEntityId()
+        public async Task ThenLogsWarningIfEventHasNoAccountLegalEntityId()
         {
             //Arrange
             var permissionEvent = new UpdatedPermissionsEvent(
@@ -115,14 +121,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
                 "test@example.com", "Test",
                 "Tester", new HashSet<Operation> { Operation.Recruitment }, DateTime.Now);
 
-            //Act + Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.AddProviderPermission(permissionEvent));
+            //Act
+            await _service.AddProviderPermission(permissionEvent);
 
-            Assert.AreEqual(nameof(permissionEvent.AccountLegalEntityId), exception.ParamName);
+            //Assert
+            _logger.VerifyLog(LogLevel.Warning);
         }
 
         [Test]
-        public void ThenThrowsArgumentExceptionIfEventHasNoUkprn()
+        public async Task ThenLogsWarningIfEventHasNoUkprn()
         {
             //Arrange
             var permissionEvent = new UpdatedPermissionsEvent(
@@ -131,10 +138,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
                 "test@example.com", "Test",
                 "Tester", new HashSet<Operation> { Operation.Recruitment }, DateTime.Now);
 
-            //Act + Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.AddProviderPermission(permissionEvent));
+            //Act
+            await _service.AddProviderPermission(permissionEvent);
 
-            Assert.AreEqual(nameof(permissionEvent.Ukprn), exception.ParamName);
+            //Assert
+            _logger.VerifyLog(LogLevel.Warning);
         }
 
 
