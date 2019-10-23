@@ -9,11 +9,11 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepository
 {
     public class WhenStoringAccountLegalEntities
     {
-        private Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
+        private Data.Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
         private Mock<IReservationsDataContext> _dataContext;
         private Mock<DatabaseFacade> _dataFacade;
         private Mock<DbContext> _dbContext;
@@ -34,7 +34,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
 
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object);
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object);
         }
 
         [Test]
