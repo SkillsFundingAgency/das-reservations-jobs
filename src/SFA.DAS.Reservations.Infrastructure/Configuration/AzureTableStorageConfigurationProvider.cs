@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 
 namespace SFA.DAS.Reservations.Infrastructure.Configuration
@@ -12,6 +13,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Configuration
         private readonly string _environment;
         private readonly string _version;
         private readonly CloudStorageAccount _storageAccount;
+        private const string EncodingConfigKey = "SFA.DAS.Encoding";
 
         public AzureTableStorageConfigurationProvider(string connection, string[] configName, string environment, string version)
         {
@@ -34,10 +36,15 @@ namespace SFA.DAS.Reservations.Infrastructure.Configuration
 
                 var configItem = (ConfigurationItem)result.Result;
 
+                if (config == EncodingConfigKey)
+                {
+                    Data.Add(nameof(EncodingConfig), configItem.Data);
+                    continue;
+                }
+
                 var data = new StorageConfigParser().ParseConfig(configItem, configDefaultSectionName);
                 data.ToList().ForEach(x => Data.Add(x.Key, x.Value));
             }
-
         }
 
         private CloudTable GetTable()

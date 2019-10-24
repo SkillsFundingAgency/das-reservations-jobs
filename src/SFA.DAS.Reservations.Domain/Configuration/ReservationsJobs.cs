@@ -6,5 +6,6 @@
         public string ConnectionString { get; set; }
         public string NServiceBusConnectionString { get; set; }
         public string AzureWebJobsStorage { get; set; }
+        public string ReservationCreatedEmailTemplateId { get; set; }
     }
 }

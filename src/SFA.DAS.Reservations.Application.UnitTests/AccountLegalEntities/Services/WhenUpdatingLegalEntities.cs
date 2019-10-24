@@ -32,7 +32,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
             {
                 AccountId = 9786,
                 LegalEntityId = 543,
-                AgreementType = AgreementType.NoneLevyExpressionOfInterest
+                AgreementType = AgreementType.NonLevyExpressionOfInterest
             };
 
             //Act

@@ -43,7 +43,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
                 AccountId = 8376234,
                 AgreementSigned = false,
                 LegalEntityId = 4,
-                AgreementType = AgreementType.NoneLevyExpressionOfInterest
+                AgreementType = AgreementType.NonLevyExpressionOfInterest
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -92,7 +92,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
             await _accountLegalEntityRepository.UpdateAgreementStatus(_updatedAccountLegalEntity);
             
             //Assert
-            Assert.AreEqual(AgreementType.NoneLevyExpressionOfInterest, _dbAccountLegalEntity.AgreementType);
+            Assert.AreEqual(AgreementType.NonLevyExpressionOfInterest, _dbAccountLegalEntity.AgreementType);
         }
 
         [Test]
