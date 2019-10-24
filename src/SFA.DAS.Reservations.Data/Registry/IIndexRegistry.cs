@@ -6,5 +6,6 @@ namespace SFA.DAS.Reservations.Data.Registry
     {
         string CurrentIndexName { get; }
         Task Add(string indexName);
+        Task DeleteOldIndices(uint daysOld);
     }
 }
