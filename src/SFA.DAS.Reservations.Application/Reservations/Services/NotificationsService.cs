@@ -28,7 +28,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 DummyReplyAddress, 
                 message.Tokens);
 
-            await _client.PostAsync("api/email", new StringContent(JsonConvert.SerializeObject(email)));
+            await _client.PostAsync("api/email", new StringContent(JsonConvert.SerializeObject(email),System.Text.Encoding.UTF8,"application/json"));
         }
     }
 }
