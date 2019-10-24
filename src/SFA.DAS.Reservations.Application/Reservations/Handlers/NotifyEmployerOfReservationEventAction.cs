@@ -39,6 +39,12 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 return;
             }
 
+            if (EventIsFromEmployerDelete(notificationEvent))
+            {
+                _logger.LogInformation($"Reservation [{notificationEvent.Id}] is created by provider but deleted by employer, no further processing.");
+                return;
+            }
+
             if (EventIsFromLevyAccount(notificationEvent))
             {
                 _logger.LogInformation($"Reservation [{notificationEvent.Id}] is from levy account, no further processing.");
@@ -81,6 +87,11 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         private static bool EventIsFromLevyAccount(INotificationEvent deletedEvent)
         {
             return deletedEvent.CourseId == null && deletedEvent.StartDate == DateTime.MinValue;
+        }
+
+        private static bool EventIsFromEmployerDelete(INotificationEvent deletedEvent)
+        {
+            return deletedEvent.ProviderId.HasValue && deletedEvent.EmployerDeleted;
         }
 
         private string GetTemplateName(INotificationEvent notificationEvent)

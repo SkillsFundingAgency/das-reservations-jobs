@@ -15,5 +15,6 @@ namespace SFA.DAS.Reservations.Domain.Notifications
         string CourseName { get; set; }
         string CourseLevel { get; set; }
         uint? ProviderId { get; set; }
+        bool EmployerDeleted { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace SFA.DAS.Reservations.Domain.Notifications
         public string CourseName { get; set; }
         public string CourseLevel { get; set; }
         public uint? ProviderId { get; set; }
+        public bool EmployerDeleted { get; set; }
 
         public static implicit operator ReservationDeletedNotificationEvent(ReservationDeletedEvent source)
         {
@@ -31,7 +32,8 @@ namespace SFA.DAS.Reservations.Domain.Notifications
                 CourseId = source.CourseId,
                 CourseName = source.CourseName,
                 CourseLevel = source.CourseLevel,
-                ProviderId = source.ProviderId
+                ProviderId = source.ProviderId,
+                EmployerDeleted = source.EmployerDeleted
             };
         }
     }

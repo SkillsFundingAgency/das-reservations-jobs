@@ -18,12 +18,26 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
     public class WhenExecutingNotifyEmployerOfReservationEventAction
     {
         [Test, MoqAutoData]
-        public async Task And_No_ProviderId_Then_No_Further_Processing(
+        public async Task And_No_ProviderId_And_Then_No_Further_Processing(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             NotifyEmployerOfReservationEventAction action)
         {
             deletedEvent.ProviderId = null;
+
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+
+            mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
+                Times.Never);
+        }
+
+        [Test, MoqAutoData]
+        public async Task And_Has_ProviderId_But_Deleted_By_Employer_Then_No_Further_Processing(
+            ReservationDeletedEvent deletedEvent,
+            [Frozen] Mock<IAccountsService> mockAccountsService,
+            NotifyEmployerOfReservationEventAction action)
+        {
+            deletedEvent.EmployerDeleted = true;
 
             await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
 
