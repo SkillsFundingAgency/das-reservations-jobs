@@ -9,8 +9,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
 
         Task Add(IEnumerable<ReservationIndex> reservations);
         Task Add(ReservationIndex reservations);
-
-       
-        //Task DeleteIndex(string indexName);
+        Task DeleteIndices(uint daysOld);
     }
 }

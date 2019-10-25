@@ -29,7 +29,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
         public async Task RefreshReservationIndex()
         {
-            var result = await _repository.GetAll();
+            var result = _repository.GetAll();
 
             var reservations = result?.ToArray();
           
@@ -39,6 +39,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
 
             var reservationIndexes = reservations.Select(MapReservation);
+
+            await _indexRepository.CreateIndex();
 
             await _indexRepository.Add(reservationIndexes);
         }

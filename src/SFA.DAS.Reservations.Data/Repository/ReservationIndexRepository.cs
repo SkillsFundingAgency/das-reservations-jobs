@@ -9,7 +9,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 {
     public class ReservationIndexRepository : IReservationIndexRepository
     {
-        private const string IndexNamePrefix = "reservations-";
+        public const string IndexNamePrefix = "reservations-";
 
         private readonly IElasticClient _client;
         private readonly IIndexRegistry _registry;
@@ -30,14 +30,14 @@ namespace SFA.DAS.Reservations.Data.Repository
             await _client.IndexAsync(new IndexRequest<ReservationIndex>(reservation, _registry.CurrentIndexName));
         }
 
-        public async Task CreateIndex()
+        public async Task DeleteIndices(uint daysOld)
         {
-            await _client.Indices.CreateAsync(new CreateIndexRequest(IndexNamePrefix + Guid.NewGuid()));
+            await _registry.DeleteOldIndices(daysOld);
         }
 
-        //public async Task DeleteIndex(string indexName)
-        //{
-        //    await _client.Indices.DeleteAsync(Indices.Index(_indexName));
-        //}
+        public async Task CreateIndex()
+        {
+            await _registry.Add(IndexNamePrefix + Guid.NewGuid());
+        }
     }
 }

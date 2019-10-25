@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.Reservations;
+using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 
 namespace SFA.DAS.Reservations.Data.Repository
@@ -32,13 +34,11 @@ namespace SFA.DAS.Reservations.Data.Repository
                 _dataContext.SaveChanges();
                 transaction.Commit();
             }
-
-            
         }
 
-        public Task<IEnumerable<Domain.Entities.Reservation>> GetAll()
+        public IEnumerable<Reservation> GetAll()
         {
-            throw new NotImplementedException();
+            return _dataContext.Reservations.ToArray();
         }
     }
 }

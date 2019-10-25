@@ -8,7 +8,6 @@ using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Reservations;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
-
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
     public class WhenRefreshingReservationIndex
@@ -32,7 +31,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 new Reservation{ Id = Guid.NewGuid() }
             };
 
-            _repository.Setup(x => x.GetAll()).ReturnsAsync(_expectedReservations);
+            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
         }
 
         [Test]
@@ -61,10 +60,20 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test]
+        public async Task ThenANewIndexWillBeCreated()
+        {
+            //Act
+            await _service.RefreshReservationIndex();
+
+            //Assert
+            _indexRepository.Verify(r => r.CreateIndex(), Times.Once);
+        }
+
+        [Test]
         public async Task ThenIfNoReservationsReturnedIndexingWillBeSkipped()
         {
             //Arrange
-            _repository.Setup(x => x.GetAll()).ReturnsAsync(new List<Reservation>());
+            _repository.Setup(x => x.GetAll()).Returns(new List<Reservation>());
 
             //Act
             await _service.RefreshReservationIndex();
@@ -77,7 +86,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public void ThenIfExceptionIsThrownFromGettingReservationsIndexingWillBeSkipped()
         {
             //Arrange
-            _repository.Setup(x => x.GetAll()).ThrowsAsync(new Exception("Test"));
+            _repository.Setup(x => x.GetAll()).Throws(new Exception("Test"));
 
             //Act
             Assert.ThrowsAsync<Exception>(() => _service.RefreshReservationIndex());
