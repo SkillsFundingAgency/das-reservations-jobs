@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -20,16 +21,35 @@ namespace SFA.DAS.Reservations.Data.Repository
         {
             using (var transaction = _dataContext.Database.BeginTransaction())
             {
+                var existingEntity = await _dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
+                    c.AccountLegalEntityId.Equals(accountLegalEntity.AccountLegalEntityId));
+
+                if (existingEntity != null)
+                {
+                    transaction.Rollback();
+                    return;
+                }
+
                 var existingLevyStatus = await _dataContext
                     .AccountLegalEntities
                     .Where(c => c.AccountId.Equals(accountLegalEntity.AccountId))
                     .AnyAsync(c=>c.IsLevy);
 
                 accountLegalEntity.IsLevy = existingLevyStatus;
-
-                await _dataContext.AccountLegalEntities.AddAsync(accountLegalEntity);
-                _dataContext.SaveChanges();
-                transaction.Commit();
+                try
+                {
+                    await _dataContext.AccountLegalEntities.AddAsync(accountLegalEntity);
+                    _dataContext.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (DbUpdateException e)
+                {
+                    if (e.GetBaseException() is SqlException sqlException
+                        && (sqlException.Number == 2601 || sqlException.Number == 2627))
+                    {
+                        transaction.Rollback();
+                    }
+                }
             }
         }
 
