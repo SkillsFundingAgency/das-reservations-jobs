@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "SFA.DAS.Reservations.Functions.ReservationsIndex": {
+    "SFA.DAS.Reservations.Functions.ReservationIndex": {
       "commandName": "Project"
     }
   }

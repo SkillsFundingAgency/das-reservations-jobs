@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Domain.Reservations;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Reservations.Application.Reservations.Handlers;
 
 namespace SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests
 {
@@ -17,8 +18,8 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests
 
             //Act
             await IndexRefresh.Run(null, 
-                handler.Object,
-                Mock.Of<ILogger>());
+                Mock.Of<ILogger<ReservationIndexRefreshHandler>>(),
+                handler.Object);
 
             //Assert
             handler.Verify(s => s.Handle(), Times.Once);
