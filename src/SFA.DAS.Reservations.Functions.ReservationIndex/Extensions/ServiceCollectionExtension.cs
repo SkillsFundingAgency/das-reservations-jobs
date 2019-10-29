@@ -2,14 +2,15 @@
 using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
+using SFA.DAS.Reservations.Domain.Configuration;
 
 namespace SFA.DAS.Reservations.Functions.ReservationIndex.Extensions
 {
     public static class ServiceCollectionExtension
     {
-        public static void AddElasticSearch(this ServiceCollection collection)
+        public static void AddElasticSearch(this ServiceCollection collection, ReservationsJobs configuration)
         {
-            var connectionPool = new  SingleNodeConnectionPool(new Uri("http://localhost:9200"));
+            var connectionPool = new  SingleNodeConnectionPool(new Uri(configuration.ElasticSearchUrl));
 
             var settings = new ConnectionSettings(connectionPool);
 

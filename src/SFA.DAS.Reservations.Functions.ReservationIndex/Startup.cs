@@ -62,7 +62,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
         public IServiceProvider Build()
         {
             var services = new ServiceCollection();
-
+            
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
             services.AddTransient<IProviderPermissionsRepository,ProviderPermissionsRepository>();
             services.AddTransient<IIndexRegistry,IndexRegistry>();
 
-            services.AddElasticSearch();
+            services.AddElasticSearch(config);
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
