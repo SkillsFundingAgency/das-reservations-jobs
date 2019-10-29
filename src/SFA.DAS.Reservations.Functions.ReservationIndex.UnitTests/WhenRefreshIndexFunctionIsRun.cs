@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests
             var handler = new Mock<IReservationIndexRefreshHandler>();
 
             //Act
-            await IndexRefresh.Run(null, 
+            await RefreshIndex.Run(null, 
                 Mock.Of<ILogger<ReservationIndexRefreshHandler>>(),
                 handler.Object);
 
