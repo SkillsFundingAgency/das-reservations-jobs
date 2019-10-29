@@ -29,7 +29,6 @@ namespace SFA.DAS.Reservations.Data.Repository
 
                 if (existingEntity != null)
                 {
-                    transaction.Rollback();
                     return;
                 }
 
