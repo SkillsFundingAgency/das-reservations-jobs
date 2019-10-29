@@ -11,6 +11,8 @@ namespace SFA.DAS.Reservations.Data.Repository
 {
     public class AccountLegalEntityRepository : IAccountLegalEntityRepository
     {
+        private const int UniqueConstraintViolation = 2601;
+        private const int UniqueKeyViolation = 2627;
         private readonly IReservationsDataContext _dataContext;
         private readonly ILogger<AccountLegalEntityRepository> _log;
 
@@ -47,7 +49,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 catch (DbUpdateException e)
                 {
                     if (e.GetBaseException() is SqlException sqlException
-                        && (sqlException.Number == 2601 || sqlException.Number == 2627))
+                        && (sqlException.Number == UniqueConstraintViolation || sqlException.Number == UniqueKeyViolation))
                     {
                         _log.LogWarning($"AccountLegalEntityRepository: Rolling back Id:{accountLegalEntity.AccountLegalEntityId} - item already exists.");
                         transaction.Rollback();
