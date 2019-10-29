@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
@@ -43,7 +44,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
 
 
 
-            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object);
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
         }
 
         [Test]

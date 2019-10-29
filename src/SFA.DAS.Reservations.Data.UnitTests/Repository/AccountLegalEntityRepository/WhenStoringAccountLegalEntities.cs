@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepository
@@ -22,23 +27,46 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
         [SetUp]
         public void Arrange()
         {
-            
-
             _dbContextTransaction = new Mock<IDbContextTransaction>();
             _dbContext = new Mock<DbContext>();
             _dataContext = new Mock<IReservationsDataContext>();
             _dataFacade = new Mock<DatabaseFacade>(_dbContext.Object);
+            
             _dataFacade.Setup(x => x.BeginTransaction()).Returns(_dbContextTransaction.Object);
-            _dataContext.Setup(x => x.AccountLegalEntities.AddAsync(It.IsAny<AccountLegalEntity>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((EntityEntry<AccountLegalEntity>)null);
-            _dataContext.Setup(x => x.Database)
-                .Returns(_dataFacade.Object);
-
-            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object);
+            
         }
 
         [Test]
-        public async Task Then_The_AccountLegalEntity_Is_Added_To_The_Repository()
+        public async Task Then_The_AccountLegalEntity_Is_Added_To_The_Repository_And_Committed()
+        {
+            //Arrange
+            var expectedAccountLegalEntity = new AccountLegalEntity
+            {
+                Id = Guid.NewGuid(),
+                ReservationLimit = 1,
+                AccountId = 1234,
+                LegalEntityId = 543,
+                AccountLegalEntityId = 5677,
+                AgreementSigned = true,
+                AccountLegalEntityName = "Test"
+            };
+            
+            _dataContext.Setup(x => x.AccountLegalEntities)
+                .ReturnsDbSet(new List<AccountLegalEntity>());
+            _dataContext.Setup(x => x.Database)
+                .Returns(_dataFacade.Object);
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
+
+            //Act
+            await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
+
+            //Assert 
+            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _dbContextTransaction.Verify(x => x.Commit(), Times.Once);
+        }
+
+        [Test]
+        public async Task Then_The_Item_Is_Not_Saved_If_It_Already_Exists()
         {
             //Arrange
             var expectedAccountLegalEntity = new AccountLegalEntity
@@ -52,21 +80,18 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
                 AccountLegalEntityName = "Test"
             };
 
+            _dataContext.Setup(x => x.AccountLegalEntities)
+                .ReturnsDbSet(new List<AccountLegalEntity>{ expectedAccountLegalEntity });
+            _dataContext.Setup(x => x.Database)
+                .Returns(_dataFacade.Object);
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
+
             //Act
             await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
 
             //Assert 
-            _dataContext.Verify(x => x.AccountLegalEntities.AddAsync(It.Is<AccountLegalEntity>(
-                c => c.Id.Equals(expectedAccountLegalEntity.Id) &&
-                     c.AccountId.Equals(expectedAccountLegalEntity.AccountId) &&
-                     c.AgreementSigned.Equals(expectedAccountLegalEntity.AgreementSigned) &&
-                     c.AccountLegalEntityId.Equals(expectedAccountLegalEntity.AccountLegalEntityId) &&
-                     c.AccountLegalEntityName.Equals(expectedAccountLegalEntity.AccountLegalEntityName) &&
-                     c.LegalEntityId.Equals(expectedAccountLegalEntity.LegalEntityId) &&
-                     c.ReservationLimit.Equals(expectedAccountLegalEntity.ReservationLimit) 
-                     ), It.IsAny<CancellationToken>()), Times.Once);
-            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
-
+            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }
+
     }
 }

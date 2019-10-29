@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Common.Domain.Types;
@@ -41,7 +42,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
                 AccountId = 8376234,
                 AgreementSigned = false,
                 LegalEntityId = 4,
-                AgreementType = AgreementType.NoneLevyExpressionOfInterest
+                AgreementType = AgreementType.NonLevyExpressionOfInterest
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -58,7 +59,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             });
 
 
-            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object);
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
         }
 
         [Test]
@@ -90,7 +91,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             await _accountLegalEntityRepository.UpdateAgreementStatus(_updatedAccountLegalEntity);
             
             //Assert
-            Assert.AreEqual(AgreementType.NoneLevyExpressionOfInterest, _dbAccountLegalEntity.AgreementType);
+            Assert.AreEqual(AgreementType.NonLevyExpressionOfInterest, _dbAccountLegalEntity.AgreementType);
         }
 
         [Test]

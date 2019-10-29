@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
@@ -8,14 +9,26 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NLog.Extensions.Logging;
+using SFA.DAS.EAS.Account.Api.Client;
+using SFA.DAS.Encoding;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Notifications.Api.Client;
+using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
+using SFA.DAS.Providers.Api.Client;
+using SFA.DAS.Reservations.Application.Accounts.Services;
+using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Repository;
+using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Notifications;
+using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
@@ -30,6 +43,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
      {
         public void Configure(IWebJobsBuilder builder)
         {
+
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
@@ -60,14 +74,26 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         public IServiceProvider Build()
         {
+
             var services = new ServiceCollection();
+            services.AddHttpClient();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+            
+            services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
+            services.AddSingleton<IAccountApiConfiguration>(cfg =>  cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
+
+            services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
+            services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
 
             var serviceProvider = services.BuildServiceProvider();
 
-            var config = serviceProvider.GetService<ReservationsJobs>();
+            var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
+
+            var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
+            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+            services.AddSingleton(encodingConfig);
 
             var nLogConfiguration = new NLogConfiguration();
 
@@ -82,7 +108,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 });
                 options.AddConsole();
                 options.AddDebug();
-
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
 
@@ -92,12 +117,35 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
-            services.AddTransient<IReservationService,ReservationService>();
-            services.AddTransient<IReservationRepository,ReservationRepository>();
+            services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
 
-            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
+            services.AddTransient<IReservationService,ReservationService>();
+            services.AddTransient<IProviderService, ProviderService>();
+            services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<INotificationsService, NotificationsService>();
+
+            services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
+            services.AddTransient<IReservationRepository,ReservationRepository>();
+            services.AddTransient<IEncodingService, EncodingService>();
+
+
+            var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
+            var newClient = clientFactory.CreateClient();
+            services.AddSingleton(provider => newClient);
+            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
+            services.AddTransient<IAccountApiClient, AccountApiClient>();
+            services.AddHttpClient<INotificationsService, NotificationsService>(
+                client =>
+                {
+                    var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
+                    var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
+                    client.BaseAddress = new Uri(notificationsConfig.ApiBaseUrl);
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
+                    client.DefaultRequestHeaders.Add("accept", "application/json");
+                });
+
+            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
-            //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
             return services.BuildServiceProvider();
         }
