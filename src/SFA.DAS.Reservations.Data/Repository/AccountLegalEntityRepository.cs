@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Entities;
 
@@ -11,10 +12,12 @@ namespace SFA.DAS.Reservations.Data.Repository
     public class AccountLegalEntityRepository : IAccountLegalEntityRepository
     {
         private readonly IReservationsDataContext _dataContext;
+        private readonly ILogger<AccountLegalEntityRepository> _log;
 
-        public AccountLegalEntityRepository(IReservationsDataContext dataContext)
+        public AccountLegalEntityRepository(IReservationsDataContext dataContext, ILogger<AccountLegalEntityRepository> log)
         {
             _dataContext = dataContext;
+            _log = log;
         }
 
         public async Task Add(AccountLegalEntity accountLegalEntity)
@@ -47,6 +50,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                     if (e.GetBaseException() is SqlException sqlException
                         && (sqlException.Number == 2601 || sqlException.Number == 2627))
                     {
+                        _log.LogWarning($"AccountLegalEntityRepository: Rolling back Id:{accountLegalEntity.AccountLegalEntityId} - item already exists.");
                         transaction.Rollback();
                     }
                 }

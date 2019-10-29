@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
@@ -54,7 +55,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
                 .ReturnsDbSet(new List<AccountLegalEntity>());
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object);
+            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
 
             //Act
             await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
@@ -83,7 +84,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
                 .ReturnsDbSet(new List<AccountLegalEntity>{ expectedAccountLegalEntity });
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object);
+            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
 
             //Act
             await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
