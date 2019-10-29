@@ -34,8 +34,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             //Arrange
             var reservations = new List<ReservationIndex>
             {
-                new ReservationIndex {Id = Guid.NewGuid(), Status = 1},
-                new ReservationIndex {Id = Guid.NewGuid(), Status = 1}
+                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1},
+                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1}
             };
 
             //Act
@@ -54,8 +54,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             //Arrange
             var reservations = new List<ReservationIndex>
             {
-                new ReservationIndex {Id = Guid.NewGuid(), Status = 1},
-                new ReservationIndex {Id = Guid.NewGuid(), Status = 1}
+                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1},
+                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1}
             };
 
             //Act
@@ -69,7 +69,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         public async Task ThenWillIndexASingleReservation()
         {
             //Arrange
-            var reservation = new ReservationIndex {Id = Guid.NewGuid(), Status = 1};
+            var reservation = new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1};
 
             //Act
             await _repository.Add(reservation);
@@ -83,7 +83,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         public async Task ThenWillIndexASingleReservationToCorrectIndex()
         {
             //Arrange
-            var reservation = new ReservationIndex {Id = Guid.NewGuid(), Status = 1};
+            var reservation = new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1};
 
             //Act
             await _repository.Add(reservation);

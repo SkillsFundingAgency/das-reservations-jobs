@@ -57,9 +57,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(repo => repo.Add(It.Is<IEnumerable<ReservationIndex>>(collection => 
-                collection.Any(r => r.Id.Equals(_expectedReservations.First().Id) && 
+                collection.Any(r => r.ReservationId.Equals(_expectedReservations.First().Id) && 
                                     r.Status.Equals(_expectedReservations.First().Status)) &&
-                collection.Any(r => r.Id.Equals(_expectedReservations.Skip(1).First().Id) && 
+                collection.Any(r => r.ReservationId.Equals(_expectedReservations.Skip(1).First().Id) && 
                                     r.Status.Equals(_expectedReservations.Skip(1).First().Status)) &&
                 collection.Count().Equals(2))), Times.Once);
         }
@@ -140,28 +140,28 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(firstReservationId) &&
+                    r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(firstReservationId) &&
+                    r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(secondReservationId) &&
+                    r.ReservationId.Equals(secondReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                        r.Id.Equals(secondReservationId) &&
+                        r.ReservationId.Equals(secondReservationId) &&
                         r.AccountId.Equals(1) &&
                         r.ProviderId.Value.Equals(2) &&
                         r.AccountLegalEntityId.Equals(1)))));
@@ -194,14 +194,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(firstReservationId) &&
+                    r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(firstReservationId) &&
+                    r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
@@ -254,7 +254,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(firstReservationId) &&
+                    r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
@@ -283,7 +283,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
                 rIndex.Any(r =>
-                    r.Id.Equals(firstReservationId) &&
+                    r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));

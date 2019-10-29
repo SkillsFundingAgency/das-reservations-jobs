@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
                 if (reservation == null)
                 {
-                    throw new InvalidOperationException($"Reservation not found in database with Id: {reservationId}");
+                    throw new InvalidOperationException($"Reservation not found in database with ReservationId: {reservationId}");
                 }
 
                 reservation.Status = (short)status;

@@ -27,7 +27,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             }
             else
             {
-                log.LogInformation($"No reservation set to pending, no reservation Id provided");
+                log.LogInformation($"No reservation set to pending, no reservation ReservationId provided");
             }
 
         }

@@ -10,7 +10,7 @@ namespace SFA.DAS.Reservations.Data.Configuration
             builder.ToTable("Reservation");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("uniqueidentifier").IsRequired();
+            builder.Property(x => x.Id).HasColumnName(@"ReservationId").HasColumnType("uniqueidentifier").IsRequired();
             builder.Property(x => x.Status).HasColumnName(@"Status").HasColumnType("tinyint").IsRequired();
         }
     }

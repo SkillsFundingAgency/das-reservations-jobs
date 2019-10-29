@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Amqp.Serialization;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
@@ -85,7 +84,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         {
             return new ReservationIndex
             {
-                Id = entity.Id,
+                ReservationId = entity.Id,
                 Status = entity.Status,
                 AccountId = entity.AccountId,
                 AccountLegalEntityId = entity.AccountLegalEntityId,

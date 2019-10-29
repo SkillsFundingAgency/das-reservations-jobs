@@ -31,8 +31,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             //Arrange
             var reservations = new List<ReservationIndex>
             {
-                new ReservationIndex {Id = Guid.NewGuid(), Status = 1},
-                new ReservationIndex {Id = Guid.NewGuid(), Status = 1}
+                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1},
+                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1}
             };
 
             //Act
