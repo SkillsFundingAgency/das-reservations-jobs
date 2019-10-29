@@ -85,10 +85,19 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             return new ReservationIndex
             {
                 ReservationId = entity.Id,
-                Status = entity.Status,
                 AccountId = entity.AccountId,
+                IsLevyAccount = entity.IsLevyAccount,
+                CreatedDate =entity. CreatedDate,
+                StartDate = entity.StartDate,
+                ExpiryDate = entity.ExpiryDate,
+                Status = entity.Status,
+                CourseId = entity.CourseId,
+                Course = entity.Course,
                 AccountLegalEntityId = entity.AccountLegalEntityId,
-                ProviderId = entity.ProviderId
+                ProviderId = entity.ProviderId,
+                AccountLegalEntityName = entity.AccountLegalEntityName,
+                TransferSenderAccountId = entity.TransferSenderAccountId,
+                UserId = entity.UserId
             };
         }
     }
