@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Data.Configuration
 
             builder.Property(x => x.AccountId).HasColumnName(@"AccountId").HasColumnType("bigint").IsRequired();
             builder.Property(x => x.AccountLegalEntityId).HasColumnName(@"AccountLegalEntityId").HasColumnType("bigint").IsRequired();
-            builder.Property(x => x.ProviderId).HasColumnName(@"ProviderId").HasColumnType("bigint").IsRequired();
+            builder.Property(x => x.ProviderId).HasColumnName(@"Ukprn").HasColumnType("bigint").IsRequired();
             builder.Property(x => x.CanCreateCohort).HasColumnName(@"CanCreateCohort").HasColumnType("bit").IsRequired();
         }
     }
