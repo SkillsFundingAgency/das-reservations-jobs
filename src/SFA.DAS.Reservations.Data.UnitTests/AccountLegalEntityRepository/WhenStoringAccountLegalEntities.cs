@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
@@ -53,7 +55,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
                 .ReturnsDbSet(new List<AccountLegalEntity>());
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object);
+            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
 
             //Act
             await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
@@ -61,6 +63,34 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
             //Assert 
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
             _dbContextTransaction.Verify(x => x.Commit(), Times.Once);
+        }
+
+        [Test]
+        public async Task Then_The_Item_Is_Not_Saved_If_It_Already_Exists()
+        {
+            //Arrange
+            var expectedAccountLegalEntity = new AccountLegalEntity
+            {
+                Id = Guid.NewGuid(),
+                ReservationLimit = 1,
+                AccountId = 1234,
+                LegalEntityId = 543,
+                AccountLegalEntityId = 5677,
+                AgreementSigned = true,
+                AccountLegalEntityName = "Test"
+            };
+
+            _dataContext.Setup(x => x.AccountLegalEntities)
+                .ReturnsDbSet(new List<AccountLegalEntity>{ expectedAccountLegalEntity });
+            _dataContext.Setup(x => x.Database)
+                .Returns(_dataFacade.Object);
+            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
+
+            //Act
+            await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
+
+            //Assert 
+            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }
 
     }
