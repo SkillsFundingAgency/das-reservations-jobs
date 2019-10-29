@@ -13,7 +13,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
     {
         [FunctionName("IndexRefresh")]
         [return: Queue(QueueNames.RefreshReservationIndex)]
-        public static string Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, [Inject]ILogger<ReservationIndexRefreshHandler> log, [Inject]IReservationIndexRefreshHandler handler)
+        public static string Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [Inject]ILogger<ReservationIndexRefreshHandler> log, [Inject]IReservationIndexRefreshHandler handler)
         {
             log.LogInformation("C# RefreshIndexHttp trigger function processed a request.");
 
