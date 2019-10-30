@@ -18,26 +18,6 @@ namespace SFA.DAS.Reservations.Domain.Entities
         public string AccountLegalEntityName { get; set; }
         public long? TransferSenderAccountId { get; set; }
         public Guid? UserId { get; set; }
-
-        public Reservation Clone()
-        {
-            return new Reservation
-            {
-                Id = Id,
-                AccountId = AccountId,
-                IsLevyAccount = IsLevyAccount,
-                CreatedDate = CreatedDate,
-                StartDate = StartDate,
-                ExpiryDate = ExpiryDate,
-                Status = Status,
-                CourseId = CourseId,
-                Course = Course,
-                AccountLegalEntityId = AccountLegalEntityId,
-                ProviderId = ProviderId,
-                AccountLegalEntityName = AccountLegalEntityName,
-                TransferSenderAccountId = TransferSenderAccountId,
-                UserId = UserId
-            };
-        }
+    
     }
 }

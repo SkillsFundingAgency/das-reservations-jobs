@@ -1,5 +1,4 @@
 ﻿using System;
-using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
@@ -14,8 +13,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public DateTime? StartDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public short Status { get; set; }
-        public string CourseId { get; set; }
-        public virtual Course Course{ get; set; }
+        public string CourseName{ get; set; }
         public long AccountLegalEntityId { get; set; }
         public uint? ProviderId { get; set; }
         public string AccountLegalEntityName { get; set; }
