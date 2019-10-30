@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -11,7 +12,7 @@ using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
 {
-    public class WhenGettingAllReservations
+    public class WhenGettingAllNonLevyReservations
     {
         private Data.Repository.ReservationRepository _reservationRepository;
         private Mock<IReservationsDataContext> _dataContext;
@@ -25,9 +26,11 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         {
             _expectedReservations = new List<Reservation>
             {
-                new Reservation { Id = Guid.NewGuid(), Status = 1 },
-                new Reservation { Id = Guid.NewGuid(), Status = 1 },
-                new Reservation { Id = Guid.NewGuid(), Status = 1 }
+                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = true, AccountLegalEntityId = 2},
+                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 2},
+                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 2},
+                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 1},
+                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = true, AccountLegalEntityId = 1}
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -43,13 +46,16 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         }
 
         [Test]
-        public void ThenReturnsAllReservations()
+        public void ThenReturnsAllNonLevyReservationsForAccountLegalEntity()
         {
+            //Arrange
+            var expectedAccountLegalEntityId = 2;
+
             //Act
-            var reservations = _reservationRepository.GetAll();
+            var reservations = _reservationRepository.GetAllNonLevyForAccountLegalEntity(expectedAccountLegalEntityId);
 
             //Assert 
-            reservations.Should().BeEquivalentTo(_expectedReservations);
+            reservations.Should().BeEquivalentTo(_expectedReservations.Where(x => !x.IsLevyAccount && x.AccountLegalEntityId.Equals(expectedAccountLegalEntityId)));
         }
     }
 }

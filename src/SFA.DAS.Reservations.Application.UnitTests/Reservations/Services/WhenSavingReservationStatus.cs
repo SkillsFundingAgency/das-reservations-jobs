@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -21,7 +22,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _service = new ReservationService(
                 _repository.Object, 
                 Mock.Of<IReservationIndexRepository>(), 
-                Mock.Of<IProviderPermissionsRepository>());
+                Mock.Of<IProviderPermissionsRepository>(), 
+                Mock.Of<ILogger<ReservationService>>());
         }
 
         [Test]

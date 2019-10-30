@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -45,10 +46,10 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ProviderPermissionsRepo
         public void ThenReturnsAllReservations()
         {
             //Act
-            var reservations = _permissionsRepository.GetAll();
+            var reservations = _permissionsRepository.GetAllWithCreateCohortPermission();
 
             //Assert 
-            reservations.Should().BeEquivalentTo(_expectedPermissions);
+            reservations.Should().BeEquivalentTo(_expectedPermissions.Where(c=>c.CanCreateCohort));
         }
     }
 }

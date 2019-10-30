@@ -5,7 +5,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
 {
     public class ReservationIndex
     {
-        public string Id => $@"{ProviderId}_{AccountLegalEntityId}_{ReservationId}";
+        public string Id => $"{IndexedProviderId}_{AccountLegalEntityId}_{ReservationId}";
         
         public Guid ReservationId { get; set; }
         public long AccountId { get; set; }
@@ -21,5 +21,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public string AccountLegalEntityName { get; set; }
         public long? TransferSenderAccountId { get; set; }
         public Guid? UserId { get; set; }
+        public uint IndexedProviderId { get; set; }
     }
 }

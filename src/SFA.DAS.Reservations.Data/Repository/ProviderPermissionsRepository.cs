@@ -14,9 +14,9 @@ namespace SFA.DAS.Reservations.Data.Repository
             _context = context;
         }
 
-        public IEnumerable<ProviderPermission> GetAll()
+        public IEnumerable<ProviderPermission> GetAllWithCreateCohortPermission()
         {
-            return _context.ProviderPermissions.ToArray();
+            return _context.ProviderPermissions.Where(c=>c.CanCreateCohort).ToArray();
         }
     }
 }

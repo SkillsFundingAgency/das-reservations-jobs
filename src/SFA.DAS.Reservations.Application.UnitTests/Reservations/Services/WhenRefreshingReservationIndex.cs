@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -20,6 +21,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         private Mock<IProviderPermissionsRepository> _permissionsRepository;
 
         private List<Reservation> _expectedReservations;
+        private Mock<ILogger<ReservationService>> _logger;
 
         [SetUp]
         public void Arrange()
@@ -27,16 +29,23 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _repository = new Mock<IReservationRepository>();
             _indexRepository = new Mock<IReservationIndexRepository>();
             _permissionsRepository = new Mock<IProviderPermissionsRepository>();
-
-            _service = new ReservationService(_repository.Object, _indexRepository.Object, _permissionsRepository.Object);
+            _logger = new Mock<ILogger<ReservationService>>();
 
             _expectedReservations = new List<Reservation>
             {
-                new Reservation{ Id = Guid.NewGuid() },
-                new Reservation{ Id = Guid.NewGuid() }
+                new Reservation{ Id = Guid.NewGuid(), AccountLegalEntityId = 1},
+                new Reservation{ Id = Guid.NewGuid(), AccountLegalEntityId = 1 }
             };
 
-            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Returns(_expectedReservations);
+
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
+            {
+                new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
+                new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
+            });
+
+            _service = new ReservationService(_repository.Object, _indexRepository.Object, _permissionsRepository.Object, _logger.Object);
         }
 
         [Test]
@@ -46,22 +55,27 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _repository.Verify(r => r.GetAll(), Times.Once);
+            _repository.Verify(r => r.GetAllNonLevyForAccountLegalEntity(1), Times.Exactly(2));
         }
 
         [Test]
         public async Task ThenAllReservationsWillBeIndexed()
         {
+            //Arrange
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
+            {
+                new ProviderPermission {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 1, CanCreateCohort = true}
+            });
+
             //Act
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(repo => repo.Add(It.Is<IEnumerable<ReservationIndex>>(collection => 
-                collection.Any(r => r.ReservationId.Equals(_expectedReservations.First().Id) && 
-                                    r.Status.Equals(_expectedReservations.First().Status)) &&
-                collection.Any(r => r.ReservationId.Equals(_expectedReservations.Skip(1).First().Id) && 
-                                    r.Status.Equals(_expectedReservations.Skip(1).First().Status)) &&
-                collection.Count().Equals(2))), Times.Once);
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+                rIndex.Any(r => r.Id.Equals($"1_1_{_expectedReservations.First().Id}")))));
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+                rIndex.Any(r => r.Id.Equals($"1_1_{_expectedReservations.Skip(1).First().Id}")))));
+
         }
 
         [Test]
@@ -75,23 +89,27 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test]
-        public async Task ThenIfNoReservationsReturnedIndexingWillBeSkipped()
+        public async Task ThenIfNoReservationsReturnedIndexingWillBeCreated()
         {
             //Arrange
-            _repository.Setup(x => x.GetAll()).Returns(new List<Reservation>());
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Returns(new List<Reservation>());
 
             //Act
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Never);
+            _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
         }
 
         [Test]
         public void ThenIfExceptionIsThrownFromGettingReservationsIndexingWillBeSkipped()
         {
             //Arrange
-            _repository.Setup(x => x.GetAll()).Throws(new Exception("Test"));
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
+            {
+                new ProviderPermission {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 1, CanCreateCohort = true}
+            });
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Throws(new Exception("Test"));
 
             //Act
             Assert.ThrowsAsync<Exception>(() => _service.RefreshReservationIndex());
@@ -121,11 +139,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _expectedReservations = new List<Reservation>
             {
                 new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
-                new Reservation {Id = secondReservationId, AccountId = 1, ProviderId = 2, AccountLegalEntityId = 1}
+                new Reservation {Id = secondReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
             };
-            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
-            _permissionsRepository.Setup(r => r.GetAll()).Returns(new List<ProviderPermission>
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
             {
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
@@ -139,32 +157,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(4))));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
-                rIndex.Any(r =>
-                    r.ReservationId.Equals(firstReservationId) &&
-                    r.AccountId.Equals(1) &&
-                    r.ProviderId.Value.Equals(1) &&
-                    r.AccountLegalEntityId.Equals(1)))));
-
+                rIndex.Any(r => r.Id.Equals($"1_1_{firstReservationId}")))));
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
-                rIndex.Any(r =>
-                    r.ReservationId.Equals(firstReservationId) &&
-                    r.AccountId.Equals(1) &&
-                    r.ProviderId.Value.Equals(1) &&
-                    r.AccountLegalEntityId.Equals(1)))));
-
+                rIndex.Any(r => r.Id.Equals($"2_1_{firstReservationId}")))));
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
-                rIndex.Any(r =>
-                    r.ReservationId.Equals(secondReservationId) &&
-                    r.AccountId.Equals(1) &&
-                    r.ProviderId.Value.Equals(1) &&
-                    r.AccountLegalEntityId.Equals(1)))));
-
+                rIndex.Any(r => r.Id.Equals($"1_1_{secondReservationId}")))));
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
-                rIndex.Any(r =>
-                        r.ReservationId.Equals(secondReservationId) &&
-                        r.AccountId.Equals(1) &&
-                        r.ProviderId.Value.Equals(2) &&
-                        r.AccountLegalEntityId.Equals(1)))));
+                rIndex.Any(r => r.Id.Equals($"2_1_{secondReservationId}")))));
+
+            
         }
 
         [Test]
@@ -177,9 +178,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             {
                 new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
             };
-            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
-            _permissionsRepository.Setup(r => r.GetAll()).Returns(new List<ProviderPermission>
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
             {
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
@@ -208,13 +210,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test]
-        public async Task ThenNoCopiesAreCreatedIfNoReservationsExist()
+        public async Task Then_The_IndexIs_Still_Created_If_There_Are_No_Matching_Reservations()
         {
             //Arrange
             _expectedReservations = new List<Reservation>();
-            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
-            _permissionsRepository.Setup(r => r.GetAll()).Returns(new List<ProviderPermission>
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
             {
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
@@ -224,7 +227,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Never());
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once());
         }
 
         [Test]
@@ -237,9 +240,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             {
                 new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
             };
-            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
-            _permissionsRepository.Setup(r => r.GetAll()).Returns(new List<ProviderPermission>
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>
             {
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
                 new ProviderPermission {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 2, CanCreateCohort = true}
@@ -261,7 +265,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test]
-        public async Task ThenNoProvidersPermissionsAreFoundNoCopiesAreCreated()
+        public async Task Then_No_Provider_Permissions_Creates_Empty_Item_Index()
         {
             //Arrange
             var firstReservationId = Guid.NewGuid();
@@ -270,23 +274,18 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             {
                 new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
             };
-            _repository.Setup(x => x.GetAll()).Returns(_expectedReservations);
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
-            _permissionsRepository.Setup(r => r.GetAll()).Returns(new List<ProviderPermission>());
+            _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<ProviderPermission>());
 
             //Act
             await _service.RefreshReservationIndex();
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
+                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(0))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
-                rIndex.Any(r =>
-                    r.ReservationId.Equals(firstReservationId) &&
-                    r.AccountId.Equals(1) &&
-                    r.ProviderId.Value.Equals(1) &&
-                    r.AccountLegalEntityId.Equals(1)))));
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
         }
 
     }

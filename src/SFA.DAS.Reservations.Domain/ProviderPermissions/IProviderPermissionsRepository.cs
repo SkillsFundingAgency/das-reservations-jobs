@@ -5,6 +5,6 @@ namespace SFA.DAS.Reservations.Domain.ProviderPermissions
 {
     public interface IProviderPermissionsRepository
     {
-        IEnumerable<ProviderPermission> GetAll();
+        IEnumerable<ProviderPermission> GetAllWithCreateCohortPermission();
     }
 }
