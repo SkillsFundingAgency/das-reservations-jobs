@@ -64,6 +64,7 @@
     "functionAppNameCourse": "[concat(variables('resourcePrefix'),'-refcrs-fa')]",
     "functionAppNameReservation": "[concat(variables('resourcePrefix'),'-rsrv-fa')]",
     "functionAppNameLegalEntities": "[concat(variables('resourcePrefix'),'-rsrv-le')]",
+    "functionAppNameProviderPermissions": "[concat(variables('resourcePrefix'),'-rsrv-prv')]",
     "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
   },
   "resources": [
@@ -472,6 +473,80 @@
           }
         }
       },
+
+      "dependsOn": [
+        "worker-app-service-plan",
+        "function-app-insights",
+        "storage-account"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "function-app-rsrv-prv",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "functionAppName": {
+            "value": "[variables('functionAppNameProviderPermissions')]"
+          },
+          "appServicePlanName": {
+            "value": "[variables('appServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[resourceGroup().name]"
+          },
+          "functionAppAppSettings": {
+            "value": [
+              {
+                "name": "ConfigurationStorageConnectionString",
+                "value": "[parameters('configurationStorageConnectionString')]"
+              },
+              {
+                "name": "ConfigNames",
+                "value": "[parameters('configNames')]"
+              },
+              {
+                "name": "EnvironmentName",
+                "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "Version",
+                "value": "[parameters('version')]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "AzureWebJobsDashboard",
+                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~2"
+              },
+              {
+                "name": "AppName",
+                "value": "das-reservations-jobs-reservation-index"
+              },
+              {
+                "name": "LoggingRedisConnectionString",
+                "value": "[parameters('loggingRedisConnectionString')]"
+              }
+            ]
+          }
+        }
+      },
+
       "dependsOn": [
         "worker-app-service-plan",
         "function-app-insights",
@@ -495,6 +570,10 @@
     "functionAppNameReservationIndex": {
       "type": "string",
       "value": "[variables('functionAppNameReservationIndex')]"
+    },
+    "functionAppNameProviderPermissions": {
+      "type": "string",
+      "value": "[variables('functionAppNameProviderPermissions')]"
     }
   }
 }
