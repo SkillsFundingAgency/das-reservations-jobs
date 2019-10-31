@@ -61,7 +61,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
             catch (Exception e)
             {
-                _logger.LogError("ReservationService: Unable to create new index", e);
+                _logger.LogError($"ReservationService: Unable to create new index: {e.Message}", e);
                 throw;
             }
         }
