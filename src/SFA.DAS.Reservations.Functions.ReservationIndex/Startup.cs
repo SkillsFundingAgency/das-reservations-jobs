@@ -87,6 +87,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
 
+
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
             services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
@@ -99,6 +100,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
             services.AddTransient<IIndexRegistry,IndexRegistry>();
 
             services.AddElasticSearch(config);
+            services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
 
             services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
