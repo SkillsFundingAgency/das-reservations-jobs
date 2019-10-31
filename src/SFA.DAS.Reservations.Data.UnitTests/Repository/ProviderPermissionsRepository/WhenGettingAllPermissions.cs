@@ -13,7 +13,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ProviderPermissionsRepo
 {
     public class WhenGettingAllPermissions
     {
-        private Data.Repository.ProviderPermissionsRepository _permissionsRepository;
+        private Data.Repository.ProviderPermissionRepository _permissionsRepository;
         private Mock<IReservationsDataContext> _dataContext;
         private Mock<DatabaseFacade> _dataFacade;
         private Mock<DbContext> _dbContext;
@@ -39,7 +39,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ProviderPermissionsRepo
             _dataContext.Setup(x => x.ProviderPermissions).ReturnsDbSet(_expectedPermissions);
             _dataContext.Setup(x => x.Database).Returns(_dataFacade.Object);
 
-            _permissionsRepository = new Data.Repository.ProviderPermissionsRepository(_dataContext.Object);
+            _permissionsRepository = new Data.Repository.ProviderPermissionRepository(_dataContext.Object);
         }
 
         [Test]

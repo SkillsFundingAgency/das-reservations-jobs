@@ -13,11 +13,11 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
     {
         private readonly IReservationRepository _repository;
         private readonly IReservationIndexRepository _indexRepository;
-        private readonly IProviderPermissionsRepository _permissionsRepository;
+        private readonly IProviderPermissionRepository _permissionsRepository;
         private readonly ILogger<ReservationService> _logger;
 
         public ReservationService(IReservationRepository repository, IReservationIndexRepository indexRepository,
-            IProviderPermissionsRepository permissionsRepository, ILogger<ReservationService> logger)
+            IProviderPermissionRepository permissionsRepository, ILogger<ReservationService> logger)
         {
             _repository = repository;
             _indexRepository = indexRepository;

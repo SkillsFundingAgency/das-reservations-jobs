@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SFA.DAS.Reservations.Data.Configuration
 {
-    public class ProviderPermission  : IEntityTypeConfiguration<Domain.Entities.ProviderPermission>
+    public class ProviderPermission : IEntityTypeConfiguration<Domain.Entities.ProviderPermission>
     {
         public void Configure(EntityTypeBuilder<Domain.Entities.ProviderPermission> builder)
         {

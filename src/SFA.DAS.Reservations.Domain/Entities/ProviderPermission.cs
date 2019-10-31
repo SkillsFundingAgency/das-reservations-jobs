@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.Reservations.Domain.Entities
+﻿using System;
+
+namespace SFA.DAS.Reservations.Domain.Entities
 {
     public class ProviderPermission
     {
