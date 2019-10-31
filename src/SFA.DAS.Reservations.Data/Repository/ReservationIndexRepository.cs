@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nest;
 using SFA.DAS.Reservations.Data.Registry;
+using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
     public class ReservationIndexRepository : IReservationIndexRepository
     {
-        public const string IndexNamePrefix = "reservations-";
+        public string IndexNamePrefix { get; }
 
         private readonly IElasticClient _client;
         private readonly IIndexRegistry _registry;
 
-        public ReservationIndexRepository(IElasticClient client, IIndexRegistry registry)
+        public ReservationIndexRepository(IElasticClient client, IIndexRegistry registry, ReservationJobsEnvironment environment)
         {
+            IndexNamePrefix = $"{environment.EnvironmentName}-reservations-";
             _client = client;
             _registry = registry;
         }

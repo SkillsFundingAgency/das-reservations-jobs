@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Moq;
 using Nest;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.Registry;
-using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Domain.Configuration;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexRepository
 {
@@ -22,24 +18,17 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         {
             _clientMock = new Mock<IElasticClient>();
             _registryMock = new Mock<IIndexRegistry>();
-            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object);
+            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
         }
 
         [Test]
         public async Task ThenWillIndexManyReservationAtOnce()
         {
-            //Arrange
-            var reservations = new List<ReservationIndex>
-            {
-                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1},
-                new ReservationIndex {ReservationId = Guid.NewGuid(), Status = 1}
-            };
-
             //Act
             await _repository.CreateIndex();
 
             //Assert
-            _registryMock.Verify(r => r.Add(It.Is<string>(s => s.StartsWith(Data.Repository.ReservationIndexRepository.IndexNamePrefix))), Times.Once);
+            _registryMock.Verify(r => r.Add(It.Is<string>(s => s.StartsWith(_repository.IndexNamePrefix))), Times.Once);
         }
     }
 }

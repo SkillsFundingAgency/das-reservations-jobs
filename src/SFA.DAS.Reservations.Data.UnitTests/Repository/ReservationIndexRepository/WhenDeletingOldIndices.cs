@@ -3,6 +3,7 @@ using Moq;
 using Nest;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.Registry;
+using SFA.DAS.Reservations.Domain.Configuration;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexRepository
 {
@@ -17,7 +18,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         {
             _clientMock = new Mock<IElasticClient>();
             _registryMock = new Mock<IIndexRegistry>();
-            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object);
+            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
         }
 
         [Test]

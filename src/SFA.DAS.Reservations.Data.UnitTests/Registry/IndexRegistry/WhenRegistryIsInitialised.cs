@@ -4,6 +4,7 @@ using Moq;
 using Nest;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.Registry;
+using SFA.DAS.Reservations.Domain.Configuration;
 using IElasticClient = Nest.IElasticClient;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Registry.IndexRegistry
@@ -17,7 +18,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry.IndexRegistry
             var clientMock = new Mock<IElasticClient>();
 
             //Act
-            var registry = new Data.Registry.IndexRegistry(clientMock.Object);
+            new Data.Registry.IndexRegistry(clientMock.Object, new ReservationJobsEnvironment("LOCAL"));
 
             //Assert
             clientMock.Verify(c => c.Search(
@@ -48,7 +49,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry.IndexRegistry
 
 
             //Act
-            var registry = new Data.Registry.IndexRegistry(clientMock.Object);
+            var registry = new Data.Registry.IndexRegistry(clientMock.Object, new ReservationJobsEnvironment("LOCAL"));
 
             //Assert
             Assert.AreEqual(latestEntry.Name, registry.CurrentIndexName);
@@ -68,7 +69,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry.IndexRegistry
 
 
             //Act
-            var registry = new Data.Registry.IndexRegistry(clientMock.Object);
+            var registry = new Data.Registry.IndexRegistry(clientMock.Object, new ReservationJobsEnvironment("LOCAL"));
 
             //Assert
             Assert.IsNull(registry.CurrentIndexName);
