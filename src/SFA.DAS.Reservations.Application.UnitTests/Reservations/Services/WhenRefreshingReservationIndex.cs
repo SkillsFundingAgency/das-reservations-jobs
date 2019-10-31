@@ -98,7 +98,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
+            _indexRepository.Verify(repo => repo.Add(It.Is<IEnumerable<ReservationIndex>>(c=>!c.Any())), Times.Once);
         }
 
         [Test]
@@ -231,7 +231,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test]
-        public async Task ThenNoCopiesAreCreatedForProvidersWhoHavePermissionsWithAnotherLegalEntity()
+        public async Task Then_Only_Reservations_For_Provider_With_Permissions_Are_Indexed()
         {
             //Arrange
             var firstReservationId = Guid.NewGuid();
@@ -262,6 +262,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
+            
         }
 
         [Test]
