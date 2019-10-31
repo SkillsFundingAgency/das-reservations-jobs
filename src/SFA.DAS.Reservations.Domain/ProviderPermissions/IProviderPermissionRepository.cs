@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Domain.ProviderPermissions
 {
     public interface IProviderPermissionRepository
     {
-        Task Add(Entities.ProviderPermission permission);
+        Task Add(ProviderPermission permission);
+        IEnumerable<ProviderPermission> GetAllWithCreateCohortPermission();
     }
 }

@@ -74,7 +74,7 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
             {
                 AccountId = updateEvent.AccountId,
                 AccountLegalEntityId = updateEvent.AccountLegalEntityId,
-                UkPrn = updateEvent.Ukprn,
+                ProviderId = updateEvent.Ukprn,
                 CanCreateCohort = updateEvent.GrantedOperations?.Contains(Operation.CreateCohort) ?? false
             };
         }

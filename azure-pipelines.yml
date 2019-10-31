@@ -65,6 +65,14 @@ steps:
     publishWebProjects: false
     projects: 'src/SFA.DAS.Reservations.Functions.LegalEntities/SFA.DAS.Reservations.Functions.LegalEntities.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+  
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App ReservationIndex'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.Reservations.Functions.ReservationIndex/SFA.DAS.Reservations.Functions.ReservationIndex.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'

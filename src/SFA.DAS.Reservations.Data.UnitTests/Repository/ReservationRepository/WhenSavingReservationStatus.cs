@@ -11,11 +11,11 @@ using SFA.DAS.Reservations.Domain.Reservations;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 
-namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
 {
     public class WhenSavingReservationStatus
     {
-        private Repository.ReservationRepository _reservationRepository;
+        private Data.Repository.ReservationRepository _reservationRepository;
         private Mock<IReservationsDataContext> _dataContext;
         private Mock<DatabaseFacade> _dataFacade;
         private Mock<DbContext> _dbContext;
@@ -48,7 +48,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ReservationRepository
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
 
-            _reservationRepository = new Repository.ReservationRepository(_dataContext.Object);
+            _reservationRepository = new Data.Repository.ReservationRepository(_dataContext.Object);
         }
 
         [Test]

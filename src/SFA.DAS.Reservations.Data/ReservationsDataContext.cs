@@ -24,6 +24,7 @@ namespace SFA.DAS.Reservations.Data
         public DbSet<Course> Apprenticeships { get; set; }
         public DbSet<AccountLegalEntity> AccountLegalEntities { get; set; }
         public DbSet<ProviderPermission> ProviderPermissions { get; set; }
+
         public ReservationsDataContext()
         {
         }

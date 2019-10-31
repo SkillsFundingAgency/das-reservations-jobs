@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             }
             else
             {
-                log.LogInformation($"No reservation confirmed, no reservation Id provided");
+                log.LogInformation($"No reservation confirmed, no reservation ReservationId provided");
             }
         }
     }

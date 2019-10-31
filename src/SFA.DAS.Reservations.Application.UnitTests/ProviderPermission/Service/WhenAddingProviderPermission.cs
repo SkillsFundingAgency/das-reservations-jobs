@@ -43,7 +43,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
             _repo.Verify(s => s.Add(It.Is<Domain.Entities.ProviderPermission>(p => 
                 p.AccountId.Equals(permissionEvent.AccountId) &&
                 p.AccountLegalEntityId.Equals(permissionEvent.AccountLegalEntityId) &&
-                p.UkPrn.Equals(permissionEvent.Ukprn) &&
+                p.ProviderId.Equals(permissionEvent.Ukprn) &&
                 p.CanCreateCohort)), Times.Once);
         }
 

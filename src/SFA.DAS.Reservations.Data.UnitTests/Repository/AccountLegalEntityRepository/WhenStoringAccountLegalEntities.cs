@@ -14,11 +14,11 @@ using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepository
 {
     public class WhenStoringAccountLegalEntities
     {
-        private Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
+        private Data.Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
         private Mock<IReservationsDataContext> _dataContext;
         private Mock<DatabaseFacade> _dataFacade;
         private Mock<DbContext> _dbContext;
@@ -55,7 +55,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
                 .ReturnsDbSet(new List<AccountLegalEntity>());
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
 
             //Act
             await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);
@@ -84,7 +84,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
                 .ReturnsDbSet(new List<AccountLegalEntity>{ expectedAccountLegalEntity });
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
 
             //Act
             await _accountLegalEntityRepository.Add(expectedAccountLegalEntity);

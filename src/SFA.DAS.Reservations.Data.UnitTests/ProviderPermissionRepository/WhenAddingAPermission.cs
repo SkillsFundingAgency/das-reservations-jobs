@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
 {
     public class WhenAddingAPermission
     {
-        private Repository.ProviderPermissionRepository _providerPermissionRepository;
+        private Data.Repository.ProviderPermissionRepository _providerPermissionRepository;
         private Mock<IReservationsDataContext> _dataContext;
         private Mock<DatabaseFacade> _dataFacade;
         private Mock<DbContext> _dbContext;
@@ -28,7 +27,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
             {
                 AccountId = 1,
                 AccountLegalEntityId = 2,
-                UkPrn = 3,
+                ProviderId = 3,
                 CanCreateCohort = true
             };
 
@@ -45,13 +44,13 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
             _dataContext.Setup(x => x.ProviderPermissions.AddAsync(It.IsAny<ProviderPermission>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((EntityEntry<ProviderPermission>) null);
             
-            _dataContext.Setup(x => x.ProviderPermissions.FindAsync(expectedPermission.AccountId, expectedPermission.AccountLegalEntityId, expectedPermission.UkPrn))
+            _dataContext.Setup(x => x.ProviderPermissions.FindAsync(expectedPermission.AccountId, expectedPermission.AccountLegalEntityId, expectedPermission.ProviderId))
                 .ReturnsAsync(expectedPermission);
 
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
 
-            _providerPermissionRepository = new Repository.ProviderPermissionRepository(_dataContext.Object);
+            _providerPermissionRepository = new Data.Repository.ProviderPermissionRepository(_dataContext.Object);
         }
 
         [Test]
@@ -62,7 +61,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
             {
                AccountId = 2,
                AccountLegalEntityId = 3,
-               UkPrn = 4,
+               ProviderId = 4,
                CanCreateCohort = true
             };
 
@@ -73,7 +72,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
             _dataContext.Verify(x=>x.ProviderPermissions.AddAsync(It.Is<ProviderPermission>(
                 c => c.AccountId.Equals(expectedPermission.AccountId) &&
                      c.AccountLegalEntityId.Equals(expectedPermission.AccountLegalEntityId) &&
-                     c.UkPrn.Equals(expectedPermission.UkPrn) &&
+                     c.ProviderId.Equals(expectedPermission.ProviderId) &&
                      c.CanCreateCohort.Equals(expectedPermission.CanCreateCohort)
                      ),It.IsAny<CancellationToken>()),Times.Once);
             
@@ -89,7 +88,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
             {
                 AccountId = 1,
                 AccountLegalEntityId = 2,
-                UkPrn = 3,
+                ProviderId = 3,
                 CanCreateCohort = true
             };
 
