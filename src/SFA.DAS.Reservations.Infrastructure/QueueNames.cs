@@ -10,6 +10,8 @@
         public const string SignedAgreement = "SFA.DAS.Reservations.Jobs.SignedAgreement";
         public const string DraftApprenticeshipDeleted = "SFA.DAS.Reservations.Jobs.ApprenticeshipDeleted";
         public const string LevyAddedToAccount = "SFA.DAS.Reservations.Jobs.LevyAddedToAccount";
-        public const string UpdatedProviderPermissions = "SFA.DAS.Reservations.Jobs.ProviderRelationshipsUpdated";
+		public const string UpdatedProviderPermissions = "SFA.DAS.Reservations.Jobs.ProviderRelationshipsUpdated";
+        public const string ReservationCreated = "SFA.DAS.Reservations.Jobs.ReservationCreated";
+        public const string ReservationDeleted = "SFA.DAS.Reservations.Jobs.ReservationDeleted";
     }
 }

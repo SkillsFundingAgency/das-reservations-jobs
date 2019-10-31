@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
             var handler = new Mock<ILevyAddedToAccountHandler>();
             var logger = new Mock<ILogger<LevyAddedToAccount>>();
             //Act
-            HandleLevyAddedToAccountEvent.Run(message, handler.Object,logger.Object);
+            await HandleLevyAddedToAccountEvent.Run(message, handler.Object,logger.Object);
 
             //Assert
             handler.Verify(x => x.Handle(message),Times.Once);
