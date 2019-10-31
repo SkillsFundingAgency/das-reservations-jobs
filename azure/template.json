@@ -54,9 +54,6 @@
     },
     "loggingRedisConnectionString": {
       "type": "securestring"
-    },
-    "elasticSearchConnectionString": {
-      "type": "securestring"
     }
   },
   "variables": {
@@ -466,10 +463,6 @@
               {
                 "name": "AppName",
                 "value": "das-reservations-jobs-reservation-index"
-              },
-              {
-                "name": "ElasticSearchConnectionString",
-                "value": "[parameters('elasticSearchConnectionString')]"
               },
               {
                 "name": "LoggingRedisConnectionString",
