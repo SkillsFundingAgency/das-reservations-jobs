@@ -39,7 +39,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         {
             try
             {
-                var permissions = _permissionsRepository.GetAllWithCreateCohortPermission()?.ToArray();
+                var permissions = _permissionsRepository.GetAllWithCreateCohortPermission()?.ToArray();//todo: why array instead of list?
                 var reservationIndexes = new List<IndexedReservation>();
 
                 if (permissions != null)
@@ -69,6 +69,11 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 _logger.LogError($"ReservationService: Unable to create new index: {e.Message}", e);
                 throw;
             }
+        }
+
+        public async Task UpdateReservationsIndex(IndexedReservation reservation)
+        {
+            throw new NotImplementedException();
         }
 
         private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)
