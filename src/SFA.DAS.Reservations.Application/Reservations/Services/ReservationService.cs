@@ -55,6 +55,11 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                     }
                 }
 
+                if (!reservationIndexes.Any())
+                {
+                    reservationIndexes.Add(new ReservationIndex());
+                }
+
                 await _indexRepository.CreateIndex();
 
                 await _indexRepository.Add(reservationIndexes);

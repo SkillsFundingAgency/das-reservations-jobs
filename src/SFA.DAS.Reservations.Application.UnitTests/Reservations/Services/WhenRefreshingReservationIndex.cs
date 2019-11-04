@@ -87,18 +87,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _indexRepository.Verify(r => r.CreateIndex(), Times.Once);
         }
 
-        [Test]
-        public async Task ThenIfNoReservationsReturnedIndexingWillBeCreated()
-        {
-            //Arrange
-            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Returns(new List<Reservation>());
-
-            //Act
-            await _service.RefreshReservationIndex();
-
-            //Assert
-            _indexRepository.Verify(repo => repo.Add(It.Is<IEnumerable<ReservationIndex>>(c=>!c.Any())), Times.Once);
-        }
 
         [Test]
         public void ThenIfExceptionIsThrownFromGettingReservationsIndexingWillBeSkipped()
@@ -263,6 +251,22 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                     r.AccountLegalEntityId.Equals(1)))));
             
         }
+        
+        [Test]
+        public async Task ThenIfNoReservationsReturnedIndexingWillBeCreated()
+        {
+            //Arrange
+            _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Returns(new List<Reservation>());
+
+            //Act
+            await _service.RefreshReservationIndex();
+
+            //Assert
+            _indexRepository.Verify(
+                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
+
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
+        }
 
         [Test]
         public async Task Then_No_Provider_Permissions_Creates_Empty_Item_Index()
@@ -283,7 +287,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(0))));
+                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
 
             _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
         }
