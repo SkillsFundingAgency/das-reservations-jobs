@@ -17,11 +17,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         public static async Task Run(
             [NServiceBusTrigger(EndPoint = QueueNames.ReservationCreated)] ReservationCreatedEvent message,
             [Inject] ILogger<ReservationCreatedEvent> log,
-            [Inject] INotifyEmployerOfReservationEventAction action)
+            [Inject] INotifyEmployerOfReservationEventAction notifyAction,
+            [Inject] IUpdateReservationIndexAction updateIndexAction)
         {
             log.LogInformation($"Reservation Created function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
 
-            await action.Execute<ReservationCreatedNotificationEvent>(message);
+            await notifyAction.Execute<ReservationCreatedNotificationEvent>(message);
+            await updateIndexAction.Execute(message);
 
             log.LogInformation($"Reservation Created function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
         }

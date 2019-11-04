@@ -12,20 +12,47 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
     public class WhenReservationCreatedEventTriggered
     {
         [Test, AutoData]
-        public async Task Then_Message_Handler_Called(ReservationCreatedEvent createdEvent)
+        public async Task Then_Notification_Action_Executed(
+            int courseLevel,
+            ReservationCreatedEvent createdEvent)
         {
             //Arrange
-            var handler = new Mock<INotifyEmployerOfReservationEventAction>();
+            createdEvent.CourseLevel = courseLevel.ToString();
+            var notifyAction = new Mock<INotifyEmployerOfReservationEventAction>();
+            var updateIndexAction = new Mock<IUpdateReservationIndexAction>();
 
             //Act
             await HandleReservationCreatedEvent.Run(
                 createdEvent, 
                 Mock.Of<ILogger<ReservationCreatedEvent>>(),
-                handler.Object);
+                notifyAction.Object,
+                updateIndexAction.Object);
 
             //Assert
-            handler.Verify(s => s.Execute(It.Is<ReservationCreatedNotificationEvent>(ev => 
+            notifyAction.Verify(s => s.Execute(It.Is<ReservationCreatedNotificationEvent>(ev => 
                 ev.Id == createdEvent.Id)), Times.Once);
+        }
+
+        [Test, AutoData]
+        public async Task Then_Update_Index_Action_Executed(
+            int courseLevel,
+            ReservationCreatedEvent createdEvent)
+        {
+            //Arrange
+            createdEvent.CourseLevel = courseLevel.ToString();
+            var notifyAction = new Mock<INotifyEmployerOfReservationEventAction>();
+            var updateIndexAction = new Mock<IUpdateReservationIndexAction>();
+
+            //Act
+            await HandleReservationCreatedEvent.Run(
+                createdEvent, 
+                Mock.Of<ILogger<ReservationCreatedEvent>>(),
+                notifyAction.Object,
+                updateIndexAction.Object);
+
+            //Assert
+            updateIndexAction.Verify(s => s.Execute(It.Is<ReservationIndex>(index => 
+                index.ReservationId == createdEvent.Id)), Times.Once);
         }
     }
 }

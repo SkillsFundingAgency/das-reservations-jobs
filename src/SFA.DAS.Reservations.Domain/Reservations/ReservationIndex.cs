@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
@@ -24,5 +25,23 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public long? TransferSenderAccountId { get; set; }
         public Guid? UserId { get; set; }
         public uint IndexedProviderId { get; set; }
+
+        public static implicit operator ReservationIndex(ReservationCreatedEvent source)
+        {
+            return new ReservationIndex            
+            {
+                ReservationId = source.Id,
+                AccountId = source.AccountId,
+                AccountLegalEntityId = source.AccountLegalEntityId,
+                AccountLegalEntityName = source.AccountLegalEntityName,
+                StartDate = source.StartDate,
+                ExpiryDate = source.EndDate,
+                CreatedDate = source.CreatedDate,
+                CourseId = source.CourseId,
+                CourseTitle = source.CourseName,
+                CourseLevel = int.Parse(source.CourseLevel),
+                ProviderId = source.ProviderId
+            };
+        }
     }
 }
