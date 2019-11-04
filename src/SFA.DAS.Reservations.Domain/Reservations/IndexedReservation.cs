@@ -3,7 +3,7 @@ using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
-    public class ReservationIndex
+    public class IndexedReservation
     {
         public string Id => $"{IndexedProviderId}_{AccountLegalEntityId}_{ReservationId}";
         
@@ -26,9 +26,9 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public Guid? UserId { get; set; }
         public uint IndexedProviderId { get; set; }
 
-        public static implicit operator ReservationIndex(ReservationCreatedEvent source)
+        public static implicit operator IndexedReservation(ReservationCreatedEvent source)
         {
-            return new ReservationIndex            
+            return new IndexedReservation            
             {
                 ReservationId = source.Id,
                 AccountId = source.AccountId,

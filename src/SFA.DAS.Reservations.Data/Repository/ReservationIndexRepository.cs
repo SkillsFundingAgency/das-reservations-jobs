@@ -22,14 +22,14 @@ namespace SFA.DAS.Reservations.Data.Repository
             _registry = registry;
         }
 
-        public async Task Add(IEnumerable<ReservationIndex> reservations)
+        public async Task Add(IEnumerable<IndexedReservation> reservations)
         {
             await _client.IndexManyAsync(reservations, _registry.CurrentIndexName);
         }
 
-        public async Task Add(ReservationIndex reservation) 
+        public async Task Add(IndexedReservation reservation) 
         {
-            await _client.IndexAsync(new IndexRequest<ReservationIndex>(reservation, _registry.CurrentIndexName));
+            await _client.IndexAsync(new IndexRequest<IndexedReservation>(reservation, _registry.CurrentIndexName));
         }
 
         public async Task DeleteIndices(uint daysOld)

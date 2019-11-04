@@ -4,6 +4,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
 {
     public interface IUpdateReservationIndexAction
     {
-        Task Execute(ReservationIndex reservationIndex);
+        Task Execute(IndexedReservation indexedReservation);
     }
 }

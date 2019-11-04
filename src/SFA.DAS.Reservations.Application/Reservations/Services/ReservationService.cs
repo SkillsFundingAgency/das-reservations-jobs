@@ -40,7 +40,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             try
             {
                 var permissions = _permissionsRepository.GetAllWithCreateCohortPermission()?.ToArray();
-                var reservationIndexes = new List<ReservationIndex>();
+                var reservationIndexes = new List<IndexedReservation>();
 
                 if (permissions != null)
                 {
@@ -71,9 +71,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
         }
 
-        private static ReservationIndex MapReservation(Reservation entity, uint indexedProviderId)
+        private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)
         {
-            return new ReservationIndex
+            return new IndexedReservation
             {
                 IndexedProviderId = indexedProviderId,
                 ReservationId = entity.Id,

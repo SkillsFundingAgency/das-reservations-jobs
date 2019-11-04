@@ -7,8 +7,8 @@ namespace SFA.DAS.Reservations.Domain.Reservations
     {
         Task CreateIndex();
 
-        Task Add(IEnumerable<ReservationIndex> reservations);
-        Task Add(ReservationIndex reservations);
+        Task Add(IEnumerable<IndexedReservation> reservations);
+        Task Add(IndexedReservation reservation);
         Task DeleteIndices(uint daysOld);
     }
 }

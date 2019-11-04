@@ -15,7 +15,7 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Reservations
         {
             source.CourseLevel = courseLevel.ToString();
 
-            ReservationIndex result = source;
+            IndexedReservation result = source;
 
             result.Should().BeEquivalentTo(source, options => 
                 options.ExcludingMissingMembers()
