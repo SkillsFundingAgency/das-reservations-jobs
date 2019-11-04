@@ -20,7 +20,6 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Reservations
             result.Should().BeEquivalentTo(source, options => 
                 options.ExcludingMissingMembers()
                     .Excluding(ev => ev.Id)
-                    .Excluding(ev => ev.CourseName)
                     .Excluding(ev => ev.CourseLevel));
         }
     }
