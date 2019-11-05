@@ -75,6 +75,10 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         {
             _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
         }
+        public async Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId)
+        {
+            await _indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
+        }
 
         private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)
         {
