@@ -39,8 +39,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         {
             try
             {
-                var permissions = _permissionsRepository.GetAllWithCreateCohortPermission()?.ToArray();//todo: why array instead of list?
-                var reservationIndexes = new List<IndexedReservation>();
+                var permissions = _permissionsRepository.GetAllWithCreateCohortPermission();
+                var indexedReservations = new List<IndexedReservation>();
 
                 if (permissions != null)
                 {
@@ -49,7 +49,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                         var matchingReservations = _repository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
                         if (matchingReservations != null && matchingReservations.Any())
                         {
-                            reservationIndexes.AddRange(matchingReservations.Select(c =>
+                            indexedReservations.AddRange(matchingReservations.Select(c =>
                                 MapReservation(c, Convert.ToUInt32(permission.ProviderId))));
                         }
                     }
@@ -62,7 +62,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
                 await _indexRepository.CreateIndex();
 
-                await _indexRepository.Add(reservationIndexes);
+                await _indexRepository.Add(indexedReservations);
             }
             catch (Exception e)
             {
@@ -71,9 +71,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
         }
 
-        public async Task UpdateReservationsIndex(IndexedReservation reservation)
+        public async Task AddReservationToReservationsIndex(IndexedReservation reservation)
         {
-            throw new NotImplementedException();
+            _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
         }
 
         private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)

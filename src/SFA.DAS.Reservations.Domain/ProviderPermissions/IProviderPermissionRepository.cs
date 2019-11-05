@@ -8,5 +8,6 @@ namespace SFA.DAS.Reservations.Domain.ProviderPermissions
     {
         Task Add(ProviderPermission permission);
         IEnumerable<ProviderPermission> GetAllWithCreateCohortPermission();
+        IEnumerable<ProviderPermission> GetAllForAccountLegalEntity(long accountLegalEntityId);
     }
 }

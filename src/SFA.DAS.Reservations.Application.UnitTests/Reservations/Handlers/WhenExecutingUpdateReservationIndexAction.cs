@@ -19,7 +19,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         {
             await action.Execute(reservation);
 
-            mockService.Verify(service => service.UpdateReservationsIndex(reservation));
+            mockService.Verify(service => service.AddReservationToReservationsIndex(reservation));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
         public async Task Execute(IndexedReservation indexedReservation)
         {
-            await _reservationService.UpdateReservationsIndex(indexedReservation);
+            await _reservationService.AddReservationToReservationsIndex(indexedReservation);
         }
     }
 }
