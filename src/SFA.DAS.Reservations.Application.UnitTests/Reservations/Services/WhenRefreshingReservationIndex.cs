@@ -263,9 +263,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
 
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once);
         }
 
         [Test]
