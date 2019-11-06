@@ -20,7 +20,12 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
         {
             var list = new ConcurrentBag<Course>();
 
-            GetStandards(list);
+            var tasks = new List<Task>
+            {
+                GetStandards(list)
+            };
+
+            Task.WaitAll(tasks.ToArray());
 
             return list.ToList();
         }
