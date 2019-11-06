@@ -35,7 +35,12 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 throw new ArgumentException("Reservation ID must be set", nameof(reservationId));
             }
 
-            await _reservationsRepository.SaveStatus(reservationId, status);
+            var taskList = new List<Task>
+            {
+                _reservationsRepository.SaveStatus(reservationId, status),
+                _indexRepository.SaveReservationStatus(reservationId, status)
+            };
+            await Task.WhenAll(taskList.ToArray());
         }
 
         public async Task RefreshReservationIndex()
