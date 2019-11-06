@@ -19,7 +19,31 @@ namespace SFA.DAS.Reservations.Data.UnitTests.ProviderPermissionRepository
             [Frozen] Mock<IReservationsDataContext> mockContext,
             Data.Repository.ProviderPermissionRepository repository)
         {
+            permissions.ForEach(permission => permission.CanCreateCohort = true);
             permissions[0].AccountLegalEntityId = accountLegalEntityId;
+            mockContext
+                .Setup(context => context.ProviderPermissions)
+                .ReturnsDbSet(permissions);
+
+            var result = repository.GetAllForAccountLegalEntity(accountLegalEntityId);
+
+            result.Count().Should().Be(1);
+            result.First().Should().BeEquivalentTo(permissions[0]);
+        }
+
+        [Test, MoqAutoData]
+        public void Then_Filters_By_Permission(
+            long accountLegalEntityId,
+            List<ProviderPermission> permissions,
+            [Frozen] Mock<IReservationsDataContext> mockContext,
+            Data.Repository.ProviderPermissionRepository repository)
+        {
+            permissions.ForEach(permission =>
+            {
+                permission.AccountLegalEntityId = accountLegalEntityId;
+                permission.CanCreateCohort = false;
+            });
+            permissions[0].CanCreateCohort = true;
             mockContext
                 .Setup(context => context.ProviderPermissions)
                 .ReturnsDbSet(permissions);
