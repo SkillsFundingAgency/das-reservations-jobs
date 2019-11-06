@@ -23,7 +23,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public DateTime CreatedDate { get; set; }
         public string CourseId { get; set; }
         public string CourseName { get; set; }
-        public int CourseLevel { get; set; }
+        public int? CourseLevel { get; set; }
         public uint? ProviderId { get; set; }
         public bool EmployerDeleted { get; set; }
 

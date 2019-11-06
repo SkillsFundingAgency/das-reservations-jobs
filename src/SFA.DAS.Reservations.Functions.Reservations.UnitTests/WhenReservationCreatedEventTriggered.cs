@@ -19,7 +19,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
             //Arrange
             createdEvent.CourseLevel = courseLevel.ToString();
             var notifyAction = new Mock<INotifyEmployerOfReservationEventAction>();
-            var updateIndexAction = new Mock<IUpdateReservationIndexAction>();
+            var updateIndexAction = new Mock<IAddNonLevyReservationToReservationsIndexAction>();
 
             //Act
             await HandleReservationCreatedEvent.Run(
@@ -41,7 +41,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
             //Arrange
             createdEvent.CourseLevel = courseLevel.ToString();
             var notifyAction = new Mock<INotifyEmployerOfReservationEventAction>();
-            var updateIndexAction = new Mock<IUpdateReservationIndexAction>();
+            var updateIndexAction = new Mock<IAddNonLevyReservationToReservationsIndexAction>();
 
             //Act
             await HandleReservationCreatedEvent.Run(

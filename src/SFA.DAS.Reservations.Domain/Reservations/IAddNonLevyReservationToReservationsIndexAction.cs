@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
-    public interface IUpdateReservationIndexAction
+    public interface IAddNonLevyReservationToReservationsIndexAction
     {
         Task Execute(Reservation reservation);
     }

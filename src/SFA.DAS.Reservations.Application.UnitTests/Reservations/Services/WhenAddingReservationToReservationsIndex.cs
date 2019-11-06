@@ -61,8 +61,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 actualReservation.ExpiryDate.Should().Be(reservation.EndDate);
                 actualReservation.CreatedDate.Should().Be(reservation.CreatedDate);
                 actualReservation.Status.Should().Be((short)reservation.Status);
-                actualReservation.TransferSenderAccountId.Should().BeNull();//todo: double check this.
-                actualReservation.IsLevyAccount.Should().Be(false); //todo: double check this
+                actualReservation.TransferSenderAccountId.Should().BeNull();
+                actualReservation.IsLevyAccount.Should().Be(false);
             }
         }
     }

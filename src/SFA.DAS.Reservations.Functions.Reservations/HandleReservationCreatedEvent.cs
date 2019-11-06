@@ -18,12 +18,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             [NServiceBusTrigger(EndPoint = QueueNames.ReservationCreated)] ReservationCreatedEvent message,
             [Inject] ILogger<ReservationCreatedEvent> log,
             [Inject] INotifyEmployerOfReservationEventAction notifyAction,
-            [Inject] IUpdateReservationIndexAction updateIndexAction)
+            [Inject] IAddNonLevyReservationToReservationsIndexAction addNonLevyToReservationsIndexAction)
         {
             log.LogInformation($"Reservation Created function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
 
             await notifyAction.Execute<ReservationCreatedNotificationEvent>(message);
-            await updateIndexAction.Execute(message);
+            await addNonLevyToReservationsIndexAction.Execute(message);
 
             log.LogInformation($"Reservation Created function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
         }
