@@ -44,12 +44,24 @@ namespace SFA.DAS.Reservations.Data.Repository
             await _registry.DeleteOldIndices(daysOld);
         }
 
+        public async Task SaveReservationStatus(Guid id, ReservationStatus status)
+        {
+            await _client
+                .UpdateByQueryAsync<IndexedReservation>(q => q.Index(_registry.CurrentIndexName)
+                .Query(rq => rq.Term(new Field("reservationId"),id))
+                .Script(c =>
+                    c.Source("ctx._source.status = params.status")
+                        .Params(p => p.Add("status", status)))
+                .Refresh());
+        }
+
         public async Task DeleteReservationsFromIndex(uint ukPrn, long accountLegalEntityId)
         {
             await _client.DeleteByQueryAsync<IndexedReservation>(q =>
                 q.Index(_registry.CurrentIndexName)
-                    .Query(rq => rq.MatchPhrasePrefix(f => f.Field("id").Query($"{ukPrn}_{accountLegalEntityId}_"))));
-
+                    .Query(rq => rq.MatchPhrasePrefix(f => f.Field("id")
+                        .Query($"{ukPrn}_{accountLegalEntityId}_")))
+                    .Refresh());
         }
 
         public async Task CreateIndex()
