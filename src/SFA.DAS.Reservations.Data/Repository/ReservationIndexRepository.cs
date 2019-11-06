@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Nest;
 using SFA.DAS.Reservations.Data.Registry;
@@ -15,7 +16,8 @@ namespace SFA.DAS.Reservations.Data.Repository
         private readonly IElasticClient _client;
         private readonly IIndexRegistry _registry;
 
-        public ReservationIndexRepository(IElasticClient client, IIndexRegistry registry, ReservationJobsEnvironment environment)
+        public ReservationIndexRepository(IElasticClient client, IIndexRegistry registry,
+            ReservationJobsEnvironment environment)
         {
             IndexNamePrefix = $"{environment.EnvironmentName}-reservations-";
             _client = client;
@@ -27,7 +29,12 @@ namespace SFA.DAS.Reservations.Data.Repository
             await _client.IndexManyAsync(reservations, _registry.CurrentIndexName);
         }
 
-        public async Task Add(IndexedReservation reservation) 
+        public async Task DeleteMany(IList<IndexedReservation> reservationIndex)
+        {
+            await _client.DeleteManyAsync(reservationIndex, _registry.CurrentIndexName);
+        }
+
+        public async Task Add(IndexedReservation reservation)
         {
             await _client.IndexAsync(new IndexRequest<IndexedReservation>(reservation, _registry.CurrentIndexName));
         }
@@ -35,6 +42,14 @@ namespace SFA.DAS.Reservations.Data.Repository
         public async Task DeleteIndices(uint daysOld)
         {
             await _registry.DeleteOldIndices(daysOld);
+        }
+
+        public async Task DeleteReservationsFromIndex(uint ukPrn, long accountLegalEntityId)
+        {
+            await _client.DeleteByQueryAsync<IndexedReservation>(q =>
+                q.Index(_registry.CurrentIndexName)
+                    .Query(rq => rq.MatchPhrasePrefix(f => f.Field("id").Query($"{ukPrn}_{accountLegalEntityId}_"))));
+
         }
 
         public async Task CreateIndex()
