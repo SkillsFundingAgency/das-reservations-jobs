@@ -79,19 +79,19 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _logger.LogInformation($"Finished notifying employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}], [{sendCount}] email(s) sent.");
         }
 
-        private static bool EventIsNotFromProvider(INotificationEvent deletedEvent)
+        private static bool EventIsNotFromProvider(INotificationEvent notificationEvent)
         {
-            return !deletedEvent.ProviderId.HasValue;
+            return !notificationEvent.ProviderId.HasValue;
         }
 
-        private static bool EventIsFromLevyAccount(INotificationEvent deletedEvent)
+        private static bool EventIsFromLevyAccount(INotificationEvent notificationEvent)
         {
-            return deletedEvent.CourseId == null && deletedEvent.StartDate == DateTime.MinValue;
+            return notificationEvent.CourseId == null && notificationEvent.StartDate == DateTime.MinValue;
         }
 
-        private static bool EventIsFromEmployerDelete(INotificationEvent deletedEvent)
+        private static bool EventIsFromEmployerDelete(INotificationEvent notificationEvent)
         {
-            return deletedEvent.ProviderId.HasValue && deletedEvent.EmployerDeleted;
+            return notificationEvent.ProviderId.HasValue && notificationEvent.EmployerDeleted;
         }
 
         private string GetTemplateName(INotificationEvent notificationEvent)
