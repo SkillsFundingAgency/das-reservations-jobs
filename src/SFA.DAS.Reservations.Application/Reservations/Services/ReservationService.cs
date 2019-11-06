@@ -11,15 +11,18 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
     public class ReservationService : IReservationService
     {
-        private readonly IReservationRepository _repository;
+        private readonly IReservationRepository _reservationsRepository;
         private readonly IReservationIndexRepository _indexRepository;
         private readonly IProviderPermissionRepository _permissionsRepository;
         private readonly ILogger<ReservationService> _logger;
 
-        public ReservationService(IReservationRepository repository, IReservationIndexRepository indexRepository,
-            IProviderPermissionRepository permissionsRepository, ILogger<ReservationService> logger)
+        public ReservationService(
+            IReservationRepository reservationsRepository, 
+            IReservationIndexRepository indexRepository,
+            IProviderPermissionRepository permissionsRepository, 
+            ILogger<ReservationService> logger)
         {
-            _repository = repository;
+            _reservationsRepository = reservationsRepository;
             _indexRepository = indexRepository;
             _permissionsRepository = permissionsRepository;
             _logger = logger;
@@ -32,7 +35,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 throw new ArgumentException("Reservation ID must be set", nameof(reservationId));
             }
 
-            await _repository.SaveStatus(reservationId, status);
+            await _reservationsRepository.SaveStatus(reservationId, status);
         }
 
         public async Task RefreshReservationIndex()
@@ -46,7 +49,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 {
                     foreach (var permission in permissions)
                     {
-                        var matchingReservations = _repository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
+                        var matchingReservations = _reservationsRepository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
                         if (matchingReservations != null && matchingReservations.Any())
                         {
                             indexedReservations.AddRange(matchingReservations.Select(c =>
@@ -71,9 +74,19 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
         }
 
-        public async Task AddReservationToReservationsIndex(IndexedReservation reservation)
+        public async Task AddReservationToReservationsIndex(Domain.Reservations.Reservation reservation)
         {
-            _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
+            var permissions = _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
+            var indexedReservations = new List<IndexedReservation>();
+
+            foreach (var providerPermission in permissions)
+            {
+                IndexedReservation indexedReservation = reservation;
+                indexedReservation.IndexedProviderId = (uint) providerPermission.ProviderId;
+                indexedReservations.Add(indexedReservation);
+            }
+
+            await _indexRepository.Add(indexedReservations);
         }
 
         private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)

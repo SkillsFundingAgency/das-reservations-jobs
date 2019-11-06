@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
     {
         [Test, MoqAutoData]
         public async Task Then_Calls_Service(
-            IndexedReservation reservation,
+            Reservation reservation,
             [Frozen] Mock<IReservationService> mockService,
             UpdateReservationIndexAction action
             )

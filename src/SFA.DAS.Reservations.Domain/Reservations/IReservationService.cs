@@ -7,6 +7,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
     {
         Task UpdateReservationStatus(Guid reservationId, ReservationStatus status);
         Task RefreshReservationIndex();
-        Task AddReservationToReservationsIndex(IndexedReservation reservation);
+        Task AddReservationToReservationsIndex(Reservation reservation);
     }
 }

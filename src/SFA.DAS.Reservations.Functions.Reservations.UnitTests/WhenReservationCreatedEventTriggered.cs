@@ -51,8 +51,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
                 updateIndexAction.Object);
 
             //Assert
-            updateIndexAction.Verify(s => s.Execute(It.Is<IndexedReservation>(index => 
-                index.ReservationId == createdEvent.Id)), Times.Once);
+            updateIndexAction.Verify(s => s.Execute(It.Is<Reservation>(index => 
+                index.Id == createdEvent.Id)), Times.Once);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
@@ -26,7 +25,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public Guid? UserId { get; set; }
         public uint IndexedProviderId { get; set; }
 
-        public static implicit operator IndexedReservation(ReservationCreatedEvent source)
+        public static implicit operator IndexedReservation(Reservation source)
         {
             return new IndexedReservation            
             {
@@ -39,7 +38,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
                 CreatedDate = source.CreatedDate,
                 CourseId = source.CourseId,
                 CourseTitle = source.CourseName,
-                CourseLevel = int.Parse(source.CourseLevel),
+                CourseLevel = source.CourseLevel,
                 ProviderId = source.ProviderId
             };
         }

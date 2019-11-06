@@ -12,9 +12,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _reservationService = reservationService;
         }
 
-        public async Task Execute(IndexedReservation indexedReservation)
+        public async Task Execute(Reservation reservation)
         {
-            await _reservationService.AddReservationToReservationsIndex(indexedReservation);
+            await _reservationService.AddReservationToReservationsIndex(reservation);
         }
     }
 }
