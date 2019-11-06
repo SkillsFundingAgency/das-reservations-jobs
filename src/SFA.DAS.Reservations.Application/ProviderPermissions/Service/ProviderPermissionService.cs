@@ -44,6 +44,12 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
                     Convert.ToUInt32(permission.ProviderId),
                     permission.AccountLegalEntityId);
             }
+            else
+            {
+                await _reservationService.AddProviderToSearchIndex(
+                    (uint) permission.ProviderId,
+                    permission.AccountLegalEntityId);
+            }
 
             await _permissionRepository.Add(permission);
         }

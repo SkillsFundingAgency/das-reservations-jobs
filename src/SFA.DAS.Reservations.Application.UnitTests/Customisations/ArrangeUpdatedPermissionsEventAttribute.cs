@@ -4,7 +4,6 @@ using AutoFixture;
 using AutoFixture.NUnit3;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
-using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Customisations
 {

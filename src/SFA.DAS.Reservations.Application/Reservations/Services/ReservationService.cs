@@ -97,12 +97,17 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
             await _indexRepository.Add(indexedReservations);
 
-            _logger.LogInformation($"[{indexedReservations.Count()}] new documents have been created for Reservation Id [{reservation.Id}].");
+            _logger.LogInformation($"[{indexedReservations.Count}] new documents have been created for Reservation Id [{reservation.Id}].");
         }
 
         public async Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId)
         {
             await _indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
+        }
+
+        public async Task AddProviderToSearchIndex(uint providerId, long accountLegalEntityId)
+        {
+            throw new NotImplementedException();
         }
 
         private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)

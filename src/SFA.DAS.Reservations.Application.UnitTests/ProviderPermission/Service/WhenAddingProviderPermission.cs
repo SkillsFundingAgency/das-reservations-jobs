@@ -103,9 +103,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
         {
             await service.AddProviderPermission(updatedEvent);
 
-            /*mockReservationsService.Verify(reservationService =>
-                    reservationService.AddProviderToSearchIndex((uint) updatedEvent.Ukprn),
-                Times.Once);*/
+            mockReservationsService.Verify(reservationService =>
+                    reservationService.AddProviderToSearchIndex((uint) updatedEvent.Ukprn, updatedEvent.AccountLegalEntityId),
+                Times.Once);
         }
     }
 }

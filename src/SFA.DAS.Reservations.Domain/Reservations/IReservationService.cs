@@ -9,5 +9,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         Task RefreshReservationIndex();
         Task AddReservationToReservationsIndex(Reservation reservation);
         Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId);
+        Task AddProviderToSearchIndex(uint providerId, long accountLegalEntityId);
     }
 }
