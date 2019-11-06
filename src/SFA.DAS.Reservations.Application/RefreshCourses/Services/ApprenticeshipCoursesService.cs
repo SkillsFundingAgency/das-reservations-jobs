@@ -9,12 +9,10 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 {
     public class ApprenticeshipCoursesService : IApprenticeshipCourseService
     {
-        private readonly IFrameworkApiClient _frameworkApiClient;
         private readonly IStandardApiClient _standardApiClient;
 
-        public ApprenticeshipCoursesService(IFrameworkApiClient frameworkApiClient, IStandardApiClient standardApiClient)
+        public ApprenticeshipCoursesService(IStandardApiClient standardApiClient)
         {
-            _frameworkApiClient = frameworkApiClient;
             _standardApiClient = standardApiClient;
         }
 
@@ -24,23 +22,12 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 
             var tasks = new List<Task>
             {
-                GetFrameworks(list),
                 GetStandards(list)
             };
 
             Task.WaitAll(tasks.ToArray());
 
             return list.ToList();
-        }
-
-        private async Task GetFrameworks(ConcurrentBag<Course> courses)
-        {
-            var frameworks = await _frameworkApiClient.GetAllAsync();
-
-            foreach (var framework in frameworks.Where(c=>c.IsActiveFramework))
-            {
-                courses.Add(new Course(framework.Id,framework.Title,framework.Level, framework.EffectiveTo));
-            }
         }
 
         private async Task GetStandards(ConcurrentBag<Course> courses)
