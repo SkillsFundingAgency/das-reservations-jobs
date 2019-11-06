@@ -81,9 +81,13 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
         public async Task AddReservationToReservationsIndex(Domain.Reservations.Reservation reservation)
         {
-            var permissions = _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
-            var indexedReservations = new List<IndexedReservation>();
+            _logger.LogInformation($"Adding Reservation Id [{reservation.Id}] to index.");
 
+            var permissions = _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
+            
+            _logger.LogInformation($"[{permissions.Count()}] providers found for Reservation Id [{reservation.Id}].");
+            
+            var indexedReservations = new List<IndexedReservation>();
             foreach (var providerPermission in permissions)
             {
                 IndexedReservation indexedReservation = reservation;
@@ -92,7 +96,10 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
 
             await _indexRepository.Add(indexedReservations);
+
+            _logger.LogInformation($"[{indexedReservations.Count()}] new documents have been created for Reservation Id [{reservation.Id}].");
         }
+
         public async Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId)
         {
             await _indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
