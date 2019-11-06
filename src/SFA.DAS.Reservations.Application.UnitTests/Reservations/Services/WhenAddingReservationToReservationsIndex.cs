@@ -49,6 +49,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 var actualReservation = actualIndexedReservations.Single(indexedReservation =>
                     indexedReservation.IndexedProviderId == providerPermission.ProviderId);
 
+                actualReservation.IndexedProviderId.Should().Be((uint)providerPermission.ProviderId);
+                actualReservation.Id.Should().Be($"{providerPermission.ProviderId}_{reservation.AccountLegalEntityId}_{reservation.Id}");
                 actualReservation.ReservationId.Should().Be(reservation.Id);
                 actualReservation.ProviderId.Should().Be(reservation.ProviderId);
                 actualReservation.AccountLegalEntityId.Should().Be(reservation.AccountLegalEntityId);

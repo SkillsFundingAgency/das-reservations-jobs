@@ -102,12 +102,30 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
         public async Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId)
         {
+            _logger.LogInformation($"Deleting reservations for ProviderId [{ukPrn}], AccountLegalEntityId [{accountLegalEntityId}] from index.");
+
             await _indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
         }
 
         public async Task AddProviderToSearchIndex(uint providerId, long accountLegalEntityId)
         {
-            throw new NotImplementedException();
+            _logger.LogInformation($"Adding reservations for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}] to index.");
+
+            var indexedReservations = new List<IndexedReservation>();
+
+            var matchingReservations = _reservationsRepository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId)?.ToList();
+
+            _logger.LogInformation($"[{matchingReservations.Count}] providers found for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
+
+            if (matchingReservations != null && matchingReservations.Any())
+            {
+                indexedReservations.AddRange(matchingReservations.Select(c =>
+                    MapReservation(c, providerId)));
+            }
+
+            await _indexRepository.Add(indexedReservations);
+
+            _logger.LogInformation($"[{indexedReservations.Count}] new documents have been created for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
         }
 
         private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)
