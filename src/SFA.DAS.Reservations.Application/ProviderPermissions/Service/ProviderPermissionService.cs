@@ -11,14 +11,14 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
 {
     public class ProviderPermissionService : IProviderPermissionService
     {
-        private readonly IProviderPermissionRepository _repository;
+        private readonly IProviderPermissionRepository _permissionRepository;
         private readonly ILogger<ProviderPermissionService> _logger;
         private readonly IReservationService _reservationService;
 
-        public ProviderPermissionService(IProviderPermissionRepository repository,
+        public ProviderPermissionService(IProviderPermissionRepository permissionRepository,
             ILogger<ProviderPermissionService> logger, IReservationService reservationService)
         {
-            _repository = repository;
+            _permissionRepository = permissionRepository;
             _logger = logger;
             _reservationService = reservationService;
         }
@@ -45,7 +45,7 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
                     permission.AccountLegalEntityId);
             }
 
-            await _repository.Add(permission);
+            await _permissionRepository.Add(permission);
         }
 
         private void ValidateEvent(UpdatedPermissionsEvent updateEvent)

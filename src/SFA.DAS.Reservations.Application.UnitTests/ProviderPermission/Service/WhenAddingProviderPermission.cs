@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
-using SFA.DAS.Reservations.Application.UnitTests.Extensions;
+using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
 {
@@ -93,66 +95,17 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
                     permissionEvent.AccountLegalEntityId), Times.Once);
         }
 
-
-        [Test]
-        public async Task ThenLogsWarningIfEventIsNull()
+        [Test, MoqAutoData]
+        public async Task And_CanCreateCohort_Then_Adds_Provider_To_Search_Index(
+            [ArrangeUpdatedPermissionsEvent(Operation = Operation.CreateCohort)] UpdatedPermissionsEvent updatedEvent,
+            [Frozen] Mock<IReservationService> mockReservationsService,
+            ProviderPermissionService service)
         {
-            //Act
-            await _service.AddProviderPermission(null);
+            await service.AddProviderPermission(updatedEvent);
 
-            //Assert
-            _logger.VerifyLog(LogLevel.Warning);
-        }
-
-        [Test]
-        public async Task ThenLogsWarningIfEventHasNoAccountId()
-        {
-            //Arrange
-            var permissionEvent = new UpdatedPermissionsEvent(
-                0, 11, 12,
-                13, 14, Guid.NewGuid(),
-                "test@example.com", "Test",
-                "Tester", new HashSet<Operation> {Operation.Recruitment}, DateTime.Now);
-
-            //Act
-            await _service.AddProviderPermission(permissionEvent);
-
-            //Assert
-            _logger.VerifyLog(LogLevel.Warning);
-        }
-
-        [Test]
-        public async Task ThenLogsWarningIfEventHasNoAccountLegalEntityId()
-        {
-            //Arrange
-            var permissionEvent = new UpdatedPermissionsEvent(
-                1, 0, 12,
-                13, 14, Guid.NewGuid(),
-                "test@example.com", "Test",
-                "Tester", new HashSet<Operation> {Operation.Recruitment}, DateTime.Now);
-
-            //Act
-            await _service.AddProviderPermission(permissionEvent);
-
-            //Assert
-            _logger.VerifyLog(LogLevel.Warning);
-        }
-
-        [Test]
-        public async Task ThenLogsWarningIfEventHasNoUkprn()
-        {
-            //Arrange
-            var permissionEvent = new UpdatedPermissionsEvent(
-                1, 11, 12,
-                13, 0, Guid.NewGuid(),
-                "test@example.com", "Test",
-                "Tester", new HashSet<Operation> {Operation.Recruitment}, DateTime.Now);
-
-            //Act
-            await _service.AddProviderPermission(permissionEvent);
-
-            //Assert
-            _logger.VerifyLog(LogLevel.Warning);
+            /*mockReservationsService.Verify(reservationService =>
+                    reservationService.AddProviderToSearchIndex((uint) updatedEvent.Ukprn),
+                Times.Once);*/
         }
     }
 }
