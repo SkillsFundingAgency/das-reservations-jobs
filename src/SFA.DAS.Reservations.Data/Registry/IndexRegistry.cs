@@ -38,7 +38,6 @@ namespace SFA.DAS.Reservations.Data.Registry
             {
                 CurrentIndexName = indexName;
             }
-            //todo: thow up, something to log higher in call stack
         }
 
         public async Task DeleteOldIndices(uint daysOld)
