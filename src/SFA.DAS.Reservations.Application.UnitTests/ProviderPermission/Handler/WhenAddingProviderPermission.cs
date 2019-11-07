@@ -1,42 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
+using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Handler
 {
     public class WhenAddingProviderPermission
     {
-        private ProviderPermissionUpdatedHandler _handler;
-        private Mock<IProviderPermissionService> _service;
-
-        [SetUp]
-        public void Arrange()
+        [Test, MoqAutoData]
+        public async Task And_Validation_Error_Then_No_Further_Processing(
+            [ArrangeUpdatedPermissionsEvent(Operation = Operation.CreateCohort)] UpdatedPermissionsEvent updatedEvent,
+            [Frozen] Mock<IUpdatedPermissionsEventValidator> mockValidator,
+            [Frozen] Mock<IProviderPermissionService> mockPermissionsService,
+            ProviderPermissionsUpdatedHandler handler)
         {
-            _service = new Mock<IProviderPermissionService>();
-            _handler = new ProviderPermissionUpdatedHandler(_service.Object);
+            mockValidator
+                .Setup(validator => validator.Validate(updatedEvent))
+                .Returns(false);
+
+            await handler.Handle(updatedEvent);
+
+            mockPermissionsService.Verify(service => service.AddProviderPermission(It.IsAny<UpdatedPermissionsEvent>()), 
+                Times.Never);
         }
 
-        [Test]
-        public async Task ThenCallsServiceToAddPermission()
+        [Test, MoqAutoData]
+        public async Task Then_Calls_Service(
+            [ArrangeUpdatedPermissionsEvent(Operation = Operation.CreateCohort)] UpdatedPermissionsEvent updatedEvent,
+            [Frozen] Mock<IUpdatedPermissionsEventValidator> mockValidator,
+            [Frozen] Mock<IProviderPermissionService> mockPermissionsService,
+            ProviderPermissionsUpdatedHandler handler)
         {
-            //Arrange
-            var permissionEvent = new UpdatedPermissionsEvent(
-                10, 11, 12, 
-                13, 14, Guid.NewGuid(), 
-                "test@example.com", "Test", 
-                "Tester", new HashSet<Operation>(), DateTime.Now );
-
-            //Act
-            await _handler.Handle(permissionEvent);
+            await handler.Handle(updatedEvent);
 
             //Assert
-            _service.Verify(s => s.AddProviderPermission(permissionEvent), Times.Once);
+            mockPermissionsService.Verify(s => s.AddProviderPermission(updatedEvent), 
+                Times.Once);
         }
     }
 }

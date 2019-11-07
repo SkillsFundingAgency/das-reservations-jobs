@@ -20,8 +20,10 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
         private const int UniqueConstraintViolation = 2601;
         private const int UniqueKeyViolation = 2627;
 
-        public ProviderPermissionService(IProviderPermissionRepository permissionRepository,
-            ILogger<ProviderPermissionService> logger, IReservationService reservationService)
+        public ProviderPermissionService(
+            IProviderPermissionRepository permissionRepository,
+            ILogger<ProviderPermissionService> logger, 
+            IReservationService reservationService)
         {
             _permissionRepository = permissionRepository;
             _logger = logger;
@@ -30,17 +32,6 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
 
         public async Task AddProviderPermission(UpdatedPermissionsEvent updateEvent)
         {
-            try
-            {
-                ValidateEvent(updateEvent);
-            }
-            catch (ArgumentException e)
-            {
-                _logger.LogWarning($"Cannot process provider permission message due to missing argument {e.ParamName}. " +
-                                   $"Account ID: {updateEvent?.AccountId}, Ukprn: {updateEvent?.Ukprn}, Account legal entity ID:{updateEvent?.AccountLegalEntityId}");
-                return;
-            }
-
             try
             {
                 var permission = Map(updateEvent);

@@ -21,10 +21,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
         private Mock<IProviderPermissionRepository> _repo;
         private Mock<ILogger<ProviderPermissionService>> _logger;
         private Mock<IReservationService> _reservationIndexService;
+        private Mock<IUpdatedPermissionsEventValidator> _validator;
 
         [SetUp]
         public void Arrange()
         {
+            _validator = new Mock<IUpdatedPermissionsEventValidator>();
+            _validator
+                .Setup(validator => validator.Validate(It.IsAny<UpdatedPermissionsEvent>()))
+                .Returns(true);
             _repo = new Mock<IProviderPermissionRepository>();
             _logger = new Mock<ILogger<ProviderPermissionService>>();
             _reservationIndexService = new Mock<IReservationService>();
