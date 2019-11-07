@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
@@ -14,6 +16,9 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
         private readonly IProviderPermissionRepository _permissionRepository;
         private readonly ILogger<ProviderPermissionService> _logger;
         private readonly IReservationService _reservationService;
+
+        private const int UniqueConstraintViolation = 2601;
+        private const int UniqueKeyViolation = 2627;
 
         public ProviderPermissionService(IProviderPermissionRepository permissionRepository,
             ILogger<ProviderPermissionService> logger, IReservationService reservationService)
@@ -36,22 +41,39 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
                 return;
             }
 
-            var permission = Map(updateEvent);
-
-            if (!permission.CanCreateCohort)
+            try
             {
-                await _reservationService.DeleteProviderFromSearchIndex(
-                    Convert.ToUInt32(permission.ProviderId),
-                    permission.AccountLegalEntityId);
-            }
-            else
-            {
-                await _reservationService.AddProviderToSearchIndex(
-                    (uint) permission.ProviderId,
-                    permission.AccountLegalEntityId);
-            }
+                var permission = Map(updateEvent);
 
-            await _permissionRepository.Add(permission);
+                await _permissionRepository.Add(permission);
+
+                if (!permission.CanCreateCohort)
+                {
+                    await _reservationService.DeleteProviderFromSearchIndex(
+                        Convert.ToUInt32(permission.ProviderId),
+                        permission.AccountLegalEntityId);
+                }
+                else
+                {
+                    await _reservationService.AddProviderToSearchIndex(
+                        (uint) permission.ProviderId,
+                        permission.AccountLegalEntityId);
+                }
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.GetBaseException() is SqlException sqlException
+                    && (sqlException.Number == UniqueConstraintViolation ||
+                        sqlException.Number == UniqueKeyViolation))
+                {
+                    _logger.LogWarning(
+                        $"ProviderPermissionService: Rolling back adding permission for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}] - item already exists.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Error updating index for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}]", ex);
+            }
         }
 
         private void ValidateEvent(UpdatedPermissionsEvent updateEvent)
