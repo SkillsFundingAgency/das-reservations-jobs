@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="SFA.DAS.Account.Api.Client" Version="1.6.2276" />
     <PackageReference Include="SFA.DAS.Apprenticeships.Api.Client" Version="0.11.203" />
@@ -18,5 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Reservations.Domain\SFA.DAS.Reservations.Domain.csproj" />
   </ItemGroup>
-
 </Project>

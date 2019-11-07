@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
@@ -12,11 +11,11 @@ using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.CourseRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.CourseRepository
 {
     public class WhenStoringCourses
     {
-        private Repository.CourseRepository _courseRepository;
+        private Data.Repository.CourseRepository _courseRepository;
         private Mock<IReservationsDataContext> _dataContext;
         private Mock<DatabaseFacade> _dataFacade;
         private Mock<DbContext> _dbContext;
@@ -50,7 +49,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.CourseRepository
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
 
-            _courseRepository = new Repository.CourseRepository(_dataContext.Object);
+            _courseRepository = new Data.Repository.CourseRepository(_dataContext.Object);
         }
 
         [Test]

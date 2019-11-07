@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.RefreshCourse", "SFA.DAS.Reservations.Functions.RefreshCourse\SFA.DAS.Reservations.Functions.RefreshCourse.csproj", "{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}"
 EndProject
@@ -32,6 +32,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.LegalEntities.UnitTests", "SFA.DAS.Reservations.Functions.LegalEntities.UnitTests\SFA.DAS.Reservations.Functions.LegalEntities.UnitTests.csproj", "{629D2700-19D7-4BC8-82F2-FD2FC6D7297E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.Reservations.UnitTests", "SFA.DAS.Reservations.Functions.Reservations.UnitTests\SFA.DAS.Reservations.Functions.Reservations.UnitTests.csproj", "{84F5FC70-32BC-4202-A991-97CD10521E49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Functions.ReservationIndex", "SFA.DAS.Reservations.Functions.ReservationIndex\SFA.DAS.Reservations.Functions.ReservationIndex.csproj", "{6395FAA0-211C-426E-A5B0-56EF2A71BED5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests", "SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests\SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests.csproj", "{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.ProviderPermission", "SFA.DAS.Reservations.Functions.ProviderPermission\SFA.DAS.Reservations.Functions.ProviderPermission.csproj", "{45763277-941D-4464-98AC-42449111E61E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Domain.UnitTests", "SFA.DAS.Reservations.Domain.UnitTests\SFA.DAS.Reservations.Domain.UnitTests.csproj", "{76607543-0043-4A09-84A1-DC26C7DBA9DB}"
 EndProject
@@ -98,10 +104,27 @@ Global
 		{84F5FC70-32BC-4202-A991-97CD10521E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84F5FC70-32BC-4202-A991-97CD10521E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84F5FC70-32BC-4202-A991-97CD10521E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Release|Any CPU.Build.0 = Release|Any CPU
+
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +139,10 @@ Global
 		{EB580E13-D8D0-43B2-B3E0-1E66BA547D83} = {7BA3397A-01E4-454C-A282-A09F402764CE}
 		{629D2700-19D7-4BC8-82F2-FD2FC6D7297E} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 		{84F5FC70-32BC-4202-A991-97CD10521E49} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
+		{6395FAA0-211C-426E-A5B0-56EF2A71BED5} = {7BA3397A-01E4-454C-A282-A09F402764CE}
+		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
+		{45763277-941D-4464-98AC-42449111E61E} = {7BA3397A-01E4-454C-A282-A09F402764CE}
+		{87F1454A-CB3A-43BC-A815-768C9DD6FF03} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

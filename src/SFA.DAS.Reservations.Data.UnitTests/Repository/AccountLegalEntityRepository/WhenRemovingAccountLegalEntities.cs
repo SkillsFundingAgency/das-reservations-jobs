@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -11,13 +10,13 @@ using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepository
 {
     public class WhenRemovingAccountLegalEntities
     {
         private AccountLegalEntity _accountLegalEntity;
         private Mock<IReservationsDataContext> _dataContext;
-        private Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
+        private Data.Repository.AccountLegalEntityRepository _accountLegalEntityRepository;
         private Mock<IDbContextTransaction> _dbContextTransaction;
         private Mock<DbContext> _dbContext;
         private Mock<DatabaseFacade> _dataFacade;
@@ -45,7 +44,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.AccountLegalEntityRepository
 
 
 
-            _accountLegalEntityRepository = new Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Repository.AccountLegalEntityRepository>>());
+            _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());
         }
 
         [Test]

@@ -6,5 +6,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
     public interface IReservationService
     {
         Task UpdateReservationStatus(Guid reservationId, ReservationStatus status);
+        Task RefreshReservationIndex();
     }
 }

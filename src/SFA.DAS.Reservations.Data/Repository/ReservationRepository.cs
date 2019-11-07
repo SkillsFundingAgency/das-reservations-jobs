@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.Reservations;
+using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 
 namespace SFA.DAS.Reservations.Data.Repository
@@ -23,7 +26,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
                 if (reservation == null)
                 {
-                    throw new InvalidOperationException($"Reservation not found in database with Id: {reservationId}");
+                    throw new InvalidOperationException($"Reservation not found in database with ReservationId: {reservationId}");
                 }
 
                 reservation.Status = (short)status;
@@ -31,8 +34,11 @@ namespace SFA.DAS.Reservations.Data.Repository
                 _dataContext.SaveChanges();
                 transaction.Commit();
             }
+        }
 
-            
+        public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
+        {
+            return _dataContext.Reservations.Where(c=>c.AccountLegalEntityId.Equals(accountLegalEntityId) && !c.IsLevyAccount).ToArray();
         }
     }
 }
