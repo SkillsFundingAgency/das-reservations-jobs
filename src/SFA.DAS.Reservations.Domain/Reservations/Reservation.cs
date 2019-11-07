@@ -41,7 +41,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
                 CreatedDate = source.CreatedDate,
                 CourseId = source.CourseId,
                 CourseName = source.CourseName,
-                CourseLevel = int.Parse(source.CourseLevel),
+                CourseLevel = source.CourseLevel == null ? default : int.Parse(source.CourseLevel),
                 ProviderId = source.ProviderId,
                 EmployerDeleted = false
             };
