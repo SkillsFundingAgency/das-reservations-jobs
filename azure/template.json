@@ -507,6 +507,14 @@
                 "value": "[parameters('configurationStorageConnectionString')]"
               },
               {
+                "name": "NServiceBusConnectionString",
+                "value": "[parameters('nServiceBusConnectionString')]"
+              },
+              {
+                "name": "NServiceBusLicense",
+                "value": "[parameters('nServiceBusLicense')]"
+              },
+              {
                 "name": "ConfigNames",
                 "value": "[parameters('configNames')]"
               },
@@ -536,7 +544,7 @@
               },
               {
                 "name": "AppName",
-                "value": "das-reservations-jobs-reservation-index"
+                "value": "das-reservations-jobs-reservation-provider"
               },
               {
                 "name": "LoggingRedisConnectionString",
