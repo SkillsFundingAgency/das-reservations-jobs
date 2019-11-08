@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public string CourseTitle { get; set; }
         public int? CourseLevel { get; set; }
 
-        public string CourseDescription => $"{CourseTitle} {CourseLevel}";
+        public string CourseDescription => $"{CourseTitle} - Level {CourseLevel}";
         public long AccountLegalEntityId { get; set; }
         public uint? ProviderId { get; set; }
         public string AccountLegalEntityName { get; set; }
