@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 15.0.28307.136
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.RefreshCourse", "SFA.DAS.Reservations.Functions.RefreshCourse\SFA.DAS.Reservations.Functions.RefreshCourse.csproj", "{4C1C3154-C08B-42EB-8456-1565C8B6EAC4}"
 EndProject
@@ -33,9 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.Reservations.UnitTests", "SFA.DAS.Reservations.Functions.Reservations.UnitTests\SFA.DAS.Reservations.Functions.Reservations.UnitTests.csproj", "{84F5FC70-32BC-4202-A991-97CD10521E49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Functions.ReservationIndex", "SFA.DAS.Reservations.Functions.ReservationIndex\SFA.DAS.Reservations.Functions.ReservationIndex.csproj", "{6395FAA0-211C-426E-A5B0-56EF2A71BED5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.ReservationIndex", "SFA.DAS.Reservations.Functions.ReservationIndex\SFA.DAS.Reservations.Functions.ReservationIndex.csproj", "{6395FAA0-211C-426E-A5B0-56EF2A71BED5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests", "SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests\SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests.csproj", "{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests", "SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests\SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests.csproj", "{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.ProviderPermission", "SFA.DAS.Reservations.Functions.ProviderPermission\SFA.DAS.Reservations.Functions.ProviderPermission.csproj", "{45763277-941D-4464-98AC-42449111E61E}"
 EndProject
@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests", "SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests\SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests.csproj", "{60FB02DE-91BC-4DF7-8177-1A2949ED6F9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,14 +106,6 @@ Global
 		{84F5FC70-32BC-4202-A991-97CD10521E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84F5FC70-32BC-4202-A991-97CD10521E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84F5FC70-32BC-4202-A991-97CD10521E49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45763277-941D-4464-98AC-42449111E61E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45763277-941D-4464-98AC-42449111E61E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45763277-941D-4464-98AC-42449111E61E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45763277-941D-4464-98AC-42449111E61E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87F1454A-CB3A-43BC-A815-768C9DD6FF03}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6395FAA0-211C-426E-A5B0-56EF2A71BED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -120,11 +114,18 @@ Global
 		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45763277-941D-4464-98AC-42449111E61E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB}.Release|Any CPU.Build.0 = Release|Any CPU
-
+		{60FB02DE-91BC-4DF7-8177-1A2949ED6F9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60FB02DE-91BC-4DF7-8177-1A2949ED6F9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60FB02DE-91BC-4DF7-8177-1A2949ED6F9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60FB02DE-91BC-4DF7-8177-1A2949ED6F9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,8 +143,8 @@ Global
 		{6395FAA0-211C-426E-A5B0-56EF2A71BED5} = {7BA3397A-01E4-454C-A282-A09F402764CE}
 		{6715DAD6-FAA5-4FB3-968D-6A97DFDB58D4} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 		{45763277-941D-4464-98AC-42449111E61E} = {7BA3397A-01E4-454C-A282-A09F402764CE}
-		{87F1454A-CB3A-43BC-A815-768C9DD6FF03} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 		{76607543-0043-4A09-84A1-DC26C7DBA9DB} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
+		{60FB02DE-91BC-4DF7-8177-1A2949ED6F9E} = {3289F558-BCE4-4DE9-9046-620AA212BE65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD5A047B-5DB3-4BD8-89DF-94E5FE734FEC}
