@@ -1,40 +1,70 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
+using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
 {
     public class ProviderPermissionService : IProviderPermissionService
     {
-        private readonly IProviderPermissionRepository _repository;
+        private readonly IProviderPermissionRepository _permissionRepository;
         private readonly ILogger<ProviderPermissionService> _logger;
+        private readonly IReservationService _reservationService;
 
-        public ProviderPermissionService(IProviderPermissionRepository repository, ILogger<ProviderPermissionService> logger)
+        private const int UniqueConstraintViolation = 2601;
+        private const int UniqueKeyViolation = 2627;
+
+        public ProviderPermissionService(
+            IProviderPermissionRepository permissionRepository,
+            ILogger<ProviderPermissionService> logger, 
+            IReservationService reservationService)
         {
-            _repository = repository;
+            _permissionRepository = permissionRepository;
             _logger = logger;
+            _reservationService = reservationService;
         }
 
         public async Task AddProviderPermission(UpdatedPermissionsEvent updateEvent)
         {
             try
             {
-                ValidateEvent(updateEvent);
+                var permission = Map(updateEvent);
+
+                await _permissionRepository.Add(permission);
+
+                if (!permission.CanCreateCohort)
+                {
+                    await _reservationService.DeleteProviderFromSearchIndex(
+                        Convert.ToUInt32(permission.ProviderId),
+                        permission.AccountLegalEntityId);
+                }
+                else
+                {
+                    await _reservationService.AddProviderToSearchIndex(
+                        (uint) permission.ProviderId,
+                        permission.AccountLegalEntityId);
+                }
             }
-            catch (ArgumentException e)
+            catch (DbUpdateException e)
             {
-                _logger.LogWarning($"Cannot process provider permission message due to missing argument {e.ParamName}. " +
-                                   $"Account ID: {updateEvent?.AccountId}, Ukprn: {updateEvent?.Ukprn}, Account legal entity ID:{updateEvent?.AccountLegalEntityId}");
-                return;
+                if (e.GetBaseException() is SqlException sqlException
+                    && (sqlException.Number == UniqueConstraintViolation ||
+                        sqlException.Number == UniqueKeyViolation))
+                {
+                    _logger.LogWarning(
+                        $"ProviderPermissionService: Rolling back adding permission for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}] - item already exists.");
+                }
             }
-
-            var permission = Map(updateEvent);
-
-            await _repository.Add(permission);
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Error updating index for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}]", ex);
+            }
         }
 
         private void ValidateEvent(UpdatedPermissionsEvent updateEvent)

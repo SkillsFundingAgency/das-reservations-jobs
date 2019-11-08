@@ -70,9 +70,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{_expectedReservations.First().Id}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{_expectedReservations.Skip(1).First().Id}")))));
 
         }
@@ -102,14 +102,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             Assert.ThrowsAsync<Exception>(() => _service.RefreshReservationIndex());
 
             //Assert
-            _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Never);
+            _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Never);
         }
 
         [Test]
         public void ThenIfExceptionIsThrownFromIndexingThenExceptionIsThrown()
         {
             //Arrange
-            _indexRepository.Setup(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()))
+            _indexRepository.Setup(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()))
                 .ThrowsAsync(new Exception("Test"));
 
             //Act + Assert
@@ -141,15 +141,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(4))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(4))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{firstReservationId}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"2_1_{firstReservationId}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{secondReservationId}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"2_1_{secondReservationId}")))));
 
             
@@ -179,16 +179,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(2))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(2))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
                     r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
                     r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
@@ -214,7 +214,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once());
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once());
         }
 
         [Test]
@@ -241,9 +241,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex =>
+            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
                     r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
@@ -263,9 +263,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
 
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once);
         }
 
         [Test]
@@ -287,9 +287,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<ReservationIndex>>(rIndex => rIndex.Count().Equals(1))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
 
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<ReservationIndex>>()), Times.Once);
+            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once);
         }
 
     }

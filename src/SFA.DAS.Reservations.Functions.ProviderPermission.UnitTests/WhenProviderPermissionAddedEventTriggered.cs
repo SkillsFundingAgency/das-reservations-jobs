@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests
         public async Task Then_Message_Handler_Called()
         {
             //Arrange
-            var handler = new Mock<IProviderPermissionUpdatedHandler>();
+            var handler = new Mock<IProviderPermissionsUpdatedHandler>();
             var message = new UpdatedPermissionsEvent(
                 10, 11, 12, 
                 13, 14, Guid.NewGuid(), 

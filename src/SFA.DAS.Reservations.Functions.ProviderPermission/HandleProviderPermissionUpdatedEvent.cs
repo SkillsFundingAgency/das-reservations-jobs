@@ -18,10 +18,10 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
         public static async Task Run(
             [NServiceBusTrigger(EndPoint = QueueNames.UpdatedProviderPermissions)] UpdatedPermissionsEvent updateEvent, 
             [Inject]ILogger<UpdatedPermissionsEvent> logger, 
-            [Inject]IProviderPermissionUpdatedHandler providerPermissionUpdatedHandler)
+            [Inject]IProviderPermissionsUpdatedHandler providerPermissionsUpdatedHandler)
         {
             logger.LogInformation($"NServiceBus AddedAccountProvider trigger function executed at: {DateTime.Now}");
-            await providerPermissionUpdatedHandler.Handle(updateEvent);
+            await providerPermissionsUpdatedHandler.Handle(updateEvent);
         }
     }
 }

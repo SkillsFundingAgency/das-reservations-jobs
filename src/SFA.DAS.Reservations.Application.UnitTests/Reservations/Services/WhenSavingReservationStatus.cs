@@ -13,15 +13,17 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
     {
         private ReservationService _service;
         private Mock<IReservationRepository> _repository;
+        private Mock<IReservationIndexRepository> _reservationIndex;
 
         [SetUp]
         public void Arrange()
         {
             _repository = new Mock<IReservationRepository>();
+            _reservationIndex = new Mock<IReservationIndexRepository>();
 
             _service = new ReservationService(
-                _repository.Object, 
-                Mock.Of<IReservationIndexRepository>(), 
+                _repository.Object,
+                _reservationIndex.Object, 
                 Mock.Of<IProviderPermissionRepository>(), 
                 Mock.Of<ILogger<ReservationService>>());
         }
@@ -38,6 +40,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _repository.Verify(r => r.SaveStatus(reservationId, status), Times.Once);
+            _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, status), Times.Once);
         }
 
         [Test]
@@ -53,6 +56,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Assert
             Assert.AreEqual("reservationId", exception.ParamName);
             _repository.Verify(r => r.SaveStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
+            _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
         }
     }
 }

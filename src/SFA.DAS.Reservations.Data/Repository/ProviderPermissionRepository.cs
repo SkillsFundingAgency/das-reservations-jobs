@@ -17,7 +17,15 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public IEnumerable<ProviderPermission> GetAllWithCreateCohortPermission()
         {
-            return _dataContext.ProviderPermissions.Where(c => c.CanCreateCohort).ToArray();
+            return _dataContext.ProviderPermissions
+                .Where(c => c.CanCreateCohort);
+        }
+
+        public IEnumerable<ProviderPermission> GetAllForAccountLegalEntity(long accountLegalEntityId)
+        {
+            return _dataContext.ProviderPermissions
+                .Where(permission => permission.AccountLegalEntityId == accountLegalEntityId)
+                .Where(permission => permission.CanCreateCohort);
         }
 
         public async Task Add(ProviderPermission permission)

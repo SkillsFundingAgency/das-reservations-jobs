@@ -11,15 +11,18 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
     public class ReservationService : IReservationService
     {
-        private readonly IReservationRepository _repository;
+        private readonly IReservationRepository _reservationsRepository;
         private readonly IReservationIndexRepository _indexRepository;
         private readonly IProviderPermissionRepository _permissionsRepository;
         private readonly ILogger<ReservationService> _logger;
 
-        public ReservationService(IReservationRepository repository, IReservationIndexRepository indexRepository,
-            IProviderPermissionRepository permissionsRepository, ILogger<ReservationService> logger)
+        public ReservationService(
+            IReservationRepository reservationsRepository, 
+            IReservationIndexRepository indexRepository,
+            IProviderPermissionRepository permissionsRepository, 
+            ILogger<ReservationService> logger)
         {
-            _repository = repository;
+            _reservationsRepository = reservationsRepository;
             _indexRepository = indexRepository;
             _permissionsRepository = permissionsRepository;
             _logger = logger;
@@ -32,37 +35,42 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 throw new ArgumentException("Reservation ID must be set", nameof(reservationId));
             }
 
-            await _repository.SaveStatus(reservationId, status);
+            var taskList = new List<Task>
+            {
+                _reservationsRepository.SaveStatus(reservationId, status),
+                _indexRepository.SaveReservationStatus(reservationId, status)
+            };
+            await Task.WhenAll(taskList.ToArray());
         }
 
         public async Task RefreshReservationIndex()
         {
             try
             {
-                var permissions = _permissionsRepository.GetAllWithCreateCohortPermission()?.ToArray();
-                var reservationIndexes = new List<ReservationIndex>();
+                var permissions = _permissionsRepository.GetAllWithCreateCohortPermission();
+                var indexedReservations = new List<IndexedReservation>();
 
                 if (permissions != null)
                 {
                     foreach (var permission in permissions)
                     {
-                        var matchingReservations = _repository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
+                        var matchingReservations = _reservationsRepository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
                         if (matchingReservations != null && matchingReservations.Any())
                         {
-                            reservationIndexes.AddRange(matchingReservations.Select(c =>
+                            indexedReservations.AddRange(matchingReservations.Select(c =>
                                 MapReservation(c, Convert.ToUInt32(permission.ProviderId))));
                         }
                     }
                 }
 
-                if (!reservationIndexes.Any())
+                if (!indexedReservations.Any())
                 {
-                    reservationIndexes.Add(new ReservationIndex());
+                    indexedReservations.Add(new IndexedReservation());
                 }
 
                 await _indexRepository.CreateIndex();
 
-                await _indexRepository.Add(reservationIndexes);
+                await _indexRepository.Add(indexedReservations);
             }
             catch (Exception e)
             {
@@ -71,9 +79,58 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
         }
 
-        private static ReservationIndex MapReservation(Reservation entity, uint indexedProviderId)
+        public async Task AddReservationToReservationsIndex(Domain.Reservations.Reservation reservation)
         {
-            return new ReservationIndex
+            _logger.LogInformation($"Adding Reservation Id [{reservation.Id}] to index.");
+
+            var permissions = _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
+            
+            _logger.LogInformation($"[{permissions.Count()}] providers found for Reservation Id [{reservation.Id}].");
+            
+            var indexedReservations = new List<IndexedReservation>();
+            foreach (var providerPermission in permissions)
+            {
+                IndexedReservation indexedReservation = reservation;
+                indexedReservation.IndexedProviderId = (uint) providerPermission.ProviderId;
+                indexedReservations.Add(indexedReservation);
+            }
+
+            await _indexRepository.Add(indexedReservations);
+
+            _logger.LogInformation($"[{indexedReservations.Count}] new documents have been created for Reservation Id [{reservation.Id}].");
+        }
+
+        public async Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId)
+        {
+            _logger.LogInformation($"Deleting reservations for ProviderId [{ukPrn}], AccountLegalEntityId [{accountLegalEntityId}] from index.");
+
+            await _indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
+        }
+
+        public async Task AddProviderToSearchIndex(uint providerId, long accountLegalEntityId)
+        {
+            _logger.LogInformation($"Adding reservations for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}] to index.");
+
+            var indexedReservations = new List<IndexedReservation>();
+
+            var matchingReservations = _reservationsRepository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId)?.ToList();
+
+            _logger.LogInformation($"[{matchingReservations.Count}] providers found for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
+
+            if (matchingReservations != null && matchingReservations.Any())
+            {
+                indexedReservations.AddRange(matchingReservations.Select(c =>
+                    MapReservation(c, providerId)));
+            }
+
+            await _indexRepository.Add(indexedReservations);
+
+            _logger.LogInformation($"[{indexedReservations.Count}] new documents have been created for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
+        }
+
+        private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)
+        {
+            return new IndexedReservation
             {
                 IndexedProviderId = indexedProviderId,
                 ReservationId = entity.Id,
