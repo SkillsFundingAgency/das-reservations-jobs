@@ -9,7 +9,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
     public class RefreshReservationIndex
     {
         [FunctionName("RefreshReservationIndex")]
-        [return: Queue(QueueNames.GetCourses)]
+        [return: Queue(QueueNames.RefreshReservationIndex)]
         public static string Run([TimerTrigger("0 0 0 */1 * *")]TimerInfo myTimer, [Inject]ILogger<string> log)
         {
             log.LogInformation($"C# Timer trigger function for reservation index refresh executed at: {DateTime.Now}");
