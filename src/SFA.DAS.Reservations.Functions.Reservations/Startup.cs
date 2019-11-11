@@ -29,6 +29,7 @@ using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.Notifications;
+using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
@@ -132,6 +133,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
 
             services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+            services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
+
             services.AddTransient<IIndexRegistry, IndexRegistry>();
 
             services.AddElasticSearch(jobsConfig);
