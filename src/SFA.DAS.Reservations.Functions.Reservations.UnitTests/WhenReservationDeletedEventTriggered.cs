@@ -12,7 +12,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
     public class WhenReservationDeletedEventTriggered
     {
         [Test, AutoData]
-        public async Task Then_Notification_Action_Executed(ReservationDeletedEvent deletedEvent)
+        public async Task Then_Notification_Action_Executed_And_Index_Updated(ReservationDeletedEvent deletedEvent)
         {
             ReservationDeletedNotificationEvent actionArgument;
             //Arrange
@@ -23,16 +23,19 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
                 {
                     actionArgument = actualArgument;
                 });
+            var reservationService = new Mock<IReservationService>();
 
             //Act
             await HandleReservationDeletedEvent.Run(
                 deletedEvent, 
                 Mock.Of<ILogger<ReservationDeletedEvent>>(),
+                reservationService.Object,
                 handler.Object);
 
             //Assert
             handler.Verify(s => s.Execute(It.Is<ReservationDeletedNotificationEvent>(ev => 
                 ev.Id == deletedEvent.Id)), Times.Once);
+            reservationService.Verify(x=>x.UpdateReservationStatus(deletedEvent.Id, ReservationStatus.Deleted));
         }
     }
 }
