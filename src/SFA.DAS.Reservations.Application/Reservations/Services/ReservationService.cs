@@ -121,9 +121,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             {
                 indexedReservations.AddRange(matchingReservations.Select(c =>
                     MapReservation(c, providerId)));
-            }
 
-            await _indexRepository.Add(indexedReservations);
+                await _indexRepository.Add(indexedReservations);
+            }
 
             _logger.LogInformation($"[{indexedReservations.Count}] new documents have been created for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
         }

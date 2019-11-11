@@ -12,15 +12,19 @@ using NLog.Extensions.Logging;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
+using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ProviderPermission;
 using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
+using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
@@ -93,9 +97,17 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
 
             services.AddTransient<IAzureQueueService, AzureQueueService>();
+            services.AddTransient<IReservationService, ReservationService>();
             services.AddTransient<IProviderPermissionService, ProviderPermissionService>();
+            
             services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
+            services.AddTransient<IReservationRepository, ReservationRepository>();
+            services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+            services.AddTransient<IIndexRegistry, IndexRegistry>();
 
+            services.AddElasticSearch(config);
+
+            services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
             services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
             services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
 

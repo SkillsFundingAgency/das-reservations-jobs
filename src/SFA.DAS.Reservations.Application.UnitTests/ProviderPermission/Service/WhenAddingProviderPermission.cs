@@ -102,14 +102,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
 
         [Test, MoqAutoData]
         public async Task And_CanCreateCohort_Then_Adds_Provider_To_Search_Index(
-            [ArrangeUpdatedPermissionsEvent(Operation = Operation.CreateCohort)] UpdatedPermissionsEvent updatedEvent,
+            [ArrangeUpdatedPermissionsEvent(Operation = Operation.CreateCohort)]
+            UpdatedPermissionsEvent updatedEvent,
             [Frozen] Mock<IReservationService> mockReservationsService,
             ProviderPermissionService service)
         {
             await service.AddProviderPermission(updatedEvent);
 
             mockReservationsService.Verify(reservationService =>
-                    reservationService.AddProviderToSearchIndex((uint) updatedEvent.Ukprn, updatedEvent.AccountLegalEntityId),
+                    reservationService.AddProviderToSearchIndex((uint) updatedEvent.Ukprn,
+                        updatedEvent.AccountLegalEntityId),
                 Times.Once);
         }
     }

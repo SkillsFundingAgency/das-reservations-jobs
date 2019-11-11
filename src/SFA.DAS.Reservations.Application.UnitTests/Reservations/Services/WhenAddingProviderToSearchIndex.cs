@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Testing.AutoFixture;
+using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
@@ -30,7 +31,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public async Task Then_Updates_Index_With_New_Doc_For_Each_AccountLegalEntity(
             uint providerId,
             long accountLegalEntityId,
-            List<Domain.Entities.Reservation> reservationsFound,
+            List<Reservation> reservationsFound,
             [Frozen] Mock<IReservationRepository> mockReservationsRepo,
             [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
             ReservationService service)
@@ -68,6 +69,27 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 actualReservation.TransferSenderAccountId.Should().Be(reservation.TransferSenderAccountId);
                 actualReservation.IsLevyAccount.Should().Be(reservation.IsLevyAccount);
             }
+        }
+
+        [Test, MoqAutoData]
+        public async  Task Then_Does_Not_Index_If_There_Are_No_Matching_Reservations(
+            uint providerId,
+            long accountLegalEntityId,
+            [Frozen] Mock<IReservationRepository> mockReservationsRepo,
+            [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
+            ReservationService service)
+        {
+            IEnumerable<IndexedReservation> actualIndexedReservations = new List<IndexedReservation>();
+            mockReservationsRepo
+                .Setup(repository => repository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId))
+                .Returns(new List<Reservation>());
+            mockIndexRepo
+                .Setup(repository => repository.Add(It.IsAny<IEnumerable<IndexedReservation>>()))
+                .Callback((IEnumerable<IndexedReservation> res) => actualIndexedReservations = res);
+
+            await service.AddProviderToSearchIndex(providerId, accountLegalEntityId);
+
+            actualIndexedReservations.Count().Should().Be(0);
         }
     }
 }
