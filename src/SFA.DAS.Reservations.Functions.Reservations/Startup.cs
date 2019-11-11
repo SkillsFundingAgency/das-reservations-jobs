@@ -23,6 +23,7 @@ using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
@@ -33,6 +34,7 @@ using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
+using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
@@ -127,7 +129,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
             services.AddTransient<IEncodingService, EncodingService>();
+            services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
 
+            services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+            services.AddTransient<IIndexRegistry, IndexRegistry>();
+
+            services.AddElasticSearch(jobsConfig);
+            services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
 
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
             var newClient = clientFactory.CreateClient();

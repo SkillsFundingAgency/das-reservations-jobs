@@ -19,9 +19,9 @@ using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ReservationIndex;
-using SFA.DAS.Reservations.Functions.ReservationIndex.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
+using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]

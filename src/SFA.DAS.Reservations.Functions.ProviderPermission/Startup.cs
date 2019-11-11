@@ -97,6 +97,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
             services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
 
             services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
+            services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
 
             return services.BuildServiceProvider();
         }
