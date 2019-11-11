@@ -10,7 +10,7 @@ namespace SFA.DAS.Reservations.Data.Configuration
             builder.ToTable("AccountLegalEntity");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Id).HasColumnName(@"ReservationId").HasColumnType("uniqueidentifier").IsRequired().ValueGeneratedOnAdd();
+            builder.Property(x => x.Id).HasColumnName(@"Id").HasColumnType("uniqueidentifier").IsRequired().ValueGeneratedOnAdd();
             builder.Property(x => x.AccountId).HasColumnName(@"AccountId").HasColumnType("bigint").IsRequired();
             builder.Property(x => x.LegalEntityId).HasColumnName(@"LegalEntityId").HasColumnType("bigint").IsRequired();
             builder.Property(x => x.AccountLegalEntityId).HasColumnName(@"AccountLegalEntityId").HasColumnType("bigint").IsRequired();
