@@ -71,6 +71,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 await _indexRepository.CreateIndex();
 
                 await _indexRepository.Add(indexedReservations);
+
+                await _indexRepository.DeleteIndices(5);
             }
             catch (Exception e)
             {

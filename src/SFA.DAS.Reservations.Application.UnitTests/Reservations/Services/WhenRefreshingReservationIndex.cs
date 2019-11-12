@@ -87,6 +87,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _indexRepository.Verify(r => r.CreateIndex(), Times.Once);
         }
 
+        [Test]
+        public async Task Then_The_Old_Indexes_Will_Be_Deleted()
+        {
+            //Act
+            await _service.RefreshReservationIndex();
+
+            //Assert
+            _indexRepository.Verify(r => r.DeleteIndices(5), Times.Once);
+        }
+
 
         [Test]
         public void ThenIfExceptionIsThrownFromGettingReservationsIndexingWillBeSkipped()

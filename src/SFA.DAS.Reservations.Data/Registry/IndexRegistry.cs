@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nest;
@@ -12,15 +11,14 @@ namespace SFA.DAS.Reservations.Data.Registry
         public string Name { get; }
 
         private readonly IElasticClient _client;
-        private List<IndexRegistryEntry> _indexRegistries;
-
+        
         public string CurrentIndexName { get; private set; }
 
         public IndexRegistry(IElasticClient client, ReservationJobsEnvironment environment)
         {
             _client = client;
             Name = $"{environment.EnvironmentName}-reservations-index-registry";
-            RefreshRegistry();
+            SetCurrentIndexName();
         }
 
         public async Task Add(string indexName)
@@ -41,31 +39,29 @@ namespace SFA.DAS.Reservations.Data.Registry
         }
 
         public async Task DeleteOldIndices(uint daysOld)
-        {
-            var indicesToDelete = _indexRegistries.Where(x => 
+        {   
+            var indices = _client.Search<IndexRegistryEntry>(s => s
+                .Index(Name)
+                .From(0).Size(100));
+            
+            var indicesToDelete = indices.Documents.Where(x =>
                 x.DateCreated <= DateTime.Now.AddDays(-daysOld)).ToArray();
 
-            var response = await _client.DeleteManyAsync(indicesToDelete, Name);
+            await _client.DeleteManyAsync(indicesToDelete, Name);
 
-            if (response.IsValid)
-            {
-                _indexRegistries = _indexRegistries.Except(indicesToDelete).ToList();
-
-                if (!_indexRegistries.Any())
-                {
-                    CurrentIndexName = null;
-                }
-            }
         }
 
-        private void RefreshRegistry()
+        private void SetCurrentIndexName()
         {
-            var entries = _client.Search<IndexRegistryEntry>(descriptor => descriptor.Index(Name).MatchAll());
-            _indexRegistries = entries?.Documents?.ToList() ?? new List<IndexRegistryEntry>();
-
-            if (_indexRegistries.Any())
+            var entries = _client.Search<IndexRegistryEntry>(s => s
+                .Index(Name)
+                .From(0)
+                .Size(1)
+                .Sort(x => x.Descending(a => a.DateCreated)));
+            
+            if (entries.Documents.Any())
             {
-                CurrentIndexName = _indexRegistries.OrderByDescending(r => r.DateCreated).First().Name;
+                CurrentIndexName = entries.Documents.First().Name;
             }
         }
     }

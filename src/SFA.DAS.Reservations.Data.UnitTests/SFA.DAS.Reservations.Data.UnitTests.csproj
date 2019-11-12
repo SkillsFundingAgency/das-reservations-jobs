@@ -15,4 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Reservations.Data\SFA.DAS.Reservations.Data.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Registry\" />
+  </ItemGroup>
 </Project>
