@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Nest;
 using SFA.DAS.Reservations.Data.Registry;
@@ -67,7 +66,16 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task CreateIndex()
         {
-            await _registry.Add(IndexNamePrefix + Guid.NewGuid());
+            var indexName = IndexNamePrefix + Guid.NewGuid();
+
+            await _client.Indices.CreateAsync(indexName, c =>
+                c.Map<IndexedReservation>(r =>
+                    r.Properties(p =>p
+                        .Keyword(k => k.Name(n => n.CourseDescription))
+                        .Keyword(k => k.Name(n => n.CourseId))
+                        )));
+
+            await _registry.Add(indexName);
         }
     }
 }
