@@ -137,7 +137,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IIndexRegistry, IndexRegistry>();
 
-            services.AddElasticSearch(jobsConfig);
+            services.AddElasticSearch(jobsConfig, Configuration["EnvironmentName"]);
             services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
 
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
