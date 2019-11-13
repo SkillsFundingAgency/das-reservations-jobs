@@ -47,8 +47,9 @@ namespace SFA.DAS.Reservations.Data.Registry
             var indicesToDelete = indices.Documents.Where(x =>
                 x.DateCreated <= DateTime.Now.AddDays(-daysOld)).ToArray();
 
+            if (!indicesToDelete.Any()) return;
+            
             await _client.DeleteManyAsync(indicesToDelete, Name);
-
         }
 
         private void SetCurrentIndexName()
