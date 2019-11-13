@@ -71,7 +71,12 @@ namespace SFA.DAS.Reservations.Data.Repository
             await _client.Indices.CreateAsync(indexName, c =>
                 c.Map<IndexedReservation>(r =>
                     r.Properties(p => p
-                        .Text(k => k.Name(n => n.CourseDescription))
+                        .Text(s => s
+                            .Name(n => n.CourseDescription)
+                            .Fields(fs => fs
+                                .Keyword(ss => ss
+                                    .Name("keyword")
+                                )))
                         .Keyword(k => k.Name(n => n.CourseId))
                         )));
 
