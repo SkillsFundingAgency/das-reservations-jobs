@@ -77,6 +77,12 @@ namespace SFA.DAS.Reservations.Data.Repository
                                 .Keyword(ss => ss
                                     .Name("keyword")
                                 )))
+                        .Text(s => s
+                            .Name(n => n.AccountLegalEntityName)
+                            .Fields(fs => fs
+                                .Keyword(ss => ss
+                                    .Name("keyword")
+                                )))
                         .Keyword(k => k.Name(n => n.CourseId))
                         )));
 
