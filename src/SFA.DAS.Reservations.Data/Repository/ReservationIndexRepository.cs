@@ -84,7 +84,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                                     .Name("keyword")
                                 )))
                         .Text(s => s
-                            .Name(n => n.StartDate)
+                            .Name(n => n.ReservationPeriod)
                             .Fields(fs => fs
                                 .Keyword(ss => ss
                                     .Name("keyword")
