@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.UnitTests.DatabaseMock;
+using SFA.DAS.Reservations.Domain.Reservations;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
@@ -30,6 +31,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
                 new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 2},
                 new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 2},
                 new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 1},
+                new Reservation {Id = Guid.NewGuid(), Status = (int)ReservationStatus.Deleted, IsLevyAccount = false, AccountLegalEntityId = 2},
                 new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = true, AccountLegalEntityId = 1}
             };
 
@@ -46,7 +48,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         }
 
         [Test]
-        public void ThenReturnsAllNonLevyReservationsForAccountLegalEntity()
+        public void Then_Returns_All_Non_Levy_Non_Deleted_Reservations_For_AccountLegalEntity()
         {
             //Arrange
             var expectedAccountLegalEntityId = 2;
@@ -55,7 +57,10 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             var reservations = _reservationRepository.GetAllNonLevyForAccountLegalEntity(expectedAccountLegalEntityId);
 
             //Assert 
-            reservations.Should().BeEquivalentTo(_expectedReservations.Where(x => !x.IsLevyAccount && x.AccountLegalEntityId.Equals(expectedAccountLegalEntityId)));
+            reservations.Should().BeEquivalentTo(_expectedReservations
+                .Where(x => !x.IsLevyAccount
+                            && x.Status != (int)ReservationStatus.Deleted
+                            && x.AccountLegalEntityId.Equals(expectedAccountLegalEntityId)));
         }
     }
 }
