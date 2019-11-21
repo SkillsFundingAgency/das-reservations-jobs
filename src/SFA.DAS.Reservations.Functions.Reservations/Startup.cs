@@ -42,7 +42,7 @@ using SFA.DAS.Reservations.Infrastructure.Logging;
 
 namespace SFA.DAS.Reservations.Functions.Reservations
 {
-     internal class Startup : IWebJobsStartup
+     public class Startup : IWebJobsStartup
      {
         public void Configure(IWebJobsBuilder builder)
         {
@@ -53,8 +53,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         }
      }
 
-    internal class ServiceProviderBuilder : IServiceProviderBuilder
-    {
+     public class ServiceProviderBuilder : IServiceProviderBuilder
+     {
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
         public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
