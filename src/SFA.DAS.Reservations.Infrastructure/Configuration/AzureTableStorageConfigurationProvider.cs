@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -25,6 +26,11 @@ namespace SFA.DAS.Reservations.Infrastructure.Configuration
 
         public override void Load()
         {
+            if (_environment.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return;
+            }
+            
             var table = GetTable();
             foreach (var config in _configName)
             {

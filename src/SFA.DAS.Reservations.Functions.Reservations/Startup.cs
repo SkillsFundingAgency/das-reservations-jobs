@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -55,6 +56,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
      public class ServiceProviderBuilder : IServiceProviderBuilder
      {
+        public ServiceCollection ServiceCollection { get; set; }
+        
+         
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
         public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
@@ -62,6 +66,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             _loggerFactory = loggerFactory;
             
             var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
                 .SetBasePath(Directory.GetCurrentDirectory()) 
                 .AddJsonFile("local.settings.json",true)
                 .AddEnvironmentVariables()
@@ -78,7 +83,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         public IServiceProvider Build()
         {
 
-            var services = new ServiceCollection();
+            var services = ServiceCollection ?? new ServiceCollection();
             services.AddHttpClient();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
@@ -94,25 +99,31 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
-            var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
-            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
-            services.AddSingleton(encodingConfig);
+            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
+                var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+                services.AddSingleton(encodingConfig);
+            }
 
             var nLogConfiguration = new NLogConfiguration();
 
-            services.AddLogging((options) =>
+            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
-                options.AddConfiguration(Configuration.GetSection("Logging"));
-                options.SetMinimumLevel(LogLevel.Trace);
-                options.AddNLog(new NLogProviderOptions
+                services.AddLogging((options) =>
                 {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
+                    options.AddConfiguration(Configuration.GetSection("Logging"));
+                    options.SetMinimumLevel(LogLevel.Trace);
+                    options.AddNLog(new NLogProviderOptions
+                    {
+                        CaptureMessageTemplates = true,
+                        CaptureMessageProperties = true
+                    });
+                    options.AddConsole();
+                    options.AddDebug();
+                    nLogConfiguration.ConfigureNLog(Configuration);
                 });
-                options.AddConsole();
-                options.AddDebug();
-                nLogConfiguration.ConfigureNLog(Configuration);
-            });
+            }
 
             services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
@@ -129,10 +140,16 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
-            services.AddTransient<IEncodingService, EncodingService>();
+
+            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                services.AddTransient<IEncodingService, EncodingService>();
+                services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+            }
+
             services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
 
-            services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+            
             services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
 
             services.AddTransient<IIndexRegistry, IndexRegistry>();
@@ -140,22 +157,33 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddElasticSearch(jobsConfig, Configuration["EnvironmentName"]);
             services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
 
-            var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
-            var newClient = clientFactory.CreateClient();
-            services.AddSingleton(provider => newClient);
-            services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
-            services.AddTransient<IAccountApiClient, AccountApiClient>();
-            services.AddHttpClient<INotificationsService, NotificationsService>(
-                client =>
-                {
-                    var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
-                    var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
-                    client.BaseAddress = new Uri(notificationsConfig.ApiBaseUrl);
-                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
-                    client.DefaultRequestHeaders.Add("accept", "application/json");
-                });
+            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
+                var newClient = clientFactory.CreateClient();
+                services.AddSingleton(provider => newClient);
+                services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
+                services.AddTransient<IAccountApiClient, AccountApiClient>();
+                services.AddHttpClient<INotificationsService, NotificationsService>(
+                    client =>
+                    {
+                        var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
+                        var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
+                        client.BaseAddress = new Uri(notificationsConfig.ApiBaseUrl);
+                        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
+                        client.DefaultRequestHeaders.Add("accept", "application/json");
+                    });
+            }
 
-            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
+            if (Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                services.AddDbContext<ReservationsDataContext>(options => options.UseInMemoryDatabase("SFA.DAS.Reservations")
+                    .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
+            }
+            else
+            {
+                services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
+            }
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
 
             return services.BuildServiceProvider();
