@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 {
-    public class TestServiceProvider
+    public class TestServiceProvider : IServiceProvider
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
                 InitialData = new[]
                 {
                     new KeyValuePair<string, string>("ConfigurationStorageConnectionString", "UseDevelopmentStorage=true;"),
-                    new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Api"),
+                    new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
                     new KeyValuePair<string, string>("Environment", "DEV"),
                     new KeyValuePair<string, string>("Version", "1.0"),
                     new KeyValuePair<string, string>("Reservations:ElasticSearchServerUrl", "http://localhost:9200"),

@@ -24,4 +24,19 @@
     <ProjectReference Include="..\SFA.DAS.Reservations.Functions.Reservations\SFA.DAS.Reservations.Functions.Reservations.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Features\ConfimReservation.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ConfimReservation.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\ConfimReservation.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ConfimReservation.feature.cs</LastGenOutput>
+    </SpecFlowFeatureFiles>
+  </ItemGroup>
+
 </Project>
