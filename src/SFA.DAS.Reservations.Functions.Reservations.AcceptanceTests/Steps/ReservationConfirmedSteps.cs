@@ -15,12 +15,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         {
         }
         
-        [Given(@"I have a reservation")]
-        public void GivenIHaveAReservation()
+        [Given(@"I have a (.*) reservation")]
+        public void GivenIHaveAReservation(string reservationStatus)
         {
             TestData.ReservationId = Guid.NewGuid();
 
-            Enum.TryParse("Pending", true, out ReservationStatus status);
+            Enum.TryParse(reservationStatus, true, out ReservationStatus status);
 
             var dbContext = Services.GetService<ReservationsDataContext>();
 
@@ -42,7 +42,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             dbContext.Reservations.Add(reservation);
             dbContext.SaveChanges();
         }
-        
+
+        [Given(@"I have a reservation that doesnt exist")]
+        public void GivenIHaveAReservationThatDoesntExist()
+        {
+            TestData.ReservationId = Guid.NewGuid();
+        }
+
         [When(@"a confirm reservation event is triggered")]
         public void WhenAConfirmReservationEventIsTriggered()
         {
@@ -61,6 +67,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             mock.Verify(x=>x.SaveReservationStatus(TestData.ReservationId,ReservationStatus.Confirmed), Times.Once);
         }
 
-        
+        [Then(@"the reservation status will not be confirmed")]
+        public void ThenTheReservationStatusWillNotBeConfirmed()
+        {
+            var dbContext = Services.GetService<ReservationsDataContext>();
+            var reservation = dbContext.Reservations.Find(TestData.ReservationId);
+            Assert.IsNull(reservation);
+            var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
+            var mock = Mock.Get(reservationIndexRepository);
+            mock.Verify(x=>x.SaveReservationStatus(TestData.ReservationId,ReservationStatus.Confirmed), Times.Never);
+        }
     }
 }
