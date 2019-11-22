@@ -35,12 +35,16 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 throw new ArgumentException("Reservation ID must be set", nameof(reservationId));
             }
 
-            var taskList = new List<Task>
+            try
             {
-                _reservationsRepository.SaveStatus(reservationId, status),
-                _indexRepository.SaveReservationStatus(reservationId, status)
-            };
-            await Task.WhenAll(taskList.ToArray());
+                await _reservationsRepository.SaveStatus(reservationId, status);
+                await _indexRepository.SaveReservationStatus(reservationId, status);
+
+            }
+            catch (InvalidOperationException e)
+            {
+                _logger.LogWarning($"Reservation {reservationId} was not found in the database and not updated to confirmed");
+            }
         }
 
         public async Task RefreshReservationIndex()
