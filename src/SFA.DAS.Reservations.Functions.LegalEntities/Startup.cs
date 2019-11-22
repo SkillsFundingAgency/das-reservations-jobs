@@ -10,14 +10,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
+using SFA.DAS.Reservations.Application.AccountLegalEntities.Validators;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Validation;
 using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
@@ -116,6 +119,8 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddTransient<IRemoveLegalEntityHandler, RemoveLegalEntityHandler>();
             services.AddTransient<ISignedLegalAgreementHandler, SignedLegalAgreementHandler>();
             services.AddTransient<ILevyAddedToAccountHandler, LevyAddedToAccountHandler>();
+
+            services.AddSingleton<IValidator<AddedLegalEntityEvent>, AddAccountLegalEntityValidator>();
 
             //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 

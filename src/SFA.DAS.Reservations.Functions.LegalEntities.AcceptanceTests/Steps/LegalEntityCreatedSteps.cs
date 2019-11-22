@@ -41,7 +41,22 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
 
             Assert.IsNull(legalEntity);
         }
-        
+
+        [Given(@"I have a legal entity that is invalid")]
+        public void GivenIHaveALegalEntityThatIsInvalid()
+        {
+            TestData.AccountLegalEntity = new AccountLegalEntity
+            {
+                AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId + 1,
+            };
+
+            var dbContext = Services.GetService<ReservationsDataContext>();
+            var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
+                ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
+
+            Assert.IsNull(legalEntity);
+        }
+
         [When(@"added legal entity event is triggered")]
         public void WhenAddedLegalEntityEventIsTriggered()
         {
@@ -70,5 +85,18 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 .Excluding(ale => ale.AgreementSigned)
                 .Excluding(ale => ale.AgreementType));
         }
+
+        
+
+        [Then(@"the legal entity should not be available")]
+        public void ThenTheLegalEntityShouldNotBeAvailable()
+        {
+            var dbContext = Services.GetService<ReservationsDataContext>();
+            var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
+                ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
+
+            Assert.IsNull(legalEntity);
+        }
+
     }
 }
