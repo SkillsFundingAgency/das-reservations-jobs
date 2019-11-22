@@ -4,6 +4,6 @@
 
 
 Scenario: An existing legal entity has been removed
-	Given I have an existing unsigned legal entity
+	Given I have an existing unsigned, non levy legal entity
 	When removed legal entity event is triggered
 	Then the legal entity should no longer be available

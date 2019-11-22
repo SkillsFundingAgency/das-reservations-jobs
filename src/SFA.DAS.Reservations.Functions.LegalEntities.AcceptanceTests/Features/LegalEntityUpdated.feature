@@ -4,6 +4,11 @@
 
 
 Scenario: A existing legal entity has been signed
-	Given I have an existing unsigned legal entity
+	Given I have an existing unsigned, non levy legal entity
 	When signed agreement event is triggered
-	Then the legal entity state should be signed
+	Then the legal entity should be signed
+
+Scenario: A existing legal entity has recieved levy
+	Given I have an existing unsigned, non levy legal entity
+	When levy added event is triggered
+	Then the legal entity should be marked as a levy entity

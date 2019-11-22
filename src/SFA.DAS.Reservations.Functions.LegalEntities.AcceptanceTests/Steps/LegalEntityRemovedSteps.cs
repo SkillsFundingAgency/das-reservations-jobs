@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
 
         }
 
-        [Given(@"I have an existing unsigned legal entity")]
+        [Given(@"I have an existing unsigned, non levy legal entity")]
         public void GivenIHaveAnExistingLegalEntity()
         {
             var dbContext = Services.GetService<ReservationsDataContext>();
