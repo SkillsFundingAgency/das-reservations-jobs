@@ -58,5 +58,21 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _repository.Verify(r => r.SaveStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
             _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
         }
+
+        [Test]
+        public async Task Then_Will_Not_Update_The_Index_If_The_Database_Update_Fails()
+        {
+            //Arrange
+            var reservationId = Guid.NewGuid();
+            var status = ReservationStatus.Confirmed;
+            _repository.Setup(r => r.SaveStatus(It.IsAny<Guid>(),It.IsAny<ReservationStatus>()))
+                .ThrowsAsync(new InvalidOperationException());
+
+            //Act
+            await _service.UpdateReservationStatus(reservationId, status);
+            
+            //Assert
+            _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
+        }
     }
 }
