@@ -10,6 +10,25 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public long AccountId { get; set; }
         public bool IsLevyAccount { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string ReservationPeriod
+        {
+            get
+            {
+                var period = string.Empty;
+
+                if (StartDate.HasValue)
+                {
+                    period += $"{StartDate:MMM yyyy}";
+                }
+
+                if (ExpiryDate.HasValue)
+                {
+                    period += $" to {ExpiryDate:MMM yyyy}";
+                }
+
+                return period;
+            }
+        }
         public DateTime? StartDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public short Status { get; set; }
