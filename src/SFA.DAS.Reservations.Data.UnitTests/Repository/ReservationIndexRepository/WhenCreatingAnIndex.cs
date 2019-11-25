@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Elasticsearch.Net;
 using Moq;
 using Nest;
 using NUnit.Framework;
@@ -9,16 +11,22 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
 {
     public class WhenCreatingAnIndex
     {
-        private Mock<IElasticClient> _clientMock;
+        private IElasticClient _client;
         private Mock<IIndexRegistry> _registryMock;
         private Data.Repository.ReservationIndexRepository _repository;
 
         [SetUp]
         public void Init()
         {
-            _clientMock = new Mock<IElasticClient>();
+            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
+            var connectionSettings = new ConnectionSettings(pool, new InMemoryConnection())
+                .PrettyJson()
+                .DisableDirectStreaming();
+
+           _client = new ElasticClient(connectionSettings);
+
             _registryMock = new Mock<IIndexRegistry>();
-            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
+            _repository = new Data.Repository.ReservationIndexRepository(_client, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
         }
 
         [Test]
