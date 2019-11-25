@@ -25,7 +25,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         {
             TestData.AccountLegalEntity = new AccountLegalEntity
             {
-                AccountId = TestData.AccountLegalEntity.AccountId,
+                AccountId = TestData.AccountLegalEntity.AccountId + 1,
                 AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId + 1,
                 AccountLegalEntityName = "Another legal entity",
                 AgreementSigned =  true,
@@ -41,6 +41,29 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
 
             Assert.IsNull(legalEntity);
         }
+
+        [Given(@"I have an invalid legal entity that is new")]
+        public void GivenIHaveAnInvalidLegalEntityThatIsNew()
+        {
+            //Account ID is missing (invalid)
+            TestData.AccountLegalEntity = new AccountLegalEntity
+            {
+                AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId + 1,
+                AccountLegalEntityName = "Another legal entity",
+                AgreementSigned =  true,
+                AgreementType = AgreementType.NonLevyExpressionOfInterest,
+                Id = Guid.NewGuid(),
+                IsLevy = false,
+                LegalEntityId = 123
+            };
+
+            var dbContext = Services.GetService<ReservationsDataContext>();
+            var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale => 
+                ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
+
+            Assert.IsNull(legalEntity);
+        }
+
 
         [Given(@"I have a legal entity that is invalid")]
         public void GivenIHaveALegalEntityThatIsInvalid()

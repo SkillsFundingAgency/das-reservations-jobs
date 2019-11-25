@@ -7,3 +7,9 @@ Scenario: A new legal entity has been created
 	Given I have a legal entity that is new
 	When added legal entity event is triggered
 	Then the legal entity should be available
+
+
+Scenario: An invalid legal entity event has been added
+	Given I have an invalid legal entity that is new
+	When added legal entity event is triggered
+	Then the legal entity should not be available

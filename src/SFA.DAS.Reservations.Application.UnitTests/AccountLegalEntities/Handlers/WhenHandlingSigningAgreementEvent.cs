@@ -1,13 +1,13 @@
+using System;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.EmployerAccounts.Messages.Events;
-using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handlers
 {
@@ -20,8 +20,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
         public void Arrange()
         {
             _service = new Mock<IAccountLegalEntitiesService>();
-            _handler = new SignedLegalAgreementHandler(_service.Object);
-
+            _handler = new SignedLegalAgreementHandler(_service.Object, Mock.Of<ILogger<SignedLegalAgreementHandler>>());
         }
 
         [Test]
@@ -45,17 +44,22 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
                      c.AgreementType.Equals(signedAgreementEvent.AgreementType))));
         }
 
-        [Test, MoqAutoData]
-        public async Task AndLevyAddedToAccount_ThenServiceCalledCorrectly(
-            [Frozen] Mock<IAccountLegalEntitiesService> service,
-            LevyAddedToAccountHandler handler,
-            LevyAddedToAccount levyAddedToAccountEvent)
+        [Test]
+        public async Task Then_Will_Not_Throw_Exception_If_Signing_Agreement_And_Database_Update_Fails()
         {
-            //Act
-            await handler.Handle(levyAddedToAccountEvent);
+            //Arrange
+            var signedAgreementEvent = new SignedAgreementEvent
+            {
+                AccountId= 5, 
+                LegalEntityId = 56, 
+                AgreementType = AgreementType.NonLevyExpressionOfInterest
+            };
 
-            //Assert
-            service.Verify(x => x.UpdateAccountLegalEntitiesToLevy(levyAddedToAccountEvent));
+            _service.Setup(x => x.SignAgreementForAccountLegalEntity(It.IsAny<SignedAgreementEvent>()))
+                .ThrowsAsync(new DbUpdateException("Failed", (Exception)null));
+
+            //Act + Assert
+            await _handler.Handle(signedAgreementEvent);
         }
     }
 }
