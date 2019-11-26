@@ -36,7 +36,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation does not cause a re-queue")]
         public void ThenTheReservationDoesNotCauseARe_Queue()
         {
-            ScenarioContext.Current.Pending();
+            var dbContext = Services.GetService<ReservationsDataContext>();
+            var reservation = dbContext.Reservations.Find(TestData.ReservationId);
+            Assert.IsNull(reservation);
+            var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
+            var mock = Mock.Get(reservationIndexRepository);
+            mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Confirmed), Times.Never);
         }
     }
 }
