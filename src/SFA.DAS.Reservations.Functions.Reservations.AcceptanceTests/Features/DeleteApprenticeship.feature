@@ -8,7 +8,6 @@ Scenario: Reservation status should be set to pending
 	When a delete apprenticeship event is triggered
 	Then the reservation status will be pending
 
-
 Scenario: Non-Existing reservation should not cause re-queue
 	Given I have a reservation that doesnt exist
 	When a delete apprenticeship event is triggered
