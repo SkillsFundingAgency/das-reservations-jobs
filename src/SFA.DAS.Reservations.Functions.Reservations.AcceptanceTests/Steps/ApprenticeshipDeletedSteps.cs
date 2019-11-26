@@ -15,34 +15,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         {
         }
 
-        [Given(@"I have a (.*) reservation")]
-        public void GivenIHaveAReservation(string reservationStatus)
-        {
-            TestData.ReservationId = Guid.NewGuid();
-
-            Enum.TryParse(reservationStatus, true, out ReservationStatus status);
-
-            var dbContext = Services.GetService<ReservationsDataContext>();
-
-            var reservation = new Domain.Entities.Reservation
-            {
-                AccountId = 1,
-                AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId,
-                AccountLegalEntityName = TestData.AccountLegalEntity.AccountLegalEntityName,
-                CourseId = TestData.Course.CourseId,
-                CreatedDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(2),
-                IsLevyAccount = false,
-                Status = (short)status,
-                StartDate = DateTime.UtcNow.AddMonths(1),
-                Id = TestData.ReservationId,
-                UserId = Guid.NewGuid()
-            };
-
-            dbContext.Reservations.Add(reservation);
-            dbContext.SaveChanges();
-        }
-
         [When(@"a delete apprenticeship event is triggered")]
         public void WhenADeleteApprenticeshipEventIsTriggered()
         {
