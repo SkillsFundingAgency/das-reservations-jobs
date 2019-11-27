@@ -3,7 +3,7 @@
 	I want to be told when the reservation search index is updated
 
 
-Scenario: Reservation search index should be updated
+Scenario: Reservation search index should be updated on reservation creation
 	Given I have a reservation ready for creation
 	When a create reservation event is triggered
-	Then the reservation search index should be updated
+	Then the reservation search index should be updated with the new reservation

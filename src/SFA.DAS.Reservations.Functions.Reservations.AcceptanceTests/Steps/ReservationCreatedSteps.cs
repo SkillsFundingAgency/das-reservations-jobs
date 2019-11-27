@@ -63,8 +63,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             addNonLevyReservation.Execute(MapEntityReservationToReservation(_reservation));
         }
         
-        [Then(@"the reservation search index should be updated")]
-        public void ThenTheReservationSearchIndexShouldBeUpdated()
+        [Then(@"the reservation search index should be updated with the new reservation")]
+        public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheNewReservation()
         {
             var indexRepository = Services.GetService<IReservationIndexRepository>();
             var mock = Mock.Get(indexRepository);
