@@ -34,11 +34,16 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>DeleteApprenticeship.feature.cs</LastGenOutput>
     </SpecFlowFeatureFiles>
+    <SpecFlowFeatureFiles Update="Features\CreateReservation.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>CreateReservation.feature.cs</LastGenOutput>
+    </SpecFlowFeatureFiles>
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Features\ConfimReservation.feature" />
     <Content Include="Features\DeleteApprenticeship.feature" />
+    <Content Include="Features\CreateReservation.feature" />
   </ItemGroup>
   
 </Project>
