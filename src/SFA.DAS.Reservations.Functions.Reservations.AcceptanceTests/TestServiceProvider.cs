@@ -8,6 +8,7 @@ using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Providers.Api.Client;
+using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
@@ -44,6 +45,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 
             var mockReservationIndex = new Mock<IReservationIndexRepository>();
             serviceCollection.AddSingleton(mockReservationIndex.Object);
+
+            var mockProviderPermissions = new Mock<IProviderPermissionRepository>();
+            serviceCollection.AddSingleton(mockProviderPermissions.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
             
