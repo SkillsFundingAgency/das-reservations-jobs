@@ -29,8 +29,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var reservation = dbContext.Reservations.Find(TestData.ReservationId);
             Assert.AreEqual(ReservationStatus.Pending, (ReservationStatus)reservation.Status);
             var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
-            var mock = Mock.Get(reservationIndexRepository);
-            mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Once);
+            var mockReservationIndexRepository = Mock.Get(reservationIndexRepository);
+            mockReservationIndexRepository.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Once);
         }
         
         [Then(@"the reservation does not cause a re-queue")]
@@ -41,7 +41,10 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             Assert.IsNull(reservation);
             var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
             var mock = Mock.Get(reservationIndexRepository);
-            mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Confirmed), Times.Never);
+            mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Never);
+            var reservationService = Services.GetService<IReservationService>();
+            Assert.DoesNotThrow(() =>
+                reservationService.UpdateReservationStatus(TestData.ReservationId, It.IsAny<ReservationStatus>()));
         }
     }
 }
