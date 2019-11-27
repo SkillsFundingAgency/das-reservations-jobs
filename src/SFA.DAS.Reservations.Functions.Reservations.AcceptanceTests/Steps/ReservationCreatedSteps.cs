@@ -18,32 +18,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         public ReservationCreatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
         {
         }
-
-        private Domain.Entities.Reservation _reservation = new Domain.Entities.Reservation();
-
+        
         [Given(@"I have a reservation ready for creation")]
         public void GivenIHaveAReservationReadyForCreation()
         {
-            TestData.ReservationId = Guid.NewGuid();
-            
             var dbContext = Services.GetService<ReservationsDataContext>();
 
-            _reservation = new Domain.Entities.Reservation
-            {
-                AccountId = 1,
-                AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId,
-                AccountLegalEntityName = TestData.AccountLegalEntity.AccountLegalEntityName,
-                CourseId = TestData.Course.CourseId,
-                CreatedDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(2),
-                IsLevyAccount = false,
-                Status = (short) ReservationStatus.Pending,
-                StartDate = DateTime.UtcNow.AddMonths(1),
-                Id = TestData.ReservationId,
-                UserId = Guid.NewGuid()
-            };
+            TestData.Reservation.Status = (short)ReservationStatus.Pending;
 
-            dbContext.Reservations.Add(_reservation);
+            dbContext.Reservations.Add(TestData.Reservation);
             dbContext.SaveChanges();
         }
         
@@ -56,11 +39,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var providerPermission = new ProviderPermission
                 { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
 
-            mockPermissionRepository.Setup(x => x.GetAllForAccountLegalEntity(_reservation.AccountLegalEntityId))
+            mockPermissionRepository.Setup(x => x.GetAllForAccountLegalEntity(TestData.AccountLegalEntity.AccountLegalEntityId))
                 .Returns(new List<ProviderPermission> { providerPermission });
 
             var addNonLevyReservation = Services.GetService<IAddNonLevyReservationToReservationsIndexAction>();
-            addNonLevyReservation.Execute(MapEntityReservationToReservation(_reservation));
+            addNonLevyReservation.Execute(MapEntityReservationToReservation(TestData.Reservation));
         }
         
         [Then(@"the reservation search index should be updated with the new reservation")]

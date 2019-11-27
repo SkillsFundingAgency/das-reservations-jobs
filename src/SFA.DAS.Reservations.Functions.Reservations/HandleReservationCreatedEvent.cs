@@ -22,6 +22,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         {
             log.LogInformation($"Reservation Created function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
 
+            //TODO move into handler - like ConfirmReservation
             await notifyAction.Execute<ReservationCreatedNotificationEvent>(message);
             await addNonLevyToReservationsIndexAction.Execute(message);
 

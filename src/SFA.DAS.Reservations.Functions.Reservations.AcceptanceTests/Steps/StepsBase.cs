@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Entities;
+using SFA.DAS.Reservations.Domain.Reservations;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
@@ -61,6 +62,27 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 
                 dbContext.SaveChanges();
             }
+        }
+
+        [BeforeScenario()]
+        public void InitialiseTestDataReservation()
+        {
+            TestData.ReservationId = Guid.NewGuid();
+
+            TestData.Reservation = new Domain.Entities.Reservation
+            {
+                AccountId = 1,
+                AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId,
+                AccountLegalEntityName = TestData.AccountLegalEntity.AccountLegalEntityName,
+                CourseId = TestData.Course.CourseId,
+                CreatedDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(2),
+                IsLevyAccount = false,
+                Status = (short)ReservationStatus.Deleted,
+                StartDate = DateTime.UtcNow.AddMonths(1),
+                Id = TestData.ReservationId,
+                UserId = Guid.NewGuid()
+            };
         }
     }
 }

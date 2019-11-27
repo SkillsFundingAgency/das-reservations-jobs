@@ -14,32 +14,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         public ReservationDeletedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
         {
         }
-
-        private Domain.Entities.Reservation _reservation = new Domain.Entities.Reservation();
-
+        
         [Given(@"I have a reservation ready for deletion")]
         public void GivenIHaveAReservationReadyForDeletion()
         {
-            TestData.ReservationId = Guid.NewGuid();
+            TestData.Reservation.Status = (short)ReservationStatus.Deleted;
 
             var dbContext = Services.GetService<ReservationsDataContext>();
 
-            _reservation = new Domain.Entities.Reservation
-            {
-                AccountId = 1,
-                AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId,
-                AccountLegalEntityName = TestData.AccountLegalEntity.AccountLegalEntityName,
-                CourseId = TestData.Course.CourseId,
-                CreatedDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(2),
-                IsLevyAccount = false,
-                Status = (short)ReservationStatus.Deleted,
-                StartDate = DateTime.UtcNow.AddMonths(1),
-                Id = TestData.ReservationId,
-                UserId = Guid.NewGuid()
-            };
-
-            dbContext.Reservations.Add(_reservation);
+            dbContext.Reservations.Add(TestData.Reservation);
             dbContext.SaveChanges();
         }
         
@@ -47,7 +30,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         public void WhenADeleteReservationEventIsTriggered()
         {
             var reservationService = Services.GetService<IReservationService>();
-            reservationService.UpdateReservationStatus(_reservation.Id, (ReservationStatus) _reservation.Status);
+            reservationService.UpdateReservationStatus(TestData.ReservationId, ReservationStatus.Deleted);
         }
         
         [Then(@"the reservation search index should be updated with the deleted reservation removed")]

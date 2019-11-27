@@ -11,5 +11,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
         public AccountLegalEntity AccountLegalEntity { get; set; }
         public Course Course { get; set; }
         public Guid ReservationId { get ; set ; }
+        public Reservation Reservation { get; set; }
     }
 }
