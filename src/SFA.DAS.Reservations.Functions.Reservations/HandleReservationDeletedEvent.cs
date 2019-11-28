@@ -17,15 +17,19 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         public static async Task Run(
             [NServiceBusTrigger(EndPoint = QueueNames.ReservationDeleted)] ReservationDeletedEvent message,
             [Inject] ILogger<ReservationDeletedEvent> log,
-            [Inject] IReservationService reservationService,
-            [Inject] INotifyEmployerOfReservationEventAction action)
+            [Inject] IReservationDeletedHandler handler)
         {
             log.LogInformation($"Reservation Deleted function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
 
-            await action.Execute<ReservationDeletedNotificationEvent>(message);
-            await reservationService.UpdateReservationStatus(message.Id, ReservationStatus.Deleted);
-
-            log.LogInformation($"Reservation Deleted function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
+            if (message.Id != null && message.Id != Guid.Empty)
+            {
+                await handler.Handle(message);
+                log.LogInformation($"Reservation Deleted function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
+            }
+            else
+            {
+                log.LogInformation($"No reservation deleted, no reservation ReservationId provided");
+            }
         }
     }
 }

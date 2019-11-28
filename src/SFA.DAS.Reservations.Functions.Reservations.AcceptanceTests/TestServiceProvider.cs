@@ -51,6 +51,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 
             var mockReservationCreatedHandler = new Mock<IReservationCreatedHandler>();
             serviceCollection.AddSingleton(mockReservationCreatedHandler.Object);
+
+            var mockReservationDeletedHandler = new Mock<IReservationDeletedHandler>();
+            serviceCollection.AddSingleton(mockReservationDeletedHandler.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
             

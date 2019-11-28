@@ -33,6 +33,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             InitialiseTestDatabaseData();
             InitialiseTestDataReservation();
             InitialiseReservationCreatedEvent();
+            InitialiseReservationDeletedEvent();
         }
 
         private void InitialiseTestDatabaseData()
@@ -94,7 +95,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 
         private void InitialiseReservationCreatedEvent()
         {
-            TestData.ReservationCreatedEvent = new ReservationCreatedEvent(TestData.Reservation.Id,
+            TestData.ReservationCreatedEvent = new ReservationCreatedEvent(
+                TestData.Reservation.Id,
                 TestData.Reservation.AccountId,
                 TestData.Reservation.AccountLegalEntityId,
                 TestData.Reservation.AccountLegalEntityName,
@@ -105,6 +107,24 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 TestData.Course.Title,
                 TestData.Course.Level.ToString(),
                 TestData.Reservation.ProviderId);
+        }
+
+        private void InitialiseReservationDeletedEvent()
+        {
+            TestData.ReservationDeletedEvent = new ReservationDeletedEvent(
+                TestData.Reservation.Id,
+                TestData.Reservation.AccountId,
+                TestData.Reservation.AccountLegalEntityId,
+                TestData.Reservation.AccountLegalEntityName,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddMonths(3),
+                TestData.Reservation.CreatedDate,
+                TestData.Reservation.CourseId,
+                TestData.Course.Title,
+                TestData.Course.Level.ToString(),
+                TestData.Reservation.ProviderId,
+                true
+            );
         }
     }
 }

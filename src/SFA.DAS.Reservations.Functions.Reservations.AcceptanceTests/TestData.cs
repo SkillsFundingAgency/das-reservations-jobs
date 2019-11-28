@@ -14,5 +14,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
         public Guid ReservationId { get ; set ; }
         public Reservation Reservation { get; set; }
         public ReservationCreatedEvent ReservationCreatedEvent { get; set; }
+        public ReservationDeletedEvent ReservationDeletedEvent { get; set; }
     }
 }

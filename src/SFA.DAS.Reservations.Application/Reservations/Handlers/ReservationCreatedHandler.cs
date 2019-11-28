@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         }
         public async Task Handle(ReservationCreatedEvent createdEvent)
         {
-            await _notifyAction.Execute<ReservationCreatedNotificationEvent>(createdEvent);
+            //await _notifyAction.Execute<ReservationCreatedNotificationEvent>(createdEvent);
             await _addNonLevyReservationToReservationsIndexAction.Execute(createdEvent);
         }
     }

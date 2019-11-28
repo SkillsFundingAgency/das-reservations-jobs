@@ -29,8 +29,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [When(@"a delete reservation event is triggered")]
         public void WhenADeleteReservationEventIsTriggered()
         {
-            var reservationService = Services.GetService<IReservationService>();
-            reservationService.UpdateReservationStatus(TestData.ReservationId, ReservationStatus.Deleted);
+            var handler = Services.GetService<IReservationDeletedHandler>();
+            handler.Handle(TestData.ReservationDeletedEvent).Wait();
         }
         
         [Then(@"the reservation search index should be updated with the deleted reservation removed")]

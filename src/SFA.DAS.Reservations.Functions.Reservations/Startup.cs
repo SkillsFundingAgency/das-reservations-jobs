@@ -84,7 +84,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         {
 
             var services = ServiceCollection ?? new ServiceCollection();
-            //services.AddHttpClient();
+            services.AddHttpClient();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
@@ -133,6 +133,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
             services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
             services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
+            services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
 
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IProviderService, ProviderService>();
