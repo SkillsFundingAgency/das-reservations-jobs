@@ -137,10 +137,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IProviderService, ProviderService>();
-            services.AddTransient<IAccountsService, AccountsService>();
             
-
-            services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
@@ -150,6 +147,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
                 services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
                 services.AddTransient<IReservationCreatedHandler, IReservationCreatedHandler>();
+                services.AddTransient<IAccountsService, AccountsService>();
+                services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             }
 
             services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();

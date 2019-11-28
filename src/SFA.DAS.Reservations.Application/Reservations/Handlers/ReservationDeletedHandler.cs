@@ -18,7 +18,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
         public async Task Handle(ReservationDeletedEvent deletedEvent)
         {
-            //await _action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await _action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
             await _reservationService.UpdateReservationStatus(deletedEvent.Id, ReservationStatus.Deleted);
         }
     }

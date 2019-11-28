@@ -89,7 +89,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 Status = (short)ReservationStatus.Deleted,
                 StartDate = DateTime.UtcNow.AddMonths(1),
                 Id = TestData.ReservationId,
-                UserId = Guid.NewGuid()
+                UserId = Guid.NewGuid(),
+                ProviderId = 1
             };
         }
 

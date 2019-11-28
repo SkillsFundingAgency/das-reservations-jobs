@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
@@ -38,6 +41,19 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             mockPermissionRepository.Setup(x => x.GetAllForAccountLegalEntity(TestData.AccountLegalEntity.AccountLegalEntityId))
                 .Returns(new List<ProviderPermission> { providerPermission });
 
+            var accountsService = Services.GetService<IAccountsService>();
+            var mockAccountsService = Mock.Get(accountsService);
+
+            var userDetails = new UserDetails{CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = ""};
+
+            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> {userDetails});
+
+            var notificationTokenBuilder = Services.GetService<INotificationTokenBuilder>();
+            var mockNotificationTokenBuilder = Mock.Get(notificationTokenBuilder);
+
+            mockNotificationTokenBuilder.Setup(x => x.BuildTokens(It.IsAny<INotificationEvent>()))
+                .ReturnsAsync(new Dictionary<string, string>());
+
             var handler = Services.GetService<IReservationCreatedHandler>();
             handler.Handle(TestData.ReservationCreatedEvent).Wait();
         }
@@ -51,25 +67,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             mock.Verify(x => x.Add(It.IsAny<List<IndexedReservation>>()), Times.Once);
         }
 
-        private Reservation MapEntityReservationToReservation(
-            Domain.Entities.Reservation reservationToBeMapped)
+        [Then(@"the employer should be notified of the created reservation")]
+        public void ThenTheEmployerShouldBeNotifiedOfTheCreatedReservation()
         {
-            var reservation = new Reservation
-            {
-                AccountId = reservationToBeMapped.AccountId,
-                AccountLegalEntityId = reservationToBeMapped.AccountLegalEntityId,
-                AccountLegalEntityName = reservationToBeMapped.AccountLegalEntityName,
-                CourseId = reservationToBeMapped.CourseId,
-                CourseName = TestData.Course.Title,
-                CourseLevel = TestData.Course.Level,
-                CreatedDate = reservationToBeMapped.CreatedDate,
-                EmployerDeleted = false,
-                EndDate = DateTime.UtcNow.AddMonths(6),
-                Id = reservationToBeMapped.Id,
-                ProviderId = reservationToBeMapped.ProviderId,
-                StartDate = DateTime.UtcNow.AddMonths(1)
-            };
-            return reservation;
+            var notificationsService = Services.GetService<INotificationsService>();
+            var mock = Mock.Get(notificationsService);
+
+            mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()),Times.Once);
         }
     }
 }

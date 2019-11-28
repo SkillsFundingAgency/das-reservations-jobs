@@ -40,5 +40,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var mock = Mock.Get(reservationIndexRepository);
             mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Deleted), Times.Once);
         }
+
+        [Then(@"Then the employer should be notified of the deleted reservation")]
+        public void ThenTheEmployerShouldBeNotifiedOfTheDeletedReservation()
+        {
+
+        }
     }
 }
