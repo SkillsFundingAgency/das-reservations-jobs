@@ -124,7 +124,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 TestData.Course.Title,
                 TestData.Course.Level.ToString(),
                 TestData.Reservation.ProviderId,
-                true
+                false
             );
         }
     }

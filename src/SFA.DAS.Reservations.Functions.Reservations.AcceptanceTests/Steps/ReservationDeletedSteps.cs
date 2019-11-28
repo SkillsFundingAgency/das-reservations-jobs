@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Domain.Accounts;
+using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 using TechTalk.SpecFlow;
 
@@ -29,6 +32,19 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [When(@"a delete reservation event is triggered")]
         public void WhenADeleteReservationEventIsTriggered()
         {
+            var accountsService = Services.GetService<IAccountsService>();
+            var mockAccountsService = Mock.Get(accountsService);
+
+            var userDetails = new UserDetails { CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = "" };
+
+            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> { userDetails });
+
+            var notificationTokenBuilder = Services.GetService<INotificationTokenBuilder>();
+            var mockNotificationTokenBuilder = Mock.Get(notificationTokenBuilder);
+
+            mockNotificationTokenBuilder.Setup(x => x.BuildTokens(It.IsAny<INotificationEvent>()))
+                .ReturnsAsync(new Dictionary<string, string>());
+
             var handler = Services.GetService<IReservationDeletedHandler>();
             handler.Handle(TestData.ReservationDeletedEvent).Wait();
         }
@@ -41,10 +57,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Deleted), Times.Once);
         }
 
-        [Then(@"Then the employer should be notified of the deleted reservation")]
+        [Then(@"the employer should be notified of the deleted reservation")]
         public void ThenTheEmployerShouldBeNotifiedOfTheDeletedReservation()
         {
+            var notificationsService = Services.GetService<INotificationsService>();
+            var mock = Mock.Get(notificationsService);
 
+            mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()), Times.Once);
         }
     }
 }

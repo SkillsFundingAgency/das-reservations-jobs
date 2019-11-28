@@ -10,5 +10,5 @@ Scenario: Reservation search index should be updated on reservation deletion
 
 Scenario: Employer should be notified on reservation deletion
 	Given I have a reservation ready for creation
-	When a create reservation event is triggered
+	When a delete reservation event is triggered
 	Then the employer should be notified of the deleted reservation
