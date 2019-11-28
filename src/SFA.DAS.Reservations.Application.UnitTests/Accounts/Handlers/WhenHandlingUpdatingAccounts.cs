@@ -15,7 +15,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Accounts.Handlers
         public async Task Then_The_Service_Is_Called_To_Update_The_Entity(
             ChangedAccountNameEvent changedAccountNameEvent,
             [Frozen]Mock<IAccountsService> service,
-            UpdateAccountHandler handler)
+            AccountNameUpdatedHandler handler)
         {
             //Act
             await handler.Handle(changedAccountNameEvent);

@@ -4,11 +4,11 @@ using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.Accounts.Handlers
 {
-    public class UpdateAccountHandler : IAccountNameUpdatedHandler
+    public class AccountNameUpdatedHandler : IAccountNameUpdatedHandler
     {
         private readonly IAccountsService _accountsService;
 
-        public UpdateAccountHandler (IAccountsService accountsService)
+        public AccountNameUpdatedHandler (IAccountsService accountsService)
         {
             _accountsService = accountsService;
         }

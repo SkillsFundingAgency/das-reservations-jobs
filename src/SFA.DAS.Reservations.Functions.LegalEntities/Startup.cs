@@ -9,12 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
+using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
+using SFA.DAS.Reservations.Application.Accounts.Handlers;
+using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
+using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Functions.LegalEntities;
@@ -94,12 +98,18 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             services.AddTransient<IAzureQueueService, AzureQueueService>();
             services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
+            services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<IAccountApiClient, AccountApiClient>();
+            
             services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
 
             services.AddTransient<IAddAccountLegalEntityHandler, AddAccountLegalEntityHandler>();
             services.AddTransient<IRemoveLegalEntityHandler, RemoveLegalEntityHandler>();
             services.AddTransient<ISignedLegalAgreementHandler, SignedLegalAgreementHandler>();
             services.AddTransient<ILevyAddedToAccountHandler, LevyAddedToAccountHandler>();
+            services.AddTransient<IAddAccountHandler, AddAccountHandler>();
+            services.AddTransient<IAccountNameUpdatedHandler, AccountNameUpdatedHandler>();
 
             //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
