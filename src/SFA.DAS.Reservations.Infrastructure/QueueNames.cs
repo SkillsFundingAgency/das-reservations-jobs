@@ -14,5 +14,7 @@
 		public const string UpdatedProviderPermissions = "SFA.DAS.Reservations.Jobs.PrlUpdated";
         public const string ReservationCreated = "SFA.DAS.Reservations.Jobs.ReservationCreated";
         public const string ReservationDeleted = "SFA.DAS.Reservations.Jobs.ReservationDeleted";
+        public const string AccountCreated = "SFA.DAS.Reservations.Jobs.AccountCreated";
+        public const string AccountUpdated = "SFA.DAS.Reservations.Jobs.AccountUpdated";
     }
 }
