@@ -48,6 +48,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 
             var mockProviderPermissions = new Mock<IProviderPermissionRepository>();
             serviceCollection.AddSingleton(mockProviderPermissions.Object);
+
+            var mockReservationCreatedHandler = new Mock<IReservationCreatedHandler>();
+            serviceCollection.AddSingleton(mockReservationCreatedHandler.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
             

@@ -7,6 +7,7 @@ using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Messages;
 using TechTalk.SpecFlow;
 using Reservation = SFA.DAS.Reservations.Domain.Reservations.Reservation;
 
@@ -22,12 +23,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Given(@"I have a reservation ready for creation")]
         public void GivenIHaveAReservationReadyForCreation()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-
             TestData.Reservation.Status = (short)ReservationStatus.Pending;
-
-            dbContext.Reservations.Add(TestData.Reservation);
-            dbContext.SaveChanges();
         }
         
         [When(@"a create reservation event is triggered")]
@@ -37,13 +33,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var mockPermissionRepository = Mock.Get(permissionRepository);
 
             var providerPermission = new ProviderPermission
-                { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
+            { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
 
             mockPermissionRepository.Setup(x => x.GetAllForAccountLegalEntity(TestData.AccountLegalEntity.AccountLegalEntityId))
                 .Returns(new List<ProviderPermission> { providerPermission });
 
-            var addNonLevyReservation = Services.GetService<IAddNonLevyReservationToReservationsIndexAction>();
-            addNonLevyReservation.Execute(MapEntityReservationToReservation(TestData.Reservation));
+            var handler = Services.GetService<IReservationCreatedHandler>();
+            handler.Handle(TestData.ReservationCreatedEvent).Wait();
         }
         
         [Then(@"the reservation search index should be updated with the new reservation")]

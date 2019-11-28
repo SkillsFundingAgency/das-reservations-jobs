@@ -6,6 +6,7 @@ using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Messages;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
@@ -24,10 +25,17 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             Services = serviceProvider;
             TestData = testData;
         }
-        
-        
+
+
         [BeforeScenario()]
-        public void InitialiseTestDatabaseData()
+        public void InitialiseTestData()
+        {
+            InitialiseTestDatabaseData();
+            InitialiseTestDataReservation();
+            InitialiseReservationCreatedEvent();
+        }
+
+        private void InitialiseTestDatabaseData()
         {
             TestData.Course = new Course
             {
@@ -63,9 +71,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 dbContext.SaveChanges();
             }
         }
-
-        [BeforeScenario()]
-        public void InitialiseTestDataReservation()
+        
+        private void InitialiseTestDataReservation()
         {
             TestData.ReservationId = Guid.NewGuid();
 
@@ -83,6 +90,21 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 Id = TestData.ReservationId,
                 UserId = Guid.NewGuid()
             };
+        }
+
+        private void InitialiseReservationCreatedEvent()
+        {
+            TestData.ReservationCreatedEvent = new ReservationCreatedEvent(TestData.Reservation.Id,
+                TestData.Reservation.AccountId,
+                TestData.Reservation.AccountLegalEntityId,
+                TestData.Reservation.AccountLegalEntityName,
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddMonths(3),
+                TestData.Reservation.CreatedDate,
+                TestData.Course.CourseId,
+                TestData.Course.Title,
+                TestData.Course.Level.ToString(),
+                TestData.Reservation.ProviderId);
         }
     }
 }

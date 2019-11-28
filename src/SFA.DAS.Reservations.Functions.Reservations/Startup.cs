@@ -84,7 +84,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
         {
 
             var services = ServiceCollection ?? new ServiceCollection();
-            services.AddHttpClient();
+            //services.AddHttpClient();
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
@@ -132,20 +132,23 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
             services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
+            services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
 
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IProviderService, ProviderService>();
             services.AddTransient<IAccountsService, AccountsService>();
-            services.AddTransient<INotificationsService, NotificationsService>();
+            
 
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
+                services.AddTransient<INotificationsService, NotificationsService>();
                 services.AddTransient<IEncodingService, EncodingService>();
                 services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
                 services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
+                services.AddTransient<IReservationCreatedHandler, IReservationCreatedHandler>();
             }
 
             services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
