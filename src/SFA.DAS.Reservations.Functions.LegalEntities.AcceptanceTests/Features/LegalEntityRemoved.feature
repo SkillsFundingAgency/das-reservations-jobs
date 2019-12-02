@@ -8,6 +8,6 @@ Scenario: An existing legal entity has been removed
 	Then the legal entity should no longer be available
 
 Scenario: An new legal entity has been removed
-	Given  I have a legal entity that is new
+	Given I have a legal entity that is not in the database
 	When removed legal entity event is triggered
 	Then the legal entity should no longer be available

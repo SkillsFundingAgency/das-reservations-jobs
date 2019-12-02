@@ -12,12 +12,12 @@ Scenario: A existing legal entity has recieved levy
 	When levy added event is triggered
 	Then the legal entity should be marked as a levy entity
 
-Scenario: A new legal entity has recieved levy
-	Given I have a legal entity that is new
+Scenario: A unknown legal entity has recieved levy
+	Given I have a legal entity that is not in the database
 	When levy added event is triggered
 	Then an exception should be thrown
 
-Scenario: A new legal entity has been signed
-	Given I have a legal entity that is new
+Scenario: A unknown legal entity has been signed
+	Given I have a legal entity that is not in the database
 	When signed agreement event is triggered
 	Then an exception should be thrown

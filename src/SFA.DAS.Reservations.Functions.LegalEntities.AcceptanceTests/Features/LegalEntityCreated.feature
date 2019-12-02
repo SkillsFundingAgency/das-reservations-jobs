@@ -4,7 +4,7 @@
 
 
 Scenario: A new legal entity has been created
-	Given I have a legal entity that is new
+	Given I have a legal entity that is not in the database
 	When added legal entity event is triggered
 	Then the legal entity should be available
 

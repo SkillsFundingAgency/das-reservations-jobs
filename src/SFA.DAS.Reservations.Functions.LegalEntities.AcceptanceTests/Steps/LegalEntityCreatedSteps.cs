@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
             
         }
 
-        [Given(@"I have a legal entity that is new")]
+        [Given(@"I have a legal entity that is not in the database")]
         public void GivenIHaveALegalEntityThatIsNew()
         {
             TestData.AccountLegalEntity = new AccountLegalEntity
