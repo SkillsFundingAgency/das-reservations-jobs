@@ -140,6 +140,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             services.AddTransient<IReservationRepository,ReservationRepository>();
+            services.AddTransient<IAccountRepository,AccountRepository>();
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
