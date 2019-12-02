@@ -15,9 +15,9 @@ Scenario: A existing legal entity has recieved levy
 Scenario: A new legal entity has recieved levy
 	Given I have a legal entity that is new
 	When levy added event is triggered
-	Then the legal entity should not be available
+	Then an exception should be thrown
 
 Scenario: A new legal entity has been signed
 	Given I have a legal entity that is new
 	When signed agreement event is triggered
-	Then the legal entity should not be available
+	Then an exception should be thrown

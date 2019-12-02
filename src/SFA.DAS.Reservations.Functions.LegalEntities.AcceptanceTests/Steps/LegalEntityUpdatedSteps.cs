@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SFA.DAS.Common.Domain.Types;
@@ -24,12 +25,19 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         {
             var handler = Services.GetService<ISignedLegalAgreementHandler>();
 
-            handler.Handle(new SignedAgreementEvent
+            try
             {
-                AccountId = TestData.AccountLegalEntity.AccountId,
-                AgreementId = 123,
-                AgreementType = AgreementType.NonLevyExpressionOfInterest
-            }).Wait();
+                handler.Handle(new SignedAgreementEvent
+                {
+                    AccountId = TestData.AccountLegalEntity.AccountId,
+                    AgreementId = 123,
+                    AgreementType = AgreementType.NonLevyExpressionOfInterest
+                }).Wait();
+            }
+            catch (Exception e)
+            {
+                TestData.Exception = e;
+            }
         }
 
         [When(@"levy added event is triggered")]
@@ -37,10 +45,17 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         {
             var handler = Services.GetService<ILevyAddedToAccountHandler>();
 
-            handler.Handle(new LevyAddedToAccount
+            try
             {
-                AccountId = TestData.AccountLegalEntity.AccountId
-            }).Wait();
+                handler.Handle(new LevyAddedToAccount
+                {
+                    AccountId = TestData.AccountLegalEntity.AccountId
+                }).Wait();
+            }
+            catch (Exception e)
+            {
+                TestData.Exception = e;
+            }
         }
 
         [Then(@"the legal entity should be signed")]
@@ -65,5 +80,12 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
             Assert.IsTrue(legalEntity.IsLevy);
 
         }
+
+        [Then(@"an exception should be thrown")]
+        public void ThenAnExceptionShouldBeThrown()
+        {
+            Assert.IsNotNull(TestData.Exception);
+        }
+
     }
 }

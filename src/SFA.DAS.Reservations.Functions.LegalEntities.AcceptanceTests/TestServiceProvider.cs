@@ -27,10 +27,23 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
             };
             
             var encodingService = new Mock<IEncodingService>();
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyAccountId);
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyHashedAccountId);
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyAccountId);
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyHashedAccountId);
+
+            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.NonLevyAccountId);
+
+            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.NonLevyHashedAccountId);
+
+            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.LevyAccountId);
+
+            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.LevyHashedAccountId);
+
             serviceCollection.AddSingleton(encodingService.Object);
             
             var mockProviderApiClient = new Mock<IProviderApiClient>();
@@ -41,9 +54,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
 
             var mockNotificationService = new Mock<INotificationsService>();
             serviceCollection.AddSingleton(mockNotificationService.Object);
-
-            //var mockReservationIndex = new Mock<IReservationIndexRepository>();
-            //serviceCollection.AddSingleton(mockReservationIndex.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
         }

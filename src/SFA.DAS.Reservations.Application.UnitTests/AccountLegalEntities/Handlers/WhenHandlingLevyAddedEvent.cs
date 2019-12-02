@@ -44,7 +44,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
         }
 
         [Test]
-        public async Task Then_Will_Not_Throw_Exception_If_Signing_Agreement_And_Database_Update_Fails()
+        public void Then_Will_Throw_Exception_If_Signing_Agreement_And_Database_Update_Fails()
         {
             //Arrange
             var levyAddedToAccountEvent = new LevyAddedToAccount
@@ -58,7 +58,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
                 .ThrowsAsync(new DbUpdateException("Failed", (Exception)null));
 
             //Act + Assert
-            await _handler.Handle(levyAddedToAccountEvent);
+            Assert.ThrowsAsync<DbUpdateException>(() => _handler.Handle(levyAddedToAccountEvent));
         }
     }
 }

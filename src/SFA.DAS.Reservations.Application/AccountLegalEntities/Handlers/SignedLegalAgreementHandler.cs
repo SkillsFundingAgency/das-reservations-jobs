@@ -26,6 +26,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             catch (DbUpdateException e)
             {
                 _logger.LogWarning("Could not update levy status to is levy payer", e);
+                throw;
             }
         }
     }

@@ -27,6 +27,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             catch (DbUpdateException e)
             {
                 _logger.LogWarning("Could not update agreement status to signed", e);
+                throw;
             }
         }
     }
