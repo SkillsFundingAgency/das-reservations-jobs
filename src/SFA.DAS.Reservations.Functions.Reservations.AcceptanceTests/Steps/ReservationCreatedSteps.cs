@@ -29,8 +29,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             TestData.Reservation.Status = (short)ReservationStatus.Pending;
         }
         
-        [When(@"a create reservation event is triggered")]
-        public void WhenACreateReservationEventIsTriggered()
+        [When(@"a create reservation event is triggered by provider")]
+        public void WhenACreateReservationEventIsTriggeredByProvider()
         {
             var permissionRepository = Services.GetService<IProviderPermissionRepository>();
             var mockPermissionRepository = Mock.Get(permissionRepository);
@@ -52,7 +52,26 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var handler = Services.GetService<IReservationCreatedHandler>();
             handler.Handle(TestData.ReservationCreatedEvent).Wait();
         }
-        
+
+        [When(@"a create reservation event is triggered by employer")]
+        public void WhenACreateReservationEventIsTriggeredByEmployer()
+        {
+            TestData.ReservationCreatedEvent.ProviderId = null;
+
+            var handler = Services.GetService<IReservationCreatedHandler>();
+            handler.Handle(TestData.ReservationCreatedEvent).Wait();
+        }
+
+        [When(@"a created reservation event is triggered for a levy employer")]
+        public void WhenACreatedReservationEventIsTriggeredForALevyEmployer()
+        {
+            TestData.ReservationCreatedEvent.CourseId = null;
+            TestData.ReservationCreatedEvent.StartDate = DateTime.MinValue;
+
+            var handler = Services.GetService<IReservationCreatedHandler>();
+            handler.Handle(TestData.ReservationCreatedEvent).Wait();
+        }
+
         [Then(@"the reservation search index should be updated with the new reservation")]
         public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheNewReservation()
         {
@@ -69,6 +88,15 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var mock = Mock.Get(notificationsService);
 
             mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()),Times.Once);
+        }
+
+        [Then(@"the employer should not be notified of the (.*) reservation")]
+        public void ThenTheEmployerShouldNotBeNotifiedOfTheReservation(string reservationStatus)
+        {
+            var notificationsService = Services.GetService<INotificationsService>();
+            var mock = Mock.Get(notificationsService);
+
+            mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()), Times.Never);
         }
     }
 }

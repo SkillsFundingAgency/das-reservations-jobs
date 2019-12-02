@@ -29,8 +29,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             dbContext.SaveChanges();
         }
         
-        [When(@"a delete reservation event is triggered")]
-        public void WhenADeleteReservationEventIsTriggered()
+        [When(@"a delete reservation event is triggered by provider")]
+        public void WhenADeleteReservationEventIsTriggeredByProvider()
         {
             var accountsService = Services.GetService<IAccountsService>();
             var mockAccountsService = Mock.Get(accountsService);
@@ -42,6 +42,22 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 
             mockNotificationTokenBuilder.Setup(x => x.BuildTokens(It.IsAny<INotificationEvent>()))
                 .ReturnsAsync(new Dictionary<string, string>());
+
+            var handler = Services.GetService<IReservationDeletedHandler>();
+            handler.Handle(TestData.ReservationDeletedEvent).Wait();
+        }
+
+        [When(@"a delete reservation event for a reservation created by (.*) is triggered by employer")]
+        public void WhenADeleteReservationEventForAReservationCreatedByIsTriggeredByEmployer(string source)
+        {
+            if (source.Equals("employer", StringComparison.CurrentCultureIgnoreCase))
+            {
+                TestData.ReservationDeletedEvent.ProviderId = null;
+            }
+            else if (source.Equals("provider", StringComparison.CurrentCultureIgnoreCase))
+            {
+                TestData.ReservationDeletedEvent.EmployerDeleted = true;
+            }
 
             var handler = Services.GetService<IReservationDeletedHandler>();
             handler.Handle(TestData.ReservationDeletedEvent).Wait();
