@@ -8,6 +8,9 @@ using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Providers.Api.Client;
+using SFA.DAS.Reservations.Domain.Accounts;
+using SFA.DAS.Reservations.Domain.Notifications;
+using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
@@ -44,6 +47,21 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 
             var mockReservationIndex = new Mock<IReservationIndexRepository>();
             serviceCollection.AddSingleton(mockReservationIndex.Object);
+
+            var mockProviderPermissions = new Mock<IProviderPermissionRepository>();
+            serviceCollection.AddSingleton(mockProviderPermissions.Object);
+
+            var mockReservationCreatedHandler = new Mock<IReservationCreatedHandler>();
+            serviceCollection.AddSingleton(mockReservationCreatedHandler.Object);
+
+            var mockReservationDeletedHandler = new Mock<IReservationDeletedHandler>();
+            serviceCollection.AddSingleton(mockReservationDeletedHandler.Object);
+
+            var mockAccountsService = new Mock<IAccountsService>();
+            serviceCollection.AddSingleton(mockAccountsService.Object);
+
+            var mockNotificationTokenBuilder = new Mock<INotificationTokenBuilder>();
+            serviceCollection.AddSingleton(mockNotificationTokenBuilder.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
             
