@@ -1,6 +1,6 @@
 ﻿Feature: Reservation created
 	In order to know when a reservation has been created
-	I want to be told when the reservation search index is updated
+	I want to be notified when the reservation is created and the search index is updated
 
 
 Scenario: Reservation search index should be updated on reservation creation

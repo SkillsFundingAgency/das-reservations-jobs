@@ -35,18 +35,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var permissionRepository = Services.GetService<IProviderPermissionRepository>();
             var mockPermissionRepository = Mock.Get(permissionRepository);
 
-            var providerPermission = new ProviderPermission
-            { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
-
             mockPermissionRepository.Setup(x => x.GetAllForAccountLegalEntity(TestData.AccountLegalEntity.AccountLegalEntityId))
-                .Returns(new List<ProviderPermission> { providerPermission });
+                .Returns(new List<ProviderPermission> { TestData.ProviderPermission });
 
             var accountsService = Services.GetService<IAccountsService>();
             var mockAccountsService = Mock.Get(accountsService);
 
-            var userDetails = new UserDetails{CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = ""};
-
-            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> {userDetails});
+            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> {TestData.UserDetails});
 
             var notificationTokenBuilder = Services.GetService<INotificationTokenBuilder>();
             var mockNotificationTokenBuilder = Mock.Get(notificationTokenBuilder);

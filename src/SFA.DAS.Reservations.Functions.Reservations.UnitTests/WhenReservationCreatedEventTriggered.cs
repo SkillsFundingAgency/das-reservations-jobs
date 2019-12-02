@@ -42,7 +42,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
         [Test, AutoData]
         public async Task Then_Update_Index_Action_Executed(
             int courseLevel,
-            ReservationCreatedEvent createdEvent)//TODO Mock the handler and do setup on it
+            ReservationCreatedEvent createdEvent)
         {
             //Arrange
             createdEvent.CourseLevel = courseLevel.ToString();

@@ -35,9 +35,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var accountsService = Services.GetService<IAccountsService>();
             var mockAccountsService = Mock.Get(accountsService);
 
-            var userDetails = new UserDetails { CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = "" };
-
-            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> { userDetails });
+            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> { TestData.UserDetails });
 
             var notificationTokenBuilder = Services.GetService<INotificationTokenBuilder>();
             var mockNotificationTokenBuilder = Mock.Get(notificationTokenBuilder);

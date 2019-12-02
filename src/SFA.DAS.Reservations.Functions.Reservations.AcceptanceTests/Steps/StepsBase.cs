@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
@@ -34,6 +35,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             InitialiseTestDataReservation();
             InitialiseReservationCreatedEvent();
             InitialiseReservationDeletedEvent();
+            InitialiseProviderPermission();
+            InitialiseUserDetails();
         }
 
         private void InitialiseTestDatabaseData()
@@ -126,6 +129,18 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 TestData.Reservation.ProviderId,
                 false
             );
+        }
+
+        private void InitialiseProviderPermission()
+        {
+            TestData.ProviderPermission = new ProviderPermission
+                { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
+        }
+
+        private void InitialiseUserDetails()
+        {
+            TestData.UserDetails = new UserDetails
+                {CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = ""};
         }
     }
 }
