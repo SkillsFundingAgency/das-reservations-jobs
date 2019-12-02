@@ -68,6 +68,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
+            services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
+            services.AddSingleton<IAccountApiConfiguration>(cfg =>  cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
+            
             var serviceProvider = services.BuildServiceProvider();
 
             var config = serviceProvider.GetService<ReservationsJobs>();
