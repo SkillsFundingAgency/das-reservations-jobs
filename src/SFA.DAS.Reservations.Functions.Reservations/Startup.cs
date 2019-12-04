@@ -132,27 +132,28 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
             services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
+            services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
+            services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
 
             services.AddTransient<IReservationService,ReservationService>();
             services.AddTransient<IProviderService, ProviderService>();
-            services.AddTransient<IAccountsService, AccountsService>();
-            services.AddTransient<INotificationsService, NotificationsService>();
-
-            services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
+            
             services.AddTransient<IReservationRepository,ReservationRepository>();
             services.AddTransient<IAccountRepository,AccountRepository>();
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
+                services.AddTransient<INotificationsService, NotificationsService>();
                 services.AddTransient<IEncodingService, EncodingService>();
                 services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+                services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
+                services.AddTransient<IReservationCreatedHandler, IReservationCreatedHandler>();
+                services.AddTransient<IAccountsService, AccountsService>();
+                services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             }
 
             services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
-
             
-            services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
-
             services.AddTransient<IIndexRegistry, IndexRegistry>();
 
             services.AddElasticSearch(jobsConfig, Configuration["EnvironmentName"]);

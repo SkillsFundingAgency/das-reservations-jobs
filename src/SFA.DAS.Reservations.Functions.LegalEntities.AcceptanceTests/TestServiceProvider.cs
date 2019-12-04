@@ -8,12 +8,9 @@ using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Providers.Api.Client;
-using SFA.DAS.Reservations.Domain.Accounts;
-using SFA.DAS.Reservations.Domain.Notifications;
-using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 
-namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
+namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
 {
     public class TestServiceProvider : IServiceProvider
     {
@@ -30,10 +27,23 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             };
             
             var encodingService = new Mock<IEncodingService>();
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyAccountId);
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyHashedAccountId);
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyAccountId);
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyHashedAccountId);
+
+            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.NonLevyAccountId);
+
+            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.NonLevyHashedAccountId);
+
+            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.LevyAccountId);
+
+            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),
+                It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
+                .Returns(TestDataValues.LevyHashedAccountId);
+
             serviceCollection.AddSingleton(encodingService.Object);
             
             var mockProviderApiClient = new Mock<IProviderApiClient>();
@@ -44,28 +54,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 
             var mockNotificationService = new Mock<INotificationsService>();
             serviceCollection.AddSingleton(mockNotificationService.Object);
-
-            var mockReservationIndex = new Mock<IReservationIndexRepository>();
-            serviceCollection.AddSingleton(mockReservationIndex.Object);
-
-            var mockProviderPermissions = new Mock<IProviderPermissionRepository>();
-            serviceCollection.AddSingleton(mockProviderPermissions.Object);
-
-            var mockReservationCreatedHandler = new Mock<IReservationCreatedHandler>();
-            serviceCollection.AddSingleton(mockReservationCreatedHandler.Object);
-
-            var mockReservationDeletedHandler = new Mock<IReservationDeletedHandler>();
-            serviceCollection.AddSingleton(mockReservationDeletedHandler.Object);
-
-            var mockAccountsService = new Mock<IAccountsService>();
-            serviceCollection.AddSingleton(mockAccountsService.Object);
-
-            var mockNotificationTokenBuilder = new Mock<INotificationTokenBuilder>();
-            serviceCollection.AddSingleton(mockNotificationTokenBuilder.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
-            
-            
         }
 
         public object GetService(Type serviceType)
