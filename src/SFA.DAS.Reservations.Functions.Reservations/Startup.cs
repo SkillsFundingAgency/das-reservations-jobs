@@ -147,7 +147,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 services.AddTransient<IEncodingService, EncodingService>();
                 services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
                 services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
-                services.AddTransient<IReservationCreatedHandler, IReservationCreatedHandler>();
                 services.AddTransient<IAccountsService, AccountsService>();
                 services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
             }
