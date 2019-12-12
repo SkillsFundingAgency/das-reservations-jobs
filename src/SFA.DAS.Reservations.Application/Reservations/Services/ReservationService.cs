@@ -89,10 +89,15 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         {
             _logger.LogInformation($"Adding Reservation Id [{reservation.Id}] to index.");
 
-            var permissions = _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId);
-            
-            _logger.LogInformation($"[{permissions.Count()}] providers found for Reservation Id [{reservation.Id}].");
-            
+            var permissions = _permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId).ToArray();
+
+            _logger.LogInformation($"[{permissions.Length}] providers found for Reservation Id [{reservation.Id}].");
+
+            if (!permissions.Any())
+            {
+                return;
+            }
+
             var indexedReservations = new List<IndexedReservation>();
             foreach (var providerPermission in permissions)
             {

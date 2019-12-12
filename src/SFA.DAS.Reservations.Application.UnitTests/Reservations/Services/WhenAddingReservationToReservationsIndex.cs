@@ -67,5 +67,24 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 actualReservation.IsLevyAccount.Should().Be(false);
             }
         }
+
+         [Test, MoqAutoData]
+        public async Task Then_If_No_Provider_Permissions_Found_Does_Not_Update_Index(
+            Reservation reservation,
+            [Frozen] Mock<IProviderPermissionRepository> mockPermissionsRepo,
+            [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
+            ReservationService service)
+        {
+            //Arrange
+            mockPermissionsRepo
+                .Setup(repository => repository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId))
+                .Returns(new List<Domain.Entities.ProviderPermission>());
+            
+            //Act
+            await service.AddReservationToReservationsIndex(reservation);
+          
+            //Assert
+            mockIndexRepo.Verify(r => r.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Never);
+        }
     }
 }
