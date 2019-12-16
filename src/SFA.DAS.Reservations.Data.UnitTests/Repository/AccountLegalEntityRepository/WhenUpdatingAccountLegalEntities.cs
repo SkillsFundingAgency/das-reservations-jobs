@@ -33,7 +33,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
                 AccountId = 8376234,
                 AgreementSigned = false,
                 LegalEntityId = 4,
-                AgreementType = AgreementType.Levy
             };
 
             _updatedAccountLegalEntity = new AccountLegalEntity
@@ -42,7 +41,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
                 AccountId = 8376234,
                 AgreementSigned = false,
                 LegalEntityId = 4,
-                AgreementType = AgreementType.NonLevyExpressionOfInterest
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -84,15 +82,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             Assert.IsTrue(_dbAccountLegalEntity.AgreementSigned);
         }
 
-        [Test]
-        public async Task ThenWillUpdateTheAgreementType()
-        {
-            //Act
-            await _accountLegalEntityRepository.UpdateAgreementStatus(_updatedAccountLegalEntity);
-            
-            //Assert
-            Assert.AreEqual(AgreementType.NonLevyExpressionOfInterest, _dbAccountLegalEntity.AgreementType);
-        }
 
         [Test]
         public void Then_If_The_Entity_Does_Not_Exist_An_Exception_Is_Thrown()

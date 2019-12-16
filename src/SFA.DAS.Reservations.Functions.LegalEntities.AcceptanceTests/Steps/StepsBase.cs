@@ -39,7 +39,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountId = AccountId,
                 AccountLegalEntityId = AccountLegalEntityId,
                 AccountLegalEntityName = "Test Corp",
-                AgreementType = AgreementType.NonLevyExpressionOfInterest,
                 AgreementSigned = true
             };
 
