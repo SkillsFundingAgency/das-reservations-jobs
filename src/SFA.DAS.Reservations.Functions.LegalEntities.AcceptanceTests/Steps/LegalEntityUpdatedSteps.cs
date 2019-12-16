@@ -30,8 +30,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 handler.Handle(new SignedAgreementEvent
                 {
                     AccountId = TestData.AccountLegalEntity.AccountId,
-                    AgreementId = 123,
-                    AgreementType = AgreementType.NonLevyExpressionOfInterest
+                    AgreementId = 123
                 }).Wait();
             }
             catch (Exception e)

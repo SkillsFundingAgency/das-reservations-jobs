@@ -29,7 +29,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId + 1,
                 AccountLegalEntityName = "Another legal entity",
                 AgreementSigned =  true,
-                AgreementType = AgreementType.NonLevyExpressionOfInterest,
                 Id = Guid.NewGuid(),
                 IsLevy = false,
                 LegalEntityId = 123
@@ -51,7 +50,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId + 1,
                 AccountLegalEntityName = "Another legal entity",
                 AgreementSigned =  true,
-                AgreementType = AgreementType.NonLevyExpressionOfInterest,
                 Id = Guid.NewGuid(),
                 IsLevy = false,
                 LegalEntityId = 123
@@ -105,8 +103,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
             Assert.IsNotNull(legalEntity);
             legalEntity.Should().BeEquivalentTo(TestData.AccountLegalEntity, options => options
                 .Excluding(ale => ale.Id)
-                .Excluding(ale => ale.AgreementSigned)
-                .Excluding(ale => ale.AgreementType));
+                .Excluding(ale => ale.AgreementSigned));
         }
 
         

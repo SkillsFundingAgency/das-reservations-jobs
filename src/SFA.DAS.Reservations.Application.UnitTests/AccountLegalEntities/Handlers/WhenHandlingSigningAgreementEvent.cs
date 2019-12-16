@@ -30,8 +30,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
             var signedAgreementEvent = new SignedAgreementEvent
             {
                 AccountId= 5, 
-                LegalEntityId = 56, 
-                AgreementType = AgreementType.NonLevyExpressionOfInterest
+                LegalEntityId = 56
             };
 
             //Act
@@ -40,8 +39,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
             //Assert
             _service.Verify(x => x.SignAgreementForAccountLegalEntity(It.Is<SignedAgreementEvent>(
                 c => c.AccountId.Equals(signedAgreementEvent.AccountId) && 
-                     c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId) && 
-                     c.AgreementType.Equals(signedAgreementEvent.AgreementType))));
+                     c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId))));
         }
 
         [Test]
@@ -51,8 +49,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
             var signedAgreementEvent = new SignedAgreementEvent
             {
                 AccountId= 5, 
-                LegalEntityId = 56, 
-                AgreementType = AgreementType.NonLevyExpressionOfInterest
+                LegalEntityId = 56
             };
 
             _service.Setup(x => x.SignAgreementForAccountLegalEntity(It.IsAny<SignedAgreementEvent>()))

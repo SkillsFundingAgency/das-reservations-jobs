@@ -31,8 +31,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
             var signedAgreementEvent = new SignedAgreementEvent
             {
                 AccountId = 9786,
-                LegalEntityId = 543,
-                AgreementType = AgreementType.NonLevyExpressionOfInterest
+                LegalEntityId = 543
             };
 
             //Act
@@ -41,8 +40,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
             //Assert
             _repository.Verify(x=>x.UpdateAgreementStatus(
                 It.Is<AccountLegalEntity>(c=>c.AccountId.Equals(signedAgreementEvent.AccountId) && 
-                                             c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId) && 
-                                             c.AgreementType.Equals(signedAgreementEvent.AgreementType))));
+                                             c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId))));
         }
 
         [Test, MoqAutoData]
