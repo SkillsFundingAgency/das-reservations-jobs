@@ -40,16 +40,32 @@ namespace SFA.DAS.Reservations.Data.Registry
 
         public async Task DeleteOldIndices(uint daysOld)
         {   
-            var indices = _client.Search<IndexRegistryEntry>(s => s
+            var registryEntries = _client.Search<IndexRegistryEntry>(s => s
                 .Index(Name)
                 .From(0).Size(100));
             
-            var indicesToDelete = indices.Documents.Where(x =>
-                x.DateCreated <= DateTime.Now.AddDays(-daysOld)).ToArray();
+            var registriesToDelete = registryEntries.Documents
+                .Where(x => x.DateCreated <= DateTime.Now.AddDays(-daysOld))
+                .ToList();
 
-            if (!indicesToDelete.Any()) return;
-            
-            await _client.DeleteManyAsync(indicesToDelete, Name);
+            if (!registriesToDelete.Any()) return;
+
+            await _client.DeleteManyAsync(registriesToDelete, Name);
+
+            var registriesToKeep = registryEntries.Documents
+                .Where(x => x.DateCreated > DateTime.Now.AddDays(-daysOld))
+                .ToList();
+
+            var oldIndices = _client.Indices
+                .Get(new GetIndexRequest(Indices.All))
+                .Indices
+                .Where(pair => registriesToKeep.All(entry => entry.Name != pair.Key.Name))
+                .ToList();
+
+            foreach (var entry in oldIndices)
+            {
+                await _client.Indices.DeleteAsync(entry.Key.Name);
+            }
         }
 
         private void SetCurrentIndexName()
