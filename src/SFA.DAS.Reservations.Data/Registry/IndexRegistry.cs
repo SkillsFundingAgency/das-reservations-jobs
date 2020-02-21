@@ -53,14 +53,12 @@ namespace SFA.DAS.Reservations.Data.Registry
             await _client.DeleteManyAsync(registriesToDelete, Name);
 
             var registriesToKeep = registryEntries.Documents
-                .Where(x => x.DateCreated > DateTime.Now.AddDays(-daysOld))
-                .ToList();
+                .Where(x => x.DateCreated > DateTime.Now.AddDays(-daysOld));
 
             var oldIndices = _client.Indices
                 .Get(new GetIndexRequest(Indices.All))
                 .Indices
-                .Where(pair => registriesToKeep.All(entry => entry.Name != pair.Key.Name))
-                .ToList();
+                .Where(pair => registriesToKeep.All(entry => entry.Name != pair.Key.Name));
 
             foreach (var entry in oldIndices)
             {
