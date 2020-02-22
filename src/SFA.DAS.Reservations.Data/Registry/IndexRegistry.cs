@@ -58,7 +58,7 @@ namespace SFA.DAS.Reservations.Data.Registry
             var oldIndices = _client.Indices
                 .Get(new GetIndexRequest(Indices.All))
                 .Indices
-                .Where(pair => registriesToKeep.All(entry => entry.Name != pair.Key.Name));
+                .Where(pair => registriesToKeep.All(entry => entry.Name != pair.Key.Name || entry.Name != Name));
 
             foreach (var entry in oldIndices)
             {
