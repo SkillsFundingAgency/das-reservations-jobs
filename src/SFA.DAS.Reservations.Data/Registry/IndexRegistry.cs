@@ -11,12 +11,14 @@ namespace SFA.DAS.Reservations.Data.Registry
         public string Name { get; }
 
         private readonly IElasticClient _client;
-        
+        private readonly ReservationJobsEnvironment _environment;
+
         public string CurrentIndexName { get; private set; }
 
         public IndexRegistry(IElasticClient client, ReservationJobsEnvironment environment)
         {
             _client = client;
+            _environment = environment;
             Name = $"{environment.EnvironmentName}-reservations-index-registry";
             SetCurrentIndexName();
         }
@@ -53,16 +55,24 @@ namespace SFA.DAS.Reservations.Data.Registry
             await _client.DeleteManyAsync(registriesToDelete, Name);
 
             var registriesToKeep = registryEntries.Documents
-                .Where(x => x.DateCreated > DateTime.Now.AddDays(-daysOld));
+                .Where(x => x.DateCreated > DateTime.Now.AddDays(-daysOld))
+                .ToList();
 
             var oldIndices = _client.Indices
                 .Get(new GetIndexRequest(Indices.All))
                 .Indices
-                .Where(pair => registriesToKeep.All(entry => entry.Name != pair.Key.Name || entry.Name != Name));
+                .Where(c=>c.Key.Name.StartsWith($"{_environment.EnvironmentName}-reservations"))
+                .Where(c =>c.Key.Name != Name)
+                .ToList();
 
             foreach (var entry in oldIndices)
             {
-                await _client.Indices.DeleteAsync(entry.Key.Name);
+                if(registriesToKeep.Select(c => c.Name).All(c => c != entry.Key) 
+                   && entry.Key != Name)
+                {
+                    await _client.Indices.DeleteAsync(entry.Key.Name);    
+                }
+                
             }
         }
 
