@@ -530,7 +530,6 @@
                 "name": "AzureWebJobsStorage",
                 "value": "[reference('storage-account').outputs.storageConnectionString.value]"
               },
-
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                 "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
