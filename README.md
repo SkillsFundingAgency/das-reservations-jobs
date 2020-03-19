@@ -6,7 +6,7 @@
 
 ## Requirements
 
-DotNet Core 2.2 and any supported IDE for DEV running.
+DotNet Core 2.2 and any supported IDE for DEV running. Azure function SDK v2 is also required.
 
 ## About
 
