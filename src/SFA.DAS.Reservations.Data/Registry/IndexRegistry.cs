@@ -37,10 +37,11 @@ namespace SFA.DAS.Reservations.Data.Registry
                 Name = indexName,
                 DateCreated = DateTime.Now
             };
-
-            var response = await _client.IndexAsync(new IndexRequest<IndexRegistryEntry>(item, Name));
-
-            if (response.IsValid)
+            var data = PostData.String(JsonConvert.SerializeObject(item));
+            
+            var response = await _client.CreateAsync<CreateElasticSearchResponse>(Name, item.Id.ToString(), data);
+            
+            if (response.result.ToLower().Equals("created"))
             {
                 CurrentIndexName = indexName;
             }
