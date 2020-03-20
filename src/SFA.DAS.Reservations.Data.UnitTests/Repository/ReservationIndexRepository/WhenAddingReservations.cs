@@ -66,32 +66,5 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             _clientMock.Verify(c => c.BulkAsync(It.Is<IBulkRequest>(r => r.Index.Name.Equals(ExpectedIndexName)), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Test]
-        public async Task ThenWillIndexASingleReservation()
-        {
-            //Arrange
-            var reservation = new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1};
-
-            //Act
-            await _repository.Add(reservation);
-
-            //Assert
-            _clientMock.Verify(c => c.IndexAsync(It.Is<IndexRequest<IndexedReservation>>(r => r.Document.Equals(reservation)),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
-        public async Task ThenWillIndexASingleReservationToCorrectIndex()
-        {
-            //Arrange
-            var reservation = new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1};
-
-            //Act
-            await _repository.Add(reservation);
-
-            //Assert
-            _clientMock.Verify(c => c.IndexAsync(It.Is<IIndexRequest<IndexedReservation>>(r => 
-                    r.Index.Name.Equals(ExpectedIndexName)), It.IsAny<CancellationToken>()), Times.Once);
-        }
     }
 }

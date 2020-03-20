@@ -28,16 +28,6 @@ namespace SFA.DAS.Reservations.Data.Repository
             await _client.IndexManyAsync(reservations, _registry.CurrentIndexName);
         }
 
-        public async Task DeleteMany(IList<IndexedReservation> reservationIndex)
-        {
-            await _client.DeleteManyAsync(reservationIndex, _registry.CurrentIndexName);
-        }
-
-        public async Task Add(IndexedReservation reservation)
-        {
-            await _client.IndexAsync(new IndexRequest<IndexedReservation>(reservation, _registry.CurrentIndexName));
-        }
-
         public async Task DeleteIndices(uint daysOld)
         {
             await _registry.DeleteOldIndices(daysOld);
