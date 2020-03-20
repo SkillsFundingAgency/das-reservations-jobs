@@ -1,8 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Nest;
+using Elasticsearch.Net;
+using Elasticsearch.Net.Specification.IndicesApi;
+using Newtonsoft.Json;
+using SFA.DAS.Reservations.Data.ElasticSearch;
 using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Infrastructure;
 
 namespace SFA.DAS.Reservations.Data.Registry
 {
@@ -10,16 +14,18 @@ namespace SFA.DAS.Reservations.Data.Registry
     {
         public string Name { get; }
 
-        private readonly IElasticClient _client;
+        private readonly IElasticLowLevelClient _client;
+        private readonly IElasticSearchQueries _queries;
         private readonly ReservationJobsEnvironment _environment;
 
         public string CurrentIndexName { get; private set; }
 
-        public IndexRegistry(IElasticClient client, ReservationJobsEnvironment environment)
+        public IndexRegistry(IElasticLowLevelClient client, IElasticSearchQueries queries, ReservationJobsEnvironment environment)
         {
             _client = client;
+            _queries = queries;
             _environment = environment;
-            Name = $"{environment.EnvironmentName}-reservations-index-registry";
+            Name = environment.EnvironmentName + queries.ReservationIndexLookupName;
             SetCurrentIndexName();
         }
 
@@ -78,15 +84,21 @@ namespace SFA.DAS.Reservations.Data.Registry
 
         private void SetCurrentIndexName()
         {
-            var entries = _client.Search<IndexRegistryEntry>(s => s
-                .Index(Name)
-                .From(0)
-                .Size(1)
-                .Sort(x => x.Descending(a => a.DateCreated)));
+            var data = PostData.String(_queries.LastIndexSearchQuery);
             
-            if (entries.Documents.Any())
+            var response =  _client.Search<StringResponse>(
+                _environment.EnvironmentName + _queries.ReservationIndexLookupName, data);
+
+            if (response?.Body == null)
             {
-                CurrentIndexName = entries.Documents.First().Name;
+                return;
+            }
+            
+            var elasticResponse = JsonConvert.DeserializeObject<ElasticResponse<IndexRegistryEntry>>(response.Body);
+
+            if (elasticResponse?.Items != null && elasticResponse.Items.Any())
+            {
+                CurrentIndexName = elasticResponse.Items.First().Name;
             }
         }
     }
