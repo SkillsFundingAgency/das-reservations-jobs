@@ -1,4 +1,4 @@
-namespace SFA.DAS.Reservations.Domain.Infrastructure
+namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
 {
     public interface IElasticSearchQueries
     {

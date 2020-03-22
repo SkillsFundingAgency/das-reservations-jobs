@@ -1,8 +1,8 @@
 using Elasticsearch.Net;
 
-namespace SFA.DAS.Reservations.Data.ElasticSearch
+namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
 {
-    public class CreateElasticSearchResponse : IElasticsearchResponse
+    public class ElasticSearchResponse : IElasticsearchResponse
     {
         public Shards _shards { get; set; }
         public string _index { get; set; }

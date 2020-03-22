@@ -1,6 +1,6 @@
 {
   "from": 0,
-  "size": 1,
+  "size": "{size}",
   "sort": {
     "dateCreated": {
       "order": "desc"

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SFA.DAS.Reservations.Data.ElasticSearch
+namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
 {
     public class ElasticResponse<T> 
     {

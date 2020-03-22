@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Nest;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Data.Repository

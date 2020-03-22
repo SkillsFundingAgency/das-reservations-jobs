@@ -1,14 +1,12 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Elasticsearch.Net;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Data.ElasticSearch;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Registry
 {
@@ -19,7 +17,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry
         private const string ExpectedReservationIndexLookupName = ExpectedEnvironmentName + ExpectedIndexRegistryPostfix;
         private const string ExpectedLatestReservationIndexName = "test-reservations-35c937c2-f0b1-4a57-9ebb-621a2834ae8b";
         
-        private Mock<IElasticLowLevelClient> _elasticLowLevelClient;
+        private Mock<IElasticLowLevelClientWrapper> _elasticLowLevelClient;
         private Mock<IElasticSearchQueries> _elasticSearchQueries;
         private IndexRegistry _registry;
         private string _createdResponse;
@@ -35,18 +33,16 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry
             _createdResponse = @"{""_index"" : ""test-index"", ""_type"" : ""_doc"", ""_id"" : ""1"", ""_version"" : 1, ""result"" :
             ""created"", ""_shards"" : { ""total"" : 2, ""successful"" : 1, ""failed"" : 0 },  ""_seq_no"" : 0, ""_primary_term"" : 1 }";
             
-            _elasticLowLevelClient = new Mock<IElasticLowLevelClient>();
+            _elasticLowLevelClient = new Mock<IElasticLowLevelClientWrapper>();
             _elasticSearchQueries = new Mock<IElasticSearchQueries>();
             
             _elasticSearchQueries.Setup(x => x.LastIndexSearchQuery).Returns("Get index");
             _elasticSearchQueries.Setup(x => x.ReservationIndexLookupName).Returns(ExpectedIndexRegistryPostfix);
             
             _elasticLowLevelClient.Setup(c =>
-                    c.Search<StringResponse>(
-                        ExpectedReservationIndexLookupName,
-                        It.IsAny<PostData>(),
-                        It.IsAny<SearchRequestParameters>()))
-                .Returns(new StringResponse(indexLookUpResponse));
+                    c.Search(ExpectedReservationIndexLookupName,
+                        It.IsAny<string>()))
+                .ReturnsAsync(new StringResponse(indexLookUpResponse));
             
             
             
@@ -59,9 +55,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry
             //Arrange
             var indexName = "new-index";
             Guid test;
-            _elasticLowLevelClient.Setup(c => c.CreateAsync<CreateElasticSearchResponse>
-                (ExpectedReservationIndexLookupName, It.Is<string>(s=>Guid.TryParse(s, out test)), It.IsAny<PostData>(),It.IsAny<CreateRequestParameters>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(JsonConvert.DeserializeObject<CreateElasticSearchResponse>(_createdResponse));
+            _elasticLowLevelClient.Setup(c => c.Create
+                (ExpectedReservationIndexLookupName, It.Is<string>(s=>Guid.TryParse(s, out test)), It.IsAny<string>()))
+                .ReturnsAsync(JsonConvert.DeserializeObject<ElasticSearchResponse>(_createdResponse));
             
             
             //Act

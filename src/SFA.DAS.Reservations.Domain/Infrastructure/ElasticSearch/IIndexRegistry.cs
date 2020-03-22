@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace SFA.DAS.Reservations.Data.Registry
+namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
 {
     public interface IIndexRegistry
     {

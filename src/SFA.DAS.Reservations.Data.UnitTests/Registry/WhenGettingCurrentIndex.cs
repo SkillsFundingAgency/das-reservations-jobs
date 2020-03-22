@@ -3,7 +3,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Infrastructure;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Registry
 {
@@ -13,30 +13,31 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry
         private const string ExpectedIndexRegistryPostfix = "-reservations-index-registry";
         private const string ExpectedReservationIndexLookupName = ExpectedEnvironmentName + ExpectedIndexRegistryPostfix;
         private const string ExpectedLatestReservationIndexName = "test-reservations-35c937c2-f0b1-4a57-9ebb-621a2834ae8b";
-        
-        private Mock<IElasticLowLevelClient> _elasticLowLevelClient;
+
+        private Mock<IElasticLowLevelClientWrapper> _elasticLowLevelClient;
         private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
         [SetUp]
         public void Arrange()
         {
-            _elasticLowLevelClient = new Mock<IElasticLowLevelClient>();
+            _elasticLowLevelClient = new Mock<IElasticLowLevelClientWrapper>();
             _elasticSearchQueries = new Mock<IElasticSearchQueries>();
             
             var indexLookUpResponse =  @"{""took"":0,""timed_out"":false,""_shards"":{""total"":1,""successful"":1,""skipped"":0,""failed"":0},""hits"":{""total"":
             {""value"":3,""relation"":""eq""},""max_score"":null,""hits"":[{""_index"":""local-reservations-index-registry"",""_type"":""_doc"",
             ""_id"":""41444ccb-9687-4d3a-b0d5-295f3c35b153"",""_score"":null,""_source"":{""id"":""41444ccb-9687-4d3a-b0d5-295f3c35b153"",""name"":
             """ + ExpectedLatestReservationIndexName + @""",""dateCreated"":""2019-11-06T15:11:00.5385739+00:00""},""sort"":[1573053060538]}]}}";
-            
-            _elasticSearchQueries.Setup(x => x.LastIndexSearchQuery).Returns("Get index");
+
+            var getCurrentIndexSearchQuery = @"{""from"": 0, ""size"": ""{size}"", ""sort"": { ""dateCreated"": { ""order"": ""desc"" } } }";
+            _elasticSearchQueries.Setup(x => x.LastIndexSearchQuery).Returns(getCurrentIndexSearchQuery);
             _elasticSearchQueries.Setup(x => x.ReservationIndexLookupName).Returns(ExpectedIndexRegistryPostfix);
             
+            var searchQuery = getCurrentIndexSearchQuery.Replace(@"""{size}""", "1");
+            
             _elasticLowLevelClient.Setup(c =>
-                    c.Search<StringResponse>(
-                        ExpectedReservationIndexLookupName,
-                        It.IsAny<PostData>(),
-                        It.IsAny<SearchRequestParameters>()))
-                .Returns(new StringResponse(indexLookUpResponse));
+                    c.Search(ExpectedReservationIndexLookupName,
+                        searchQuery))
+                .ReturnsAsync(new StringResponse(indexLookUpResponse));
         }
 
         [Test]
