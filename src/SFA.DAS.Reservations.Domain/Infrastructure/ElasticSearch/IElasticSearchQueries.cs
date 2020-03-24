@@ -1,3 +1,5 @@
+using Elasticsearch.Net;
+
 namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
 {
     public interface IElasticSearchQueries
@@ -5,6 +7,8 @@ namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
         string ReservationIndexLookupName { get; }
 
         string LastIndexSearchQuery { get; }
-        
+        string ReservationIndexMapping { get; }
+        string UpdateReservationStatus { get;  }
+        string DeleteReservationsByQuery { get; }
     }
 }

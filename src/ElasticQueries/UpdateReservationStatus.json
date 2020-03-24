@@ -1,0 +1,11 @@
+{
+  "script": {
+    "source": "ctx._source.status={status}",
+    "lang": "painless"
+  },
+  "query": {
+    "match": {
+      "reservationId": "{reservationId}"
+    }
+  }
+}
