@@ -1,5 +1,4 @@
 using System.IO;
-using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.ElasticSearch

@@ -1,7 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Elasticsearch.Net;
-using Nest;
-using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.Registry
@@ -25,7 +24,7 @@ namespace SFA.DAS.Reservations.Data.Registry
 
         public async Task<ElasticSearchResponse> Create(string name, string id, string item)
         {
-            var data = PostData.String(JsonConvert.SerializeObject(item));
+            var data = PostData.String(item);
             
             var response = await _client.CreateAsync<ElasticSearchResponse>(name, id, data);
 
@@ -40,6 +39,33 @@ namespace SFA.DAS.Reservations.Data.Registry
         public async Task DeleteIndices(string name)
         {
             await _client.Indices.DeleteAsync<ElasticSearchResponse>(name);
+        }
+
+        public async Task DeleteByQuery(string name, string query)
+        {
+            var data = PostData.String(query);
+
+            await _client.DeleteByQueryAsync<ElasticSearchResponse>(name, data);
+        }
+
+        public async Task UpdateByQuery(string name, string query)
+        {
+            var data = PostData.String(query);
+            
+            await _client.UpdateByQueryAsync<ElasticSearchResponse>(name, data);
+        }
+        public async Task CreateIndicesWithMapping(string name, string mapping)
+        {
+            var data = PostData.String(mapping);
+
+            await _client.Indices.CreateAsync<ElasticSearchResponse>(name, data);
+        }
+
+        public async Task CreateMany(string name, IEnumerable<string> items)
+        {
+            var data = PostData.MultiJson(items);
+
+            await _client.BulkAsync<ElasticSearchResponse>(name, data);
         }
         
     }

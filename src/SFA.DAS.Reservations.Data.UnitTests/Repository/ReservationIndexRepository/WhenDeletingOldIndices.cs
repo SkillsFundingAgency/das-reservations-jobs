@@ -1,26 +1,26 @@
 ﻿using System.Threading.Tasks;
 using Moq;
-using Nest;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexRepository
 {
     public class WhenDeletingOldIndices
     {
-        private Mock<IElasticClient> _clientMock;
+        private Mock<IElasticLowLevelClientWrapper> _clientMock;
         private Mock<IIndexRegistry> _registryMock;
         private Data.Repository.ReservationIndexRepository _repository;
+        private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
         [SetUp]
         public void Init()
         {
-            _clientMock = new Mock<IElasticClient>();
+            _clientMock = new Mock<IElasticLowLevelClientWrapper>();
             _registryMock = new Mock<IIndexRegistry>();
-            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
+            _elasticSearchQueries = new Mock<IElasticSearchQueries>();
+            
+            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment("LOCAL"));
         }
 
         [Test]
@@ -28,6 +28,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         {
             //Arrange
             const uint daysOld = 2;
+            
             //Act
             await _repository.DeleteIndices(daysOld);
 

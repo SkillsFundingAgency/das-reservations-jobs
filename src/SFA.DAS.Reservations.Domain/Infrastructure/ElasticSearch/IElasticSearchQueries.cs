@@ -1,5 +1,3 @@
-using Elasticsearch.Net;
-
 namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
 {
     public interface IElasticSearchQueries

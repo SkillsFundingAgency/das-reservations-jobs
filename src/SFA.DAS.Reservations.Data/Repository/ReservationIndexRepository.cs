@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nest;
-using SFA.DAS.Reservations.Data.Registry;
+using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.Reservations;
 
@@ -14,20 +12,30 @@ namespace SFA.DAS.Reservations.Data.Repository
     {
         public string IndexNamePrefix { get; }
 
-        private readonly IElasticClient _client;
+        private readonly IElasticLowLevelClientWrapper _client;
         private readonly IIndexRegistry _registry;
+        private readonly IElasticSearchQueries _elasticSearchQueries;
 
-        public ReservationIndexRepository(IElasticClient client, IIndexRegistry registry,
+        public ReservationIndexRepository(IElasticLowLevelClientWrapper client, IIndexRegistry registry, IElasticSearchQueries elasticSearchQueries,
             ReservationJobsEnvironment environment)
         {
             IndexNamePrefix = $"{environment.EnvironmentName}-reservations-";
             _client = client;
             _registry = registry;
+            _elasticSearchQueries = elasticSearchQueries;
         }
 
         public async Task Add(IEnumerable<IndexedReservation> reservations)
         {
-            await _client.IndexManyAsync(reservations, _registry.CurrentIndexName);
+            var listOfJsonReservations = new List<string>();
+            foreach (var reservation in reservations)
+            {
+                listOfJsonReservations.Add(@"{ ""index"":{""_id"":"""+ reservation.Id + @"""} }");
+                listOfJsonReservations.Add(JsonConvert.SerializeObject(reservation));
+            }
+            listOfJsonReservations.Add(Environment.NewLine);
+            
+            await _client.CreateMany(_registry.CurrentIndexName, listOfJsonReservations);
         }
 
         public async Task DeleteIndices(uint daysOld)
@@ -37,53 +45,28 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task SaveReservationStatus(Guid id, ReservationStatus status)
         {
-            await _client
-                .UpdateByQueryAsync<IndexedReservation>(q => q.Index(_registry.CurrentIndexName)
-                .Query(rq => rq.MatchPhrase(f=>f.Field("reservationId")
-                    .Query(id.ToString().ToLower())))
-                .Script($"ctx._source.status = {(short)status}")
-                .WaitForCompletion()
-                .Refresh());
+            var query = _elasticSearchQueries.UpdateReservationStatus.Replace("{status}",status.ToString())
+                .Replace("{reservationId}",id.ToString());
+            
+            await _client.UpdateByQuery(_registry.CurrentIndexName, query);
         }
 
         public async Task DeleteReservationsFromIndex(uint ukPrn, long accountLegalEntityId)
         {
-            await _client.DeleteByQueryAsync<IndexedReservation>(q =>
-                q.Index(_registry.CurrentIndexName)
-                    .Query(rq => rq.MatchPhrasePrefix(f => f.Field("id")
-                        .Query($"{ukPrn}_{accountLegalEntityId}_")))
-                    .WaitForCompletion()
-                    .Refresh());
+            var query = _elasticSearchQueries.DeleteReservationsByQuery
+                .Replace("{ukPrn}", ukPrn.ToString())
+                .Replace("{accountLegalEntityId}", accountLegalEntityId.ToString());
+
+            await _client.DeleteByQuery(_registry.CurrentIndexName, query);
         }
 
         public async Task CreateIndex()
         {
             var indexName = IndexNamePrefix + Guid.NewGuid();
-
-            await _client.Indices.CreateAsync(indexName, c =>
-                c.Map<IndexedReservation>(r =>
-                    r.Properties(p => p
-                        .Text(s => s
-                            .Name(n => n.CourseDescription)
-                            .Fields(fs => fs
-                                .Keyword(ss => ss
-                                    .Name("keyword")
-                                )))
-                        .Text(s => s
-                            .Name(n => n.AccountLegalEntityName)
-                            .Fields(fs => fs
-                                .Keyword(ss => ss
-                                    .Name("keyword")
-                                )))
-                        .Text(s => s
-                            .Name(n => n.ReservationPeriod)
-                            .Fields(fs => fs
-                                .Keyword(ss => ss
-                                    .Name("keyword")
-                                )))
-                        .Keyword(k => k.Name(n => n.CourseId))
-                        )));
-
+            var mapping = _elasticSearchQueries.ReservationIndexMapping;
+            
+            await _client.CreateIndicesWithMapping(indexName, mapping);
+            
             await _registry.Add(indexName);
         }
     }
