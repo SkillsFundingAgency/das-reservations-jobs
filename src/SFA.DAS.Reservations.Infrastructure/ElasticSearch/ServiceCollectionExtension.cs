@@ -1,9 +1,10 @@
 ﻿using System;
 using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
-using Nest;
+using SFA.DAS.Reservations.Data.ElasticSearch;
+using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Infrastructure.ElasticSearch
 {
@@ -16,17 +17,17 @@ namespace SFA.DAS.Reservations.Infrastructure.ElasticSearch
         {
             var connectionPool = new SingleNodeConnectionPool(new Uri(configuration.ElasticSearchServerUrl));
 
-            var settings = new ConnectionSettings(connectionPool);
-            settings.DefaultMappingFor<IndexedReservation>(descriptor => descriptor.IndexName($"{environmentName}-reservations"));
+            var settings = new ConnectionConfiguration(connectionPool);
 
             if (!string.IsNullOrEmpty(configuration.ElasticSearchUsername) &&
                 !string.IsNullOrEmpty(configuration.ElasticSearchPassword))
             {
                 settings.BasicAuthentication(configuration.ElasticSearchUsername, configuration.ElasticSearchPassword);
             }
-
-
-            collection.AddTransient<IElasticClient>(sp => new ElasticClient(settings));
+            
+            collection.AddTransient<IElasticLowLevelClient>(sp => new ElasticLowLevelClient(settings));
+            collection.AddSingleton<IElasticSearchQueries, ElasticSearchQueries>();
+            collection.AddTransient<IElasticLowLevelClientWrapper,ElasticLowLevelClientWrapper>();
         }
     }
 }
