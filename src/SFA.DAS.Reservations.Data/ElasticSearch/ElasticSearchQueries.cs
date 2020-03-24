@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.ElasticSearch
@@ -13,10 +14,13 @@ namespace SFA.DAS.Reservations.Data.ElasticSearch
 
         public ElasticSearchQueries()
         {
-            LastIndexSearchQuery = File.ReadAllText("ElasticQueries/LatestIndexSearchQuery.json");
-            ReservationIndexMapping = File.ReadAllText("ElasticQueries/CreateReservationIndex.json");
-            UpdateReservationStatus = File.ReadAllText("ElasticQueries/UpdateReservationStatus.json");
-            DeleteReservationsByQuery = File.ReadAllText("ElasticQueries/DeleteReservationsByQuery.json");
+            var binDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var rootDirectory = Path.GetFullPath(Path.Combine(binDirectory, ".."));
+            
+            LastIndexSearchQuery = File.ReadAllText(Path.Combine(rootDirectory,"ElasticQueries/LatestIndexSearchQuery.json"));
+            ReservationIndexMapping = File.ReadAllText(Path.Combine(rootDirectory,"ElasticQueries/CreateReservationIndex.json"));
+            UpdateReservationStatus = File.ReadAllText(Path.Combine(rootDirectory,"ElasticQueries/UpdateReservationStatus.json"));
+            DeleteReservationsByQuery = File.ReadAllText(Path.Combine(rootDirectory,"ElasticQueries/DeleteReservationsByQuery.json"));
         }
     }
 }
