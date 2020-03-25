@@ -44,7 +44,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             await _reservationIndexRepository.SaveReservationStatus(reservationId, reservationStatus);
             
             //Assert
-            _elasticClientWrapper.Verify(x=>x.UpdateByQuery(ExpectedCurrentIndexName, $"{reservationStatus} {reservationId}"));
+            _elasticClientWrapper.Verify(x=>x.UpdateByQuery(ExpectedCurrentIndexName, $"{(short)reservationStatus} {reservationId}"));
         }
     }
 }

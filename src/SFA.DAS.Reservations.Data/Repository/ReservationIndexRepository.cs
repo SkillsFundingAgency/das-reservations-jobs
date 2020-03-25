@@ -45,7 +45,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task SaveReservationStatus(Guid id, ReservationStatus status)
         {
-            var query = _elasticSearchQueries.UpdateReservationStatus.Replace("{status}",status.ToString())
+            var query = _elasticSearchQueries.UpdateReservationStatus.Replace("{status}",((short)status).ToString())
                 .Replace("{reservationId}",id.ToString());
             
             await _client.UpdateByQuery(_registry.CurrentIndexName, query);
