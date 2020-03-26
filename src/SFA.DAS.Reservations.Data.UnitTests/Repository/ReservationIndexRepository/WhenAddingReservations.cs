@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-using Nest;
+using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexRepository
@@ -15,16 +14,19 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
     public class WhenAddingReservations
     {
         private const string ExpectedIndexName = "Test";
-        private Mock<IElasticClient> _clientMock;
+        private Mock<IElasticLowLevelClientWrapper> _clientMock;
         private Mock<IIndexRegistry> _registryMock;
         private Data.Repository.ReservationIndexRepository _repository;
+        private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
         [SetUp]
         public void Init()
         {
-            _clientMock = new Mock<IElasticClient>();
+            _clientMock = new Mock<IElasticLowLevelClientWrapper>();
             _registryMock = new Mock<IIndexRegistry>();
-            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
+            _elasticSearchQueries = new Mock<IElasticSearchQueries>();
+            
+            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment("LOCAL"));
 
             _registryMock.SetupGet(x => x.CurrentIndexName).Returns(ExpectedIndexName);
         }
@@ -33,9 +35,12 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         public async Task ThenWillIndexManyReservationAtOnce()
         {
             //Arrange
+            var firstReservation = Guid.NewGuid();
+            var indexedProviderId = 12345u;
+            var accountLegalEntityId = 54321;
             var reservations = new List<IndexedReservation>
             {
-                new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1},
+                new IndexedReservation {ReservationId = firstReservation, Status = 1, IndexedProviderId = indexedProviderId, AccountLegalEntityId = accountLegalEntityId},
                 new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1}
             };
 
@@ -43,55 +48,16 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             await _repository.Add(reservations);
 
             //Assert
-            _clientMock.Verify(c => c.BulkAsync(It.Is<IBulkRequest>(r => 
-                r.Operations.OfType<BulkIndexOperation<IndexedReservation>>()
-                    .Select(o => o.Document)
-                    .SequenceEqual(reservations)), It.IsAny<CancellationToken>()), Times.Once);
+            _clientMock.Verify(c => 
+                c.CreateMany(
+                    ExpectedIndexName,
+                    It.Is<List<string>>(x=>JsonConvert.DeserializeObject<IndexedReservation>(
+                        x.Skip(1).First()).ReservationId.Equals(firstReservation) 
+                                           && x.First().Equals(@"{ ""index"":{""_id"":""" + indexedProviderId + "_" + accountLegalEntityId + "_"+ firstReservation + @"""} }")
+                                           && x.Last().Equals(Environment.NewLine)))
+                , Times.Once);
         }
 
-        [Test]
-        public async Task ThenWillIndexManyReservationToCorrectIndex()
-        {
-            //Arrange
-            var reservations = new List<IndexedReservation>
-            {
-                new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1},
-                new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1}
-            };
 
-            //Act
-            await _repository.Add(reservations);
-
-            //Assert
-            _clientMock.Verify(c => c.BulkAsync(It.Is<IBulkRequest>(r => r.Index.Name.Equals(ExpectedIndexName)), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
-        public async Task ThenWillIndexASingleReservation()
-        {
-            //Arrange
-            var reservation = new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1};
-
-            //Act
-            await _repository.Add(reservation);
-
-            //Assert
-            _clientMock.Verify(c => c.IndexAsync(It.Is<IndexRequest<IndexedReservation>>(r => r.Document.Equals(reservation)),
-                It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
-        public async Task ThenWillIndexASingleReservationToCorrectIndex()
-        {
-            //Arrange
-            var reservation = new IndexedReservation {ReservationId = Guid.NewGuid(), Status = 1};
-
-            //Act
-            await _repository.Add(reservation);
-
-            //Assert
-            _clientMock.Verify(c => c.IndexAsync(It.Is<IIndexRequest<IndexedReservation>>(r => 
-                    r.Index.Name.Equals(ExpectedIndexName)), It.IsAny<CancellationToken>()), Times.Once);
-        }
     }
 }

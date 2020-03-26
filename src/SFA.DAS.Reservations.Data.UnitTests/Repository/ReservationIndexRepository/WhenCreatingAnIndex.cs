@@ -1,32 +1,28 @@
-﻿using System;
-using System.Threading.Tasks;
-using Elasticsearch.Net;
+﻿using System.Threading.Tasks;
 using Moq;
-using Nest;
 using NUnit.Framework;
-using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexRepository
 {
     public class WhenCreatingAnIndex
     {
-        private IElasticClient _client;
+        private const string ExpectedMapping = "some mapping";
+        private Mock<IElasticLowLevelClientWrapper> _client;
         private Mock<IIndexRegistry> _registryMock;
         private Data.Repository.ReservationIndexRepository _repository;
+        private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
         [SetUp]
         public void Init()
         {
-            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
-            var connectionSettings = new ConnectionSettings(pool, new InMemoryConnection())
-                .PrettyJson()
-                .DisableDirectStreaming();
-
-           _client = new ElasticClient(connectionSettings);
-
+            _client = new Mock<IElasticLowLevelClientWrapper>();
             _registryMock = new Mock<IIndexRegistry>();
-            _repository = new Data.Repository.ReservationIndexRepository(_client, _registryMock.Object, new ReservationJobsEnvironment("LOCAL"));
+            _elasticSearchQueries = new Mock<IElasticSearchQueries>();
+            _elasticSearchQueries.Setup(x => x.ReservationIndexMapping).Returns(ExpectedMapping);
+            
+            _repository = new Data.Repository.ReservationIndexRepository(_client.Object, _registryMock.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment("LOCAL"));
         }
 
         [Test]
@@ -36,6 +32,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             await _repository.CreateIndex();
 
             //Assert
+            _client.Verify(x=>x.CreateIndicesWithMapping(It.Is<string>(c=>c.StartsWith(_repository.IndexNamePrefix)),ExpectedMapping),Times.Once);
             _registryMock.Verify(r => r.Add(It.Is<string>(s => s.StartsWith(_repository.IndexNamePrefix))), Times.Once);
         }
     }

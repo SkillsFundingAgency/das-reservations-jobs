@@ -1,0 +1,9 @@
+{
+  "from": 0,
+  "size": "{size}",
+  "sort": {
+    "dateCreated": {
+      "order": "desc"
+    }
+  }
+}

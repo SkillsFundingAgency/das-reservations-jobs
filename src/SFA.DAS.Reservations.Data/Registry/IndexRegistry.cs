@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Nest;
+using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 
 namespace SFA.DAS.Reservations.Data.Registry
 {
     public class IndexRegistry : IIndexRegistry
     {
-        public string Name { get; }
+        private string Name { get; }
 
-        private readonly IElasticClient _client;
-        private readonly ReservationJobsEnvironment _environment;
+        private readonly IElasticLowLevelClientWrapper _client;
+        private readonly IElasticSearchQueries _queries;
 
         public string CurrentIndexName { get; private set; }
 
-        public IndexRegistry(IElasticClient client, ReservationJobsEnvironment environment)
+        public IndexRegistry(IElasticLowLevelClientWrapper client, IElasticSearchQueries queries, ReservationJobsEnvironment environment)
         {
             _client = client;
-            _environment = environment;
-            Name = $"{environment.EnvironmentName}-reservations-index-registry";
+            _queries = queries;
+            Name = environment.EnvironmentName + queries.ReservationIndexLookupName;
             SetCurrentIndexName();
         }
 
@@ -31,10 +33,11 @@ namespace SFA.DAS.Reservations.Data.Registry
                 Name = indexName,
                 DateCreated = DateTime.Now
             };
-
-            var response = await _client.IndexAsync(new IndexRequest<IndexRegistryEntry>(item, Name));
-
-            if (response.IsValid)
+            var data = JsonConvert.SerializeObject(item);
+            
+            var response = await _client.Create(Name, item.Id.ToString(), data);
+            
+            if (response.result.ToLower().Equals("created"))
             {
                 CurrentIndexName = indexName;
             }
@@ -42,51 +45,47 @@ namespace SFA.DAS.Reservations.Data.Registry
 
         public async Task DeleteOldIndices(uint daysOld)
         {   
-            var registryEntries = _client.Search<IndexRegistryEntry>(s => s
-                .Index(Name)
-                .From(0).Size(100));
+            var query = _queries.LastIndexSearchQuery.Replace(@"""{size}""", "100");
             
-            var registriesToDelete = registryEntries.Documents
+            var response =  await _client.Search(Name, query);
+
+            if (response?.Body == null)
+            {
+                return;
+            }
+            
+            var elasticResponse = JsonConvert.DeserializeObject<ElasticResponse<IndexRegistryEntry>>(response.Body);
+
+            var registriesToDelete = elasticResponse.Items
                 .Where(x => x.DateCreated <= DateTime.Now.AddDays(-daysOld))
                 .ToList();
-
-            if (!registriesToDelete.Any()) return;
-
-            await _client.DeleteManyAsync(registriesToDelete, Name);
-
-            var registriesToKeep = registryEntries.Documents
-                .Where(x => x.DateCreated > DateTime.Now.AddDays(-daysOld))
-                .ToList();
-
-            var oldIndices = _client.Indices
-                .Get(new GetIndexRequest(Indices.All))
-                .Indices
-                .Where(c=>c.Key.Name.StartsWith($"{_environment.EnvironmentName}-reservations"))
-                .Where(c =>c.Key.Name != Name)
-                .ToList();
-
-            foreach (var entry in oldIndices)
+            
+            
+            foreach (var registryEntry in registriesToDelete)
             {
-                if(registriesToKeep.Select(c => c.Name).All(c => c != entry.Key) 
-                   && entry.Key != Name)
-                {
-                    await _client.Indices.DeleteAsync(entry.Key.Name);    
-                }
-                
+                await _client.DeleteDocument(Name, registryEntry.Id.ToString());
+
+                await _client.DeleteIndices(registryEntry.Name);
             }
+            
         }
 
         private void SetCurrentIndexName()
         {
-            var entries = _client.Search<IndexRegistryEntry>(s => s
-                .Index(Name)
-                .From(0)
-                .Size(1)
-                .Sort(x => x.Descending(a => a.DateCreated)));
+            var query = _queries.LastIndexSearchQuery.Replace(@"""{size}""", "1");
             
-            if (entries.Documents.Any())
+            var response =  _client.Search(Name, query).Result;
+
+            if (response?.Body == null)
             {
-                CurrentIndexName = entries.Documents.First().Name;
+                return;
+            }
+            
+            var elasticResponse = JsonConvert.DeserializeObject<ElasticResponse<IndexRegistryEntry>>(response.Body);
+
+            if (elasticResponse?.Items != null && elasticResponse.Items.Any())
+            {
+                CurrentIndexName = elasticResponse.Items.First().Name;
             }
         }
     }

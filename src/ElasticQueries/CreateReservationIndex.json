@@ -1,0 +1,90 @@
+{
+  "mappings" : {
+    "properties" : {
+      "accountId" : {
+        "type" : "long"
+      },
+      "accountLegalEntityId" : {
+        "type" : "long"
+      },
+      "accountLegalEntityName" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "courseDescription" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "courseId" : {
+        "type" : "keyword"
+      },
+      "courseLevel" : {
+        "type" : "long"
+      },
+      "courseTitle" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "createdDate" : {
+        "type" : "date"
+      },
+      "expiryDate" : {
+        "type" : "date"
+      },
+      "id" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "indexedProviderId" : {
+        "type" : "long"
+      },
+      "isLevyAccount" : {
+        "type" : "boolean"
+      },
+      "providerId" : {
+        "type" : "long"
+      },
+      "reservationId" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "reservationPeriod" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword"
+          }
+        }
+      },
+      "startDate" : {
+        "type" : "date"
+      },
+      "status" : {
+        "type" : "long"
+      }
+    }
+  }
+}

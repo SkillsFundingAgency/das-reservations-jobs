@@ -4,13 +4,12 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" Version="7.3.1" />
+    <PackageReference Include="Elasticsearch.Net" Version="7.4.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Script.ExtensionsMetadataGenerator" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.27" />
-    <PackageReference Include="NEST" Version="7.3.1" />
     <PackageReference Include="NLog" Version="4.5.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />
   </ItemGroup>
@@ -28,4 +27,32 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\ElasticQueries\LatestIndexSearchQuery.json">
+      <Link>ElasticQueries\LatestIndexSearchQuery.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\ElasticQueries\UpdateReservationStatus.json">
+      <Link>ElasticQueries\UpdateReservationStatus.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\ElasticQueries\DeleteReservationsByQuery.json">
+      <Link>ElasticQueries\DeleteReservationsByQuery.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\ElasticQueries\CreateReservationIndex.json">
+      <Link>ElasticQueries\CreateReservationIndex.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="cp $(OutDir)$(ProjectName).deps.json $(OutDir)/bin/function.deps.json" />
+  </Target>
+  <Target Name="PostPublish" BeforeTargets="Publish">
+    <Exec Command="cp $(PublishDir)$(ProjectName).deps.json $(PublishDir)/bin/function.deps.json" />
+  </Target>
 </Project>
