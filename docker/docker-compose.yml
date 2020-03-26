@@ -1,0 +1,48 @@
+version: "2.2"
+
+services:
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    container_name: dev-elastic
+    environment:
+      - node.name=es01
+      - cluster.initial_master_nodes=es01
+      - cluster.name=muggle-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=changeme
+      - path.repo=/usr/share/elasticsearch/backups
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+      - esdata4:/usr/share/elasticsearch/backups
+    ports:
+      - 9200:9200
+    networks:
+      - esfa-logging-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.3.0
+    container_name: dev-kibana  
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch1:elasticsearch
+    networks:
+      - esfa-logging-network
+
+
+volumes:
+  esdata1:
+    driver: local
+  esdata4:
+    driver: local
+
+networks:
+  esfa-logging-network:
+    driver: bridge
+
+    
