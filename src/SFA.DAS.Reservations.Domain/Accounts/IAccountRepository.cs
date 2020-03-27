@@ -7,5 +7,6 @@ namespace SFA.DAS.Reservations.Domain.Accounts
     {
         Task Add(Account account);
         Task UpdateName(Account account);
+        Task UpdateLevyStatus(Account account);
     }
 }
