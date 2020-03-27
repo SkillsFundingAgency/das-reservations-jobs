@@ -43,5 +43,14 @@ namespace SFA.DAS.Reservations.Application.Accounts.Services
                 Name = name
             });
         }
+
+        public async Task UpdateLevyStatus(long accountId, bool isLevy)
+        {
+            await _accountRepository.UpdateLevyStatus(new Account
+            {
+                Id = accountId,
+                IsLevy = isLevy
+            });
+        }
     }
 }
