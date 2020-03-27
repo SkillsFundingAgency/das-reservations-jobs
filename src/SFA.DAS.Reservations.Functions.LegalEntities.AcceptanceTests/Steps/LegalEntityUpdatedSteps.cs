@@ -68,15 +68,15 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
             Assert.IsTrue(legalEntity.AgreementSigned);
         }
 
-        [Then(@"the legal entity should be marked as a levy entity")]
+        [Then(@"the account should be marked as a levy entity")]
         public void ThenTheLegalEntityShouldBeMarkedAsALevyEntity()
         {
             var dbContext = Services.GetService<ReservationsDataContext>();
-            var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
-                ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
+            var account = dbContext.Accounts.SingleOrDefault(ale =>
+                ale.Id.Equals(TestData.AccountLegalEntity.AccountId));
 
-            Assert.IsNotNull(legalEntity);
-            Assert.IsTrue(legalEntity.IsLevy);
+            Assert.IsNotNull(account);
+            Assert.IsTrue(account.IsLevy);
 
         }
 

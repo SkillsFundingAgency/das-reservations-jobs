@@ -7,11 +7,6 @@ Scenario: A existing legal entity has been signed
 	When signed agreement event is triggered
 	Then the legal entity should be signed
 
-Scenario: A existing legal entity has recieved levy
-	Given I have an existing unsigned, non levy legal entity
-	When levy added event is triggered
-	Then the legal entity should be marked as a levy entity
-
 Scenario: A unknown legal entity has recieved levy
 	Given I have a legal entity that is not in the database
 	When levy added event is triggered

@@ -30,7 +30,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityName = "Another legal entity",
                 AgreementSigned =  true,
                 Id = Guid.NewGuid(),
-                IsLevy = false,
                 LegalEntityId = 123
             };
 
@@ -51,7 +50,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityName = "Another legal entity",
                 AgreementSigned =  true,
                 Id = Guid.NewGuid(),
-                IsLevy = false,
                 LegalEntityId = 123
             };
 

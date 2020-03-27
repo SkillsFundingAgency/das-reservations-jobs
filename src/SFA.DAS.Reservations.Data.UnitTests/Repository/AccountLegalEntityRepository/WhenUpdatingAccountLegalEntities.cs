@@ -92,31 +92,5 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }
 
-        [Test,MoqAutoData]
-        public async Task AndUpdatingAccountToLevy_ThenEntityIsUpdatedIfItExists(
-            AccountLegalEntity accountLegalEntity)
-        {
-            _dataContext.Setup(x => x.AccountLegalEntities).ReturnsDbSet(new List<AccountLegalEntity>
-            {
-                accountLegalEntity
-            });
-
-            //Act
-            await _accountLegalEntityRepository.UpdateAccountLegalEntitiesToLevy(accountLegalEntity);
-
-            //Assert
-            _dataContext.Verify(x => x.SaveChanges(),Times.Once);
-        }
-
-        [Test, MoqAutoData]
-        public void AndUpdatingAccountToLevy_ThenExceptionThrownIfEntityDoesExist(
-            AccountLegalEntity accountLegalEntity)
-        {
-            //Act
-            Assert.ThrowsAsync<DbUpdateException>( () => _accountLegalEntityRepository.UpdateAccountLegalEntitiesToLevy(accountLegalEntity));
-
-            //Assert
-            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
-        }
     }
 }
