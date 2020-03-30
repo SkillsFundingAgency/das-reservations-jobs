@@ -39,9 +39,14 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>LegalEntityUpdated.feature.cs</LastGenOutput>
     </SpecFlowFeatureFiles>
+    <SpecFlowFeatureFiles Update="Features\AccountUpdate.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AccountUpdate.feature.cs</LastGenOutput>
+    </SpecFlowFeatureFiles>
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Features\AccountUpdate.feature" />
     <Content Include="Features\LegalEntityCreated.feature" />
     <Content Include="Features\LegalEntityRemoved.feature" />
     <Content Include="Features\LegalEntityUpdated.feature" />
