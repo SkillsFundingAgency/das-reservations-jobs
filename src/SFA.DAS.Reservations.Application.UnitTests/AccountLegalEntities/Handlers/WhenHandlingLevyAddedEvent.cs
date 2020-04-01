@@ -7,18 +7,19 @@ using NUnit.Framework;
 using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
+using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handlers
 {
     public class WhenHandlingLevyAddedEvent
     {
-        private Mock<IAccountLegalEntitiesService> _service;
+        private Mock<IAccountsService> _service;
         private LevyAddedToAccountHandler _handler;
 
         [SetUp]
         public void Arrange()
         {
-            _service = new Mock<IAccountLegalEntitiesService>();
+            _service = new Mock<IAccountsService>();
             _handler = new LevyAddedToAccountHandler(_service.Object, Mock.Of<ILogger<LevyAddedToAccountHandler>>());
         }
 
@@ -37,10 +38,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
             await _handler.Handle(levyAddedToAccountEvent);
 
             //Assert
-            _service.Verify(x => x.UpdateAccountLegalEntitiesToLevy(It.Is<LevyAddedToAccount>(
-                c => c.AccountId.Equals(levyAddedToAccountEvent.AccountId) && 
-                     c.Amount.Equals(levyAddedToAccountEvent.Amount) && 
-                     c.Created.Equals(levyAddedToAccountEvent.Created))));
+            _service.Verify(x => x.UpdateLevyStatus(levyAddedToAccountEvent.AccountId, true), Times.Once);
         }
 
         [Test]
@@ -54,7 +52,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Handle
                 Created = DateTime.Now
             };
 
-            _service.Setup(x => x.UpdateAccountLegalEntitiesToLevy(It.IsAny<LevyAddedToAccount>()))
+            _service.Setup(x => x.UpdateLevyStatus(It.IsAny<long>(), It.IsAny<bool>()))
                 .ThrowsAsync(new DbUpdateException("Failed", (Exception)null));
 
             //Act + Assert

@@ -3,15 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
+using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
 {
     public class LevyAddedToAccountHandler : ILevyAddedToAccountHandler
     {
-        private readonly IAccountLegalEntitiesService _accountLegalEntitiesService;
+        private readonly IAccountsService _accountLegalEntitiesService;
         private readonly ILogger<LevyAddedToAccountHandler> _logger;
 
-        public LevyAddedToAccountHandler(IAccountLegalEntitiesService accountLegalEntitiesService,
+        public LevyAddedToAccountHandler(IAccountsService accountLegalEntitiesService,
             ILogger<LevyAddedToAccountHandler> logger)
         {
             _accountLegalEntitiesService = accountLegalEntitiesService;
@@ -22,7 +23,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
         {
             try
             {
-                await _accountLegalEntitiesService.UpdateAccountLegalEntitiesToLevy(levyAddedToAccountEvent);
+                await _accountLegalEntitiesService.UpdateLevyStatus(levyAddedToAccountEvent.AccountId,true);
             }
             catch (DbUpdateException e)
             {

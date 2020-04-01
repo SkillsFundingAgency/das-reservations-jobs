@@ -41,7 +41,13 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityName = "Test Corp",
                 AgreementSigned = true
             };
-
+            
+            TestData.NonLevyAccount = new Account
+            {
+                Id = 1,
+                Name = "Test Account",
+                IsLevy = false
+            };
             
             var dbContext = Services.GetService<ReservationsDataContext>();
 
@@ -57,8 +63,11 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
             {
                 dbContext.AccountLegalEntities.Add(TestData.AccountLegalEntity);
 
-                dbContext.SaveChanges();
             }
+
+            
+            
+            dbContext.SaveChanges();
         }
     }
 }

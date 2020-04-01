@@ -31,11 +31,6 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
             await _repository.Remove(MapAccountLegalEntity(accountLegalEntityRemovedEvent));
         }
 
-        public async Task UpdateAccountLegalEntitiesToLevy(LevyAddedToAccount levyAddedToAccountEvent)
-        {
-            await _repository.UpdateAccountLegalEntitiesToLevy(MapAccountLegalEntity(levyAddedToAccountEvent));
-        }
-
         private AccountLegalEntity MapAccountLegalEntity(RemovedLegalEntityEvent removedLegalEntityEvent)
         {
             return new AccountLegalEntity

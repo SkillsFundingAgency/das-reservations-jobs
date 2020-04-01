@@ -11,5 +11,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
         public Guid ReservationId { get ; set ; }
 
         public Exception Exception { get; set; }
+        public Account NonLevyAccount { get ; set ; }
+        public string NewAccountName { get ; set ; }
     }
 }

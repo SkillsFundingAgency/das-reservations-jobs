@@ -39,23 +39,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
             }
         }
 
-        [When(@"levy added event is triggered")]
-        public void WhenLevyAddedEventIsTriggered()
-        {
-            var handler = Services.GetService<ILevyAddedToAccountHandler>();
-
-            try
-            {
-                handler.Handle(new LevyAddedToAccount
-                {
-                    AccountId = TestData.AccountLegalEntity.AccountId
-                }).Wait();
-            }
-            catch (Exception e)
-            {
-                TestData.Exception = e;
-            }
-        }
 
         [Then(@"the legal entity should be signed")]
         public void ThenTheLegalEntityStateShouldBeSigned()
@@ -66,18 +49,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
 
             Assert.IsNotNull(legalEntity);
             Assert.IsTrue(legalEntity.AgreementSigned);
-        }
-
-        [Then(@"the legal entity should be marked as a levy entity")]
-        public void ThenTheLegalEntityShouldBeMarkedAsALevyEntity()
-        {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-            var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
-                ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
-
-            Assert.IsNotNull(legalEntity);
-            Assert.IsTrue(legalEntity.IsLevy);
-
         }
 
         [Then(@"an exception should be thrown")]

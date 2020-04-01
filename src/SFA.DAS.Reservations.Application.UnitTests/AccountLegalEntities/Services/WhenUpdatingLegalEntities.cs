@@ -42,18 +42,5 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Servic
                 It.Is<AccountLegalEntity>(c=>c.AccountId.Equals(signedAgreementEvent.AccountId) && 
                                              c.LegalEntityId.Equals(signedAgreementEvent.LegalEntityId))));
         }
-
-        [Test, MoqAutoData]
-        public async Task AndUpdatingAccountToLevy_ThenServiceCalledToUpdate(
-            LevyAddedToAccount levyAddedToAccountEvent)
-        {
-            //Act
-            await _service.UpdateAccountLegalEntitiesToLevy(levyAddedToAccountEvent);
-
-            //Assert
-            _repository.Verify(repository =>  repository.UpdateAccountLegalEntitiesToLevy(It.Is<AccountLegalEntity>(
-                entity => entity.AccountId == levyAddedToAccountEvent.AccountId)),Times.Once);
-
-        }
     }
 }

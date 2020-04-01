@@ -34,12 +34,6 @@ namespace SFA.DAS.Reservations.Data.Repository
                     return;
                 }
 
-                var existingLevyStatus = await _dataContext
-                    .AccountLegalEntities
-                    .Where(c => c.AccountId.Equals(accountLegalEntity.AccountId))
-                    .AnyAsync(c=>c.IsLevy);
-
-                accountLegalEntity.IsLevy = existingLevyStatus;
                 try
                 {
                     await _dataContext.AccountLegalEntities.AddAsync(accountLegalEntity);
@@ -98,28 +92,5 @@ namespace SFA.DAS.Reservations.Data.Repository
             }
         }
 
-        public async Task UpdateAccountLegalEntitiesToLevy(AccountLegalEntity accountLegalEntity)
-        {
-            using (var transaction = _dataContext.Database.BeginTransaction())
-            {
-                var accountLegalEntitiesList = await _dataContext.AccountLegalEntities
-                    .Where(x => x.AccountId.Equals(accountLegalEntity.AccountId))
-                    .ToListAsync();
-
-                if (accountLegalEntitiesList != null &&
-                    accountLegalEntitiesList.Any())
-                {
-                    accountLegalEntitiesList.ForEach(entity => entity.IsLevy = true);
-                    _dataContext.AccountLegalEntities.UpdateRange(accountLegalEntitiesList);
-                    _dataContext.SaveChanges();
-                }
-                else
-                {
-                    throw new DbUpdateException($"Record not found AccountId:{accountLegalEntity.AccountId}", (Exception)null);
-                }
-
-                transaction.Commit();
-            }
-        }
     }
 }

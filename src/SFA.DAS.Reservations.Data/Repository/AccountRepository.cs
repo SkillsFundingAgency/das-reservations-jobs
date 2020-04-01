@@ -70,5 +70,26 @@ namespace SFA.DAS.Reservations.Data.Repository
                 transaction.Commit();
             }
         }
+
+        public async Task UpdateLevyStatus(Account account)
+        {
+            using (var transaction = _dataContext.Database.BeginTransaction())
+            {
+                var entity = await _dataContext.Accounts.FindAsync(account.Id);
+
+                if (entity != null)
+                {
+                    entity.IsLevy = account.IsLevy;
+                    _dataContext.SaveChanges();
+                }
+                else
+                {
+                    throw new DbUpdateException($"Update Account Levy Status - Record not found AccountId:{account.Id}", (Exception) null);
+                }
+                
+
+                transaction.Commit();
+            }
+        }
     }
 }
