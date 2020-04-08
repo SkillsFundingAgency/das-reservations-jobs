@@ -41,6 +41,7 @@ namespace SFA.DAS.Reservations.Data.Repository
             return _dataContext.Reservations
                 .Where(c=>c.AccountLegalEntityId.Equals(accountLegalEntityId) 
                           && c.Status != (byte)ReservationStatus.Deleted
+                          && c.Status != (byte)ReservationStatus.Change
                           && !c.IsLevyAccount).ToArray();
         }
     }
