@@ -8,7 +8,8 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         Pending = 0,
         Confirmed = 1,
         Completed = 2,
-        Deleted = 3
+        Deleted = 3,
+        Change = 4
     }
 
     public class Reservation

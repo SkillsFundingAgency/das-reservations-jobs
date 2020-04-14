@@ -13,6 +13,7 @@ using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
 {
+    [TestFixture]
     public class WhenGettingAllNonLevyReservations
     {
         private Data.Repository.ReservationRepository _reservationRepository;
@@ -32,7 +33,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
                 new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 2},
                 new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = false, AccountLegalEntityId = 1},
                 new Reservation {Id = Guid.NewGuid(), Status = (int)ReservationStatus.Deleted, IsLevyAccount = false, AccountLegalEntityId = 2},
-                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = true, AccountLegalEntityId = 1}
+                new Reservation {Id = Guid.NewGuid(), Status = 1, IsLevyAccount = true, AccountLegalEntityId = 1},
+                new Reservation {Id = Guid.NewGuid(), Status = (int)ReservationStatus.Change, IsLevyAccount = false, AccountLegalEntityId = 2}
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -48,7 +50,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         }
 
         [Test]
-        public void Then_Returns_All_Non_Levy_Non_Deleted_Reservations_For_AccountLegalEntity()
+        public void Then_Returns_All_Non_Levy_Non_Deleted_Non_Change_Reservations_For_AccountLegalEntity()
         {
             //Arrange
             var expectedAccountLegalEntityId = 2;
@@ -60,6 +62,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             reservations.Should().BeEquivalentTo(_expectedReservations
                 .Where(x => !x.IsLevyAccount
                             && x.Status != (int)ReservationStatus.Deleted
+                            && x.Status != (int)ReservationStatus.Change
                             && x.AccountLegalEntityId.Equals(expectedAccountLegalEntityId)));
         }
     }
