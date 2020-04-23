@@ -37,7 +37,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
             try
             {
-                await _reservationsRepository.SaveStatus(reservationId, status);
+                await _reservationsRepository.Update(reservationId, status);
                 await _indexRepository.SaveReservationStatus(reservationId, status);
 
             }

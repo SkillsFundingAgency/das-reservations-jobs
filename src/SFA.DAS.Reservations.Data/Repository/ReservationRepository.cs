@@ -18,7 +18,7 @@ namespace SFA.DAS.Reservations.Data.Repository
             _dataContext = dataContext;
         }
 
-        public async Task SaveStatus(Guid reservationId, ReservationStatus status)
+        public async Task Update(Guid reservationId, ReservationStatus status)
         {
             using (var transaction = _dataContext.Database.BeginTransaction())
             {

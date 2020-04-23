@@ -55,7 +55,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         public async Task Then_If_Reservation_Exists_Its_Status_Is_Updated()
         {
             //Act
-            await _reservationRepository.SaveStatus(_reservationEntity.Id, ReservationStatus.Completed);
+            await _reservationRepository.Update(_reservationEntity.Id, ReservationStatus.Completed);
 
             //Assert 
             Assert.AreEqual((short)ReservationStatus.Completed, _reservationEntity.Status);
@@ -66,7 +66,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         public void Then_If_Reservation_Does_Not_Exists_An_Exception_Is_Thrown()
         {
             //Act + Assert
-            Assert.ThrowsAsync<InvalidOperationException>(() => _reservationRepository.SaveStatus(Guid.NewGuid(), ReservationStatus.Confirmed));
+            Assert.ThrowsAsync<InvalidOperationException>(() => _reservationRepository.Update(Guid.NewGuid(), ReservationStatus.Confirmed));
            
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }
