@@ -19,7 +19,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             if (message.ReservationId.HasValue)
             {
-                await handler.Handle(message.ReservationId.Value);
+                await handler.Handle(message);
                 log.LogInformation($"Confirmed Reservation with ID: {message.ReservationId}");
             }
             else

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
@@ -13,14 +14,16 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _service = service;
         }
 
-        public async Task Handle(Guid reservationId)
+        public async Task Handle(DraftApprenticeshipCreatedEvent draftApprenticeshipCreatedEvent)
         {
-            if (reservationId == null || reservationId.Equals(Guid.Empty))
+            if (!draftApprenticeshipCreatedEvent.ReservationId.HasValue)
             {
-                throw new ArgumentException("ReservationId must be set", nameof(reservationId));
+                throw new ArgumentException("ReservationId must be set", nameof(draftApprenticeshipCreatedEvent.ReservationId));
             }
 
-            await _service.UpdateReservationStatus(reservationId, ReservationStatus.Confirmed);
+            //todo: map to domain type here
+
+            await _service.UpdateReservationStatus(draftApprenticeshipCreatedEvent.ReservationId.Value, ReservationStatus.Confirmed);
         }
     }
 }

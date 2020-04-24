@@ -1,50 +1,55 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 {
     public class WhenConfirmingReservation
     {
-        private ConfirmReservationHandler _handler;
-        private Mock<IReservationService> _service;
-
-        [SetUp]
-        public void Arrange()
+        [Test, MoqAutoData]
+        public async Task ThenSetsReservationStatusToConfirmed(
+            DraftApprenticeshipCreatedEvent createdEvent,
+            [Frozen]Mock<IReservationService> mockService,
+            ConfirmReservationHandler handler)
         {
-            _service = new Mock<IReservationService>();
-            _handler = new ConfirmReservationHandler(_service.Object);
-        }
-
-        [Test]
-        public async Task ThenSetsReservationStatusToConfirmed()
-        {
-            //Arrange
-            var reservationId = Guid.NewGuid();
-
             //Act
-            await _handler.Handle(reservationId);
+            await handler.Handle(createdEvent);
 
             //Assert
-            _service.Verify(s => s.UpdateReservationStatus(reservationId, ReservationStatus.Confirmed), Times.Once);
+            mockService.Verify(s => s.UpdateReservationStatus(
+                createdEvent.ReservationId.Value, 
+                ReservationStatus.Confirmed), 
+                Times.Once);
         }
-
         
-        [Test]
-        public void ThenWillThrowExceptionIfReservationIdIsInvalid()
+        [Test, MoqAutoData]
+        public void ThenWillThrowExceptionIfReservationIdIsInvalid(
+            [Frozen]Mock<IReservationService> mockService,
+            ConfirmReservationHandler handler)
         {
             //Arrange
-            var reservationId = Guid.Empty;
+            var createdEvent = new DraftApprenticeshipCreatedEvent(
+                234, 
+                234, 
+                "345", 
+                null, 
+                DateTime.UtcNow);
 
             //Act
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _handler.Handle(reservationId));
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => handler.Handle(createdEvent));
 
             //Assert
-            Assert.AreEqual("reservationId", exception.ParamName);
-            _service.Verify(s => s.UpdateReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
+            Assert.AreEqual(nameof(DraftApprenticeshipCreatedEvent.ReservationId), exception.ParamName);
+            mockService.Verify(s => s.UpdateReservationStatus(
+                It.IsAny<Guid>(), 
+                It.IsAny<ReservationStatus>()), 
+                Times.Never);
         }
     }
 }

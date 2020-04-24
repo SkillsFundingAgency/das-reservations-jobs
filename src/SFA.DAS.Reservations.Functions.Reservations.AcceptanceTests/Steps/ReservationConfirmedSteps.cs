@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Reservations;
 using TechTalk.SpecFlow;
@@ -37,8 +38,16 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [When(@"a confirm reservation event is triggered")]
         public void WhenAConfirmReservationEventIsTriggered()
         {
+            TestData.DraftApprenticeshipCreatedEvent = new DraftApprenticeshipCreatedEvent(
+                3459,
+                76546,
+                "4359805438",
+                TestData.ReservationId,
+                DateTime.UtcNow
+                );
+
             var handler = Services.GetService<IConfirmReservationHandler>();
-            handler.Handle(TestData.ReservationId).Wait();
+            handler.Handle(TestData.DraftApprenticeshipCreatedEvent).Wait();
         }
         
         [Then(@"the reservation status will be confirmed")]
