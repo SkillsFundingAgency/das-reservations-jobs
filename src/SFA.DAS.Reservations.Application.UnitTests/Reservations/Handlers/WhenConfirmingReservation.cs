@@ -24,7 +24,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             //Assert
             mockService.Verify(s => s.UpdateReservationStatus(
                 createdEvent.ReservationId.Value, 
-                ReservationStatus.Confirmed), 
+                ReservationStatus.Confirmed,
+                createdEvent.CreatedOn,
+                createdEvent.CohortId,
+                createdEvent.DraftApprenticeshipId), 
                 Times.Once);
         }
         
@@ -48,7 +51,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             Assert.AreEqual(nameof(DraftApprenticeshipCreatedEvent.ReservationId), exception.ParamName);
             mockService.Verify(s => s.UpdateReservationStatus(
                 It.IsAny<Guid>(), 
-                It.IsAny<ReservationStatus>()), 
+                It.IsAny<ReservationStatus>(),
+                It.IsAny<DateTime>(),
+                It.IsAny<long>(),
+                It.IsAny<long>()), 
                 Times.Never);
         }
     }

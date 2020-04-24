@@ -16,14 +16,17 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 
         public async Task Handle(DraftApprenticeshipCreatedEvent draftApprenticeshipCreatedEvent)
         {
-            if (!draftApprenticeshipCreatedEvent.ReservationId.HasValue)
+            if (!draftApprenticeshipCreatedEvent.ReservationId.HasValue || draftApprenticeshipCreatedEvent.ReservationId.Value == Guid.Empty)
             {
                 throw new ArgumentException("ReservationId must be set", nameof(draftApprenticeshipCreatedEvent.ReservationId));
             }
 
-            //todo: map to domain type here
-
-            await _service.UpdateReservationStatus(draftApprenticeshipCreatedEvent.ReservationId.Value, ReservationStatus.Confirmed);
+            await _service.UpdateReservationStatus(
+                draftApprenticeshipCreatedEvent.ReservationId.Value, 
+                ReservationStatus.Confirmed,
+                draftApprenticeshipCreatedEvent.CreatedOn,
+                draftApprenticeshipCreatedEvent.CohortId,
+                draftApprenticeshipCreatedEvent.DraftApprenticeshipId);
         }
     }
 }

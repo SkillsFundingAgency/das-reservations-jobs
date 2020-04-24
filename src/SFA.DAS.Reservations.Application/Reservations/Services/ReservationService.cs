@@ -28,7 +28,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _logger = logger;
         }
 
-        public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status)
+        public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status, DateTime? confirmedDate = null, long? cohortId = null, long? apprenticeshipId = null)
         {
             if (reservationId == null || reservationId.Equals(Guid.Empty))
             {
