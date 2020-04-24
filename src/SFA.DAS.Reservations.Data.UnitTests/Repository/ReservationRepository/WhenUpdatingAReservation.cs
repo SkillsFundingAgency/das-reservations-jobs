@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -13,7 +15,7 @@ using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
 {
-    public class WhenSavingReservationStatus
+    public class WhenUpdatingAReservation
     {
         private Data.Repository.ReservationRepository _reservationRepository;
         private Mock<IReservationsDataContext> _dataContext;
@@ -58,8 +60,11 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             await _reservationRepository.Update(_reservationEntity.Id, ReservationStatus.Completed);
 
             //Assert 
-            Assert.AreEqual((short)ReservationStatus.Completed, _reservationEntity.Status);
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _reservationEntity.Status.Should().Be((short) ReservationStatus.Completed);
+            _reservationEntity.ConfirmedDate.Should().BeNull();
+            _reservationEntity.CohortId.Should().BeNull();
+            _reservationEntity.DraftApprenticeshipId.Should().BeNull();
         }
 
         [Test]
@@ -69,6 +74,28 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             Assert.ThrowsAsync<InvalidOperationException>(() => _reservationRepository.Update(Guid.NewGuid(), ReservationStatus.Confirmed));
            
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
+        }
+
+        [Test, AutoData]
+        public async Task And_Status_Confirmed_Then_Reservation_Stamped_With_CohortId_And_DraftApprenticeshipId(
+            DateTime confirmedDate, 
+            long cohortId,
+            long draftApprenticeshipId)
+        {
+            //Act
+            await _reservationRepository.Update(
+                _reservationEntity.Id, 
+                ReservationStatus.Confirmed, 
+                confirmedDate, 
+                cohortId, 
+                draftApprenticeshipId);
+
+            //Assert 
+            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _reservationEntity.Status.Should().Be((short) ReservationStatus.Confirmed);
+            _reservationEntity.ConfirmedDate.Should().Be(confirmedDate);
+            _reservationEntity.CohortId.Should().Be(cohortId);
+            _reservationEntity.DraftApprenticeshipId.Should().Be(draftApprenticeshipId);
         }
     }
 }

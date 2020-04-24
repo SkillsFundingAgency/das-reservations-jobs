@@ -36,6 +36,13 @@ namespace SFA.DAS.Reservations.Data.Repository
 
                 reservation.Status = (short)status;
 
+                if (status == ReservationStatus.Confirmed)
+                {
+                    reservation.ConfirmedDate = confirmedDate;
+                    reservation.CohortId = cohortId;
+                    reservation.DraftApprenticeshipId = draftApprenticeshipId;
+                }
+
                 _dataContext.SaveChanges();
                 transaction.Commit();
             }
