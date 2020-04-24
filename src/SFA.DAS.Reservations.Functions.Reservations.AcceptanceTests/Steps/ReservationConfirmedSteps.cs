@@ -56,9 +56,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var dbContext = Services.GetService<ReservationsDataContext>();
             var reservation = dbContext.Reservations.Find(TestData.ReservationId);
             Assert.AreEqual(ReservationStatus.Confirmed,(ReservationStatus)reservation.Status);
+            Assert.AreEqual(TestData.DraftApprenticeshipCreatedEvent.CreatedOn,reservation.ConfirmedDate);
+            Assert.AreEqual(TestData.DraftApprenticeshipCreatedEvent.CohortId,reservation.CohortId);
+            Assert.AreEqual(TestData.DraftApprenticeshipCreatedEvent.DraftApprenticeshipId,reservation.DraftApprenticeshipId);
             var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
             var mock = Mock.Get(reservationIndexRepository);
-            mock.Verify(x=>x.SaveReservationStatus(TestData.ReservationId,ReservationStatus.Confirmed), Times.Once);
+            mock.Verify(x=>x.SaveReservationStatus(
+                TestData.ReservationId,ReservationStatus.Confirmed), Times.Once);
         }
 
         [Then(@"the reservation status will not be confirmed")]
