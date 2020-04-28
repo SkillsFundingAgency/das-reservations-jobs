@@ -18,7 +18,12 @@ namespace SFA.DAS.Reservations.Data.Repository
             _dataContext = dataContext;
         }
 
-        public async Task SaveStatus(Guid reservationId, ReservationStatus status)
+        public async Task Update(
+            Guid reservationId, 
+            ReservationStatus status, 
+            DateTime? confirmedDate = null, 
+            long? cohortId = null, 
+            long? draftApprenticeshipId = null)
         {
             using (var transaction = _dataContext.Database.BeginTransaction())
             {
@@ -30,6 +35,13 @@ namespace SFA.DAS.Reservations.Data.Repository
                 }
 
                 reservation.Status = (short)status;
+
+                if (status == ReservationStatus.Confirmed)
+                {
+                    reservation.ConfirmedDate = confirmedDate;
+                    reservation.CohortId = cohortId;
+                    reservation.DraftApprenticeshipId = draftApprenticeshipId;
+                }
 
                 _dataContext.SaveChanges();
                 transaction.Commit();

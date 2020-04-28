@@ -30,7 +30,12 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
             //Assert
             notifyAction.Verify(s => s.Execute(It.Is<ReservationDeletedNotificationEvent>(ev => 
                 ev.Id == deletedEvent.Id)), Times.Once);
-            reservationService.Verify(x=>x.UpdateReservationStatus(deletedEvent.Id, ReservationStatus.Deleted));
+            reservationService.Verify(x=>x.UpdateReservationStatus(
+                deletedEvent.Id, 
+                ReservationStatus.Deleted,
+                null,
+                null,
+                null));
         }
     }
 }

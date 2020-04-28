@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -9,7 +10,7 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
-    public class WhenSavingReservationStatus
+    public class WhenUpdatingAReservation
     {
         private ReservationService _service;
         private Mock<IReservationRepository> _repository;
@@ -28,18 +29,30 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 Mock.Of<ILogger<ReservationService>>());
         }
 
-        [Test]
-        public async Task ThenWillSaveStatus()
+        [Test, AutoData]
+        public async Task ThenWillSaveStatus(
+            Guid reservationId,
+            ReservationStatus status,
+            DateTime confirmedDate,
+            long cohortId,
+            long draftApprenticeshipId)
         {
-            //Arrange
-            var reservationId = Guid.NewGuid();
-            var status = ReservationStatus.Confirmed;
-
             //Act
-            await _service.UpdateReservationStatus(reservationId, status);
+            await _service.UpdateReservationStatus(
+                reservationId, 
+                status, 
+                confirmedDate, 
+                cohortId, 
+                draftApprenticeshipId);
 
             //Assert
-            _repository.Verify(r => r.SaveStatus(reservationId, status), Times.Once);
+            _repository.Verify(r => r.Update(
+                reservationId, 
+                status, 
+                confirmedDate, 
+                cohortId, 
+                draftApprenticeshipId), 
+                Times.Once);
             _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, status), Times.Once);
         }
 
@@ -55,7 +68,13 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             Assert.AreEqual("reservationId", exception.ParamName);
-            _repository.Verify(r => r.SaveStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
+            _repository.Verify(r => r.Update(
+                It.IsAny<Guid>(), 
+                It.IsAny<ReservationStatus>(),
+                It.IsAny<DateTime>(),
+                It.IsAny<long>(),
+                It.IsAny<long>()), 
+                Times.Never);
             _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
         }
 
@@ -65,7 +84,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Arrange
             var reservationId = Guid.NewGuid();
             var status = ReservationStatus.Confirmed;
-            _repository.Setup(r => r.SaveStatus(It.IsAny<Guid>(),It.IsAny<ReservationStatus>()))
+            _repository.Setup(r => r.Update(
+                    It.IsAny<Guid>(), 
+                    It.IsAny<ReservationStatus>(),
+                    null,
+                    null,
+                    null))
                 .ThrowsAsync(new InvalidOperationException());
 
             //Act

@@ -18,6 +18,8 @@ namespace SFA.DAS.Reservations.Domain.Entities
         public string AccountLegalEntityName { get; set; }
         public long? TransferSenderAccountId { get; set; }
         public Guid? UserId { get; set; }
-    
+        public DateTime? ConfirmedDate { get; set; }
+        public long? CohortId { get; set; }
+        public long? DraftApprenticeshipId { get; set; }
     }
 }

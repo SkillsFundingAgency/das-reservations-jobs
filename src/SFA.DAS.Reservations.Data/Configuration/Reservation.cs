@@ -27,6 +27,10 @@ namespace SFA.DAS.Reservations.Data.Configuration
 
             builder.Property(x => x.AccountLegalEntityName).HasColumnName(@"AccountLegalEntityName").HasColumnType("varchar").HasMaxLength(100);
             builder.Property(x => x.CourseId).HasColumnName(@"CourseId").HasColumnType("varchar").HasMaxLength(20);
+
+            builder.Property(x => x.ConfirmedDate).HasColumnName(@"ConfirmedDate").HasColumnType("datetime");
+            builder.Property(x => x.CohortId).HasColumnName(@"CohortId").HasColumnType("bigint");
+            builder.Property(x => x.DraftApprenticeshipId).HasColumnName(@"DraftApprenticeshipId").HasColumnType("bigint");
         }
     }
 }

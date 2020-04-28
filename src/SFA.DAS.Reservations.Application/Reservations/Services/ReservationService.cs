@@ -28,7 +28,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _logger = logger;
         }
 
-        public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status)
+        public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null)
         {
             if (reservationId == null || reservationId.Equals(Guid.Empty))
             {
@@ -37,7 +37,12 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
             try
             {
-                await _reservationsRepository.SaveStatus(reservationId, status);
+                await _reservationsRepository.Update(
+                    reservationId, 
+                    status, 
+                    confirmedDate, 
+                    cohortId, 
+                    draftApprenticeshipId);
                 await _indexRepository.SaveReservationStatus(reservationId, status);
 
             }
