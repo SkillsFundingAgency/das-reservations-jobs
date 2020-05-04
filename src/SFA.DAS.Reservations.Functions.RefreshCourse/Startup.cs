@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Client;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
 using SFA.DAS.Reservations.Data;
@@ -18,7 +19,6 @@ using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Functions.RefreshCourse;
-using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
@@ -47,16 +47,19 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json", true)
-                .AddEnvironmentVariables()
-                .AddAzureTableStorageConfiguration(
-                    configuration["ConfigurationStorageConnectionString"],
-                    configuration["ConfigNames"].Split(','),
-                    configuration["EnvironmentName"],
-                    configuration["Version"]
-                )
-                .Build();
+                .AddEnvironmentVariables();
+            if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(',');
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                });
+            }
 
-            Configuration = config;
+            Configuration = config.Build();
         }
 
         public IServiceProvider Build()

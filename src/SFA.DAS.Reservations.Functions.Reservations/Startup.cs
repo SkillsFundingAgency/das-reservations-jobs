@@ -12,10 +12,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Http.TokenGenerators;
-using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Providers.Api.Client;
@@ -35,7 +35,6 @@ using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
-using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
@@ -57,28 +56,34 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
      public class ServiceProviderBuilder : IServiceProviderBuilder
      {
+        private const string EncodingConfigKey = "SFA.DAS.Encoding";
         public ServiceCollection ServiceCollection { get; set; }
-        
-         
+
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
         public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _loggerFactory = loggerFactory;
-            
+
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory()) 
-                .AddJsonFile("local.settings.json",true)
-                .AddEnvironmentVariables()
-                .AddAzureTableStorageConfiguration(
-                    configuration["ConfigurationStorageConnectionString"],
-                    configuration["ConfigNames"].Split(','),
-                    configuration["EnvironmentName"],
-                    configuration["Version"])
-                .Build();
-
-            Configuration = config;
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("local.settings.json", true)
+                .AddEnvironmentVariables();
+            if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            {
+                config.AddAzureTableStorage(options =>
+                    {
+                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                        options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                        options.EnvironmentName = configuration["EnvironmentName"];
+                        options.PreFixConfigurationKeys = false;
+                        options.ConfigurationKeysRawJsonResult = new[] {EncodingConfigKey};
+                    }
+                );
+            }
+            
+            Configuration = config.Build();
         }
 
         public IServiceProvider Build()
@@ -102,7 +107,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
-                var encodingConfigJson = Configuration.GetSection(nameof(EncodingConfig)).Value;
+                var encodingConfigJson = Configuration.GetSection(EncodingConfigKey).Value;
                 var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
                 services.AddSingleton(encodingConfig);
             }
