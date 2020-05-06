@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <ProjectGuid>87E35BC2-DF79-489F-B267-F7B5E3279F3E</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
