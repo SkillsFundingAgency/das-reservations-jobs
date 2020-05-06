@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <ProjectGuid>8FC88C13-C1DF-49B6-8E1F-4219E1E6AF2C</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="7.4.0" />
