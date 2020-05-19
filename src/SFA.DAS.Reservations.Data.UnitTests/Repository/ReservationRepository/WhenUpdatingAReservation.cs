@@ -30,7 +30,10 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             _reservationEntity = new Reservation
             {
                Id = Guid.NewGuid(),
-               Status = 1
+               Status = 1,
+               ConfirmedDate = DateTime.UtcNow,
+               CohortId = 1,
+               DraftApprenticeshipId = 1
             };
 
             _dbContextTransaction = new Mock<IDbContextTransaction>();
@@ -62,9 +65,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             //Assert 
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
             _reservationEntity.Status.Should().Be((short) ReservationStatus.Completed);
-            _reservationEntity.ConfirmedDate.Should().BeNull();
-            _reservationEntity.CohortId.Should().BeNull();
-            _reservationEntity.DraftApprenticeshipId.Should().BeNull();
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         [TestCase(ReservationStatus.Pending)]
         [TestCase(ReservationStatus.Deleted)]
         [TestCase(ReservationStatus.Change)]
-        public void Then_If_The_Reservation_Status_Being_Changed_To_Pending_When_It_Is_Not_Confirmed_An_Exception_Is_Thrown(ReservationStatus status)
+        public void Then_If_The_Reservation_Status_Being_Changed_To_Pending_When_It_Is_Not_Confirmed_And_Has_No_Audit_Values_An_Exception_Is_Thrown(ReservationStatus status)
         {
             var reservationId = Guid.NewGuid();
             _reservationEntity = new Reservation
@@ -94,9 +94,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }
-
+        
         [Test]
-        public async Task Then_Reservation_Is_Set_To_Pending_If_It_Is_Confirmed()
+        public async Task Then_Reservation_Is_Set_To_Pending_If_It_Is_Confirmed_And_Audit_Fields_Set_To_Null()
         {
             //Act
             await _reservationRepository.Update(_reservationEntity.Id, ReservationStatus.Pending);
