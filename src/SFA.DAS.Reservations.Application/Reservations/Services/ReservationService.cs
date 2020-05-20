@@ -48,7 +48,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
             catch (InvalidOperationException e)
             {
-                _logger.LogWarning($"Reservation {reservationId} was not found in the database and not updated to confirmed");
+                _logger.LogWarning($"Reservation {reservationId} was not found in the database and not updated to {status}");
             }
         }
 
