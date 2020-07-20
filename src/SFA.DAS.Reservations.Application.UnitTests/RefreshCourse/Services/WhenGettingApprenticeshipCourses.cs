@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Client;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
+using SFA.DAS.Reservations.Domain.ImportTypes;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using Standard = SFA.DAS.Reservations.Domain.ImportTypes.Standard;
 
@@ -20,23 +21,27 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
         public void Arrange()
         {
             _standardApiClient = new Mock<IFindApprenticeshipTrainingService>();
-            _standardApiClient.Setup(x => x.GetStandards()).ReturnsAsync(new List<Standard>
+            _standardApiClient.Setup(x => x.GetStandards()).ReturnsAsync(new StandardApiResponse
             {
-                new Standard
-                {
-                    Id = 1,
-                    Title = "Some Standard",
-                    Level = 1,
-                    EffectiveTo = DateTime.Today.AddDays(-1)
-                },
-                new Standard
-                {
-                    Id = 2,
-                    Title = "Some Standard 2",
-                    Level = 1,
-                    EffectiveTo = DateTime.Today.AddDays(-1)
+                Standards = new List<Standard>
+                    {
+                        new Standard
+                        {
+                            Id = 1,
+                            Title = "Some Standard",
+                            Level = 1,
+                            EffectiveTo = DateTime.Today.AddDays(-1)
+                        },
+                        new Standard
+                        {
+                            Id = 2,
+                            Title = "Some Standard 2",
+                            Level = 1,
+                            EffectiveTo = DateTime.Today.AddDays(-1)
+                        }
+                    }
                 }
-            });
+            );
 
             _apprenticeshipCoursesService = new ApprenticeshipCoursesService(_standardApiClient.Object);
         }

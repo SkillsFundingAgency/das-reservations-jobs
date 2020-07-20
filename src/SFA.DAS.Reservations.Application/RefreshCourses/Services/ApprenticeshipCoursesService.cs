@@ -31,9 +31,9 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 
         private async Task GetStandards(ConcurrentBag<Course> courses)
         {
-            var standards = await _standardApiClient.GetStandards();
+            var standardApiResponse = await _standardApiClient.GetStandards();
 
-            foreach (var standard in standards)
+            foreach (var standard in standardApiResponse.Standards)
             {
                 courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo));
             }

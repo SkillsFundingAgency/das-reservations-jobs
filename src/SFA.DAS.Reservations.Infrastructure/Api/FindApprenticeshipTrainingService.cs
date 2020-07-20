@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
             _configuration = configuration.Value;
         }
 
-        public async Task<List<Standard>> GetStandards()
+        public async Task<StandardApiResponse> GetStandards()
         {
             AddHeaders();
 
@@ -28,7 +28,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
 
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<List<Standard>>(json);
+            return JsonConvert.DeserializeObject<StandardApiResponse>(json);
         }
         
         private void AddHeaders()

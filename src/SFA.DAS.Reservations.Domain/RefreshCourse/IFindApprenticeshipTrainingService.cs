@@ -6,6 +6,6 @@ namespace SFA.DAS.Reservations.Domain.RefreshCourse
 {
     public interface IFindApprenticeshipTrainingService
     {
-        Task<List<Standard>> GetStandards();
+        Task<StandardApiResponse> GetStandards();
     }
 }

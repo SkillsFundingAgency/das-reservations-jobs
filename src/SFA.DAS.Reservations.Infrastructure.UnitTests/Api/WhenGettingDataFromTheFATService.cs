@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
     {
         [Test, MoqAutoData]
         public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Standards_Returned(
-            List<Domain.ImportTypes.Standard> importStandards,
+            Domain.ImportTypes.StandardApiResponse importStandards,
             Mock<IOptions<ReservationsJobs>> configuration, 
             string baseUrl,
             string apiKey)
