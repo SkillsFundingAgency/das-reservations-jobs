@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -29,4 +29,10 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(OutDir)$(ProjectName).deps.json" DestinationFiles="$(OutDir)/bin/function.deps.json" />
+  </Target>
+  <Target Name="PostPublish" BeforeTargets="Publish">
+    <Copy SourceFiles="$(PublishDir)$(ProjectName).deps.json" DestinationFiles="$(PublishDir)/bin/function.deps.json" />
+  </Target>
 </Project>
