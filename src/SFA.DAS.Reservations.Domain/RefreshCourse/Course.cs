@@ -4,9 +4,9 @@ namespace SFA.DAS.Reservations.Domain.RefreshCourse
 {
     public class Course
     {
-        public Course(string id, string title, int level, DateTime? effectiveTo)
+        public Course(int id, string title, int level, DateTime? effectiveTo)
         {
-            Id = id;
+            Id = id.ToString();
             Title = title;
             Level = level;
             EffectiveTo = effectiveTo;

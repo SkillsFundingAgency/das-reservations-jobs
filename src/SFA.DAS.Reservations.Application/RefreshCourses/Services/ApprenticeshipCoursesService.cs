@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.Api.Client;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 {
     public class ApprenticeshipCoursesService : IApprenticeshipCourseService
     {
-        private readonly IStandardApiClient _standardApiClient;
+        private readonly IFindApprenticeshipTrainingService _standardApiClient;
 
-        public ApprenticeshipCoursesService(IStandardApiClient standardApiClient)
+        public ApprenticeshipCoursesService(IFindApprenticeshipTrainingService standardApiClient)
         {
             _standardApiClient = standardApiClient;
         }
@@ -32,9 +31,9 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
 
         private async Task GetStandards(ConcurrentBag<Course> courses)
         {
-            var standards = await _standardApiClient.GetAllAsync();
+            var standards = await _standardApiClient.GetStandards();
 
-            foreach (var standard in standards.Where(c=>c.IsActiveStandard))
+            foreach (var standard in standards)
             {
                 courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo));
             }
