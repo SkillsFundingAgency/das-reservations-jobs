@@ -5,10 +5,11 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.ImportTypes;
+using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Infrastructure.Api
 {
-    public class FindApprenticeshipTrainingService
+    public class FindApprenticeshipTrainingService : IFindApprenticeshipTrainingService
     {
         private readonly HttpClient _client;
         private readonly ReservationsJobs _configuration;

@@ -19,6 +19,7 @@ using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Functions.RefreshCourse;
+using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
@@ -94,9 +95,8 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
-            services.AddTransient<IStandardApiClient>(x => new StandardApiClient(config.ApprenticeshipBaseUrl));
-            services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));
-
+            services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+            
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
             services.AddTransient<ICourseService, CourseService>();
 
