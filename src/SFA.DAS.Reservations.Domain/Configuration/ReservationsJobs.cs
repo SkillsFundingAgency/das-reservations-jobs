@@ -10,7 +10,7 @@
         public string ElasticSearchPassword { get; set; }
         public string ElasticSearchServerUrl { get; set; }
         public string ReservationCreatedEmailTemplateId { get; set; }
-        public virtual string FindApprenticeshipTrainingOuterApiUrl { get; set; }
-        public virtual string FindApprenticeshipTrainingOuterApiKey { get; set; }
+        public virtual string ReservationsOuterApiUrl { get; set; }
+        public virtual string ReservationsOuterApiKey { get; set; }
     }
 }

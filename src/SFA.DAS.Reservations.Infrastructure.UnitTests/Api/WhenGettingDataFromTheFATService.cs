@@ -31,8 +31,8 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
         {
             //Arrange
             baseUrl = "https://" + baseUrl;
-            configuration.Setup(x => x.Value.FindApprenticeshipTrainingOuterApiKey).Returns(apiKey);
-            configuration.Setup(x => x.Value.FindApprenticeshipTrainingOuterApiUrl).Returns(baseUrl);
+            configuration.Setup(x => x.Value.ReservationsOuterApiKey).Returns(apiKey);
+            configuration.Setup(x => x.Value.ReservationsOuterApiUrl).Returns(baseUrl);
             var response = new HttpResponseMessage
             {
                 Content = new StringContent(JsonConvert.SerializeObject(importStandards)),
@@ -57,8 +57,8 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
         {
             //Arrange
             baseUrl = "https://" + baseUrl;
-            configuration.Setup(x => x.Value.FindApprenticeshipTrainingOuterApiKey).Returns(apiKey);
-            configuration.Setup(x => x.Value.FindApprenticeshipTrainingOuterApiUrl).Returns(baseUrl);
+            configuration.Setup(x => x.Value.ReservationsOuterApiKey).Returns(apiKey);
+            configuration.Setup(x => x.Value.ReservationsOuterApiUrl).Returns(baseUrl);
             var response = new HttpResponseMessage
             {
                 Content = new StringContent(""),
