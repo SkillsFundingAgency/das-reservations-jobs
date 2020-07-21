@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
         
         private void AddHeaders()
         {
-            _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configuration.ReservationsOuterApiKey);
+            _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configuration.ReservationsOuterApiSubscriptionKey);
             _client.DefaultRequestHeaders.Add("X-Version", "1");
         }
     }

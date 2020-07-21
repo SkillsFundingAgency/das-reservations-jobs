@@ -31,7 +31,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
         {
             //Arrange
             baseUrl = "https://" + baseUrl;
-            configuration.Setup(x => x.Value.ReservationsOuterApiKey).Returns(apiKey);
+            configuration.Setup(x => x.Value.ReservationsOuterApiSubscriptionKey).Returns(apiKey);
             configuration.Setup(x => x.Value.ReservationsOuterApiUrl).Returns(baseUrl);
             var response = new HttpResponseMessage
             {
@@ -57,7 +57,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
         {
             //Arrange
             baseUrl = "https://" + baseUrl;
-            configuration.Setup(x => x.Value.ReservationsOuterApiKey).Returns(apiKey);
+            configuration.Setup(x => x.Value.ReservationsOuterApiSubscriptionKey).Returns(apiKey);
             configuration.Setup(x => x.Value.ReservationsOuterApiUrl).Returns(baseUrl);
             var response = new HttpResponseMessage
             {

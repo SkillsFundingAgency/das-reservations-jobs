@@ -11,6 +11,6 @@
         public string ElasticSearchServerUrl { get; set; }
         public string ReservationCreatedEmailTemplateId { get; set; }
         public virtual string ReservationsOuterApiUrl { get; set; }
-        public virtual string ReservationsOuterApiKey { get; set; }
+        public virtual string ReservationsOuterApiSubscriptionKey { get; set; }
     }
 }
