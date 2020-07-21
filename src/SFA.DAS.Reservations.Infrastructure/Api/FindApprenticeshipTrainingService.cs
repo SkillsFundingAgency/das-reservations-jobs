@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
         {
             AddHeaders();
 
-            var response = await _client.GetAsync(_configuration.ReservationsOuterApiUrl).ConfigureAwait(false);
+            var response = await _client.GetAsync(_configuration.ReservationsApimUrl).ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
         
         private void AddHeaders()
         {
-            _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configuration.ReservationsOuterApiSubscriptionKey);
+            _client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configuration.ReservationsApimSubscriptionKey);
             _client.DefaultRequestHeaders.Add("X-Version", "1");
         }
     }

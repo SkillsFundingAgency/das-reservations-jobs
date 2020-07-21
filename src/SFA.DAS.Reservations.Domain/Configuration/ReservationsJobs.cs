@@ -10,7 +10,7 @@
         public string ElasticSearchPassword { get; set; }
         public string ElasticSearchServerUrl { get; set; }
         public string ReservationCreatedEmailTemplateId { get; set; }
-        public virtual string ReservationsOuterApiUrl { get; set; }
-        public virtual string ReservationsOuterApiSubscriptionKey { get; set; }
+        public virtual string ReservationsApimUrl { get; set; }
+        public virtual string ReservationsApimSubscriptionKey { get; set; }
     }
 }
