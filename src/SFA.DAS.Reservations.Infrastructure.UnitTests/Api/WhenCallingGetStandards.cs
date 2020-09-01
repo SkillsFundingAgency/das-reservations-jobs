@@ -14,7 +14,7 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
 {
-    public class WhenGettingDataFromTheFATService
+    public class WhenCallingGetStandards
     {
         [Test, MoqAutoData]
         public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Standards_Returned(
