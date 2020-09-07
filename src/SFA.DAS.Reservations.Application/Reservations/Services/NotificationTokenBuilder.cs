@@ -34,7 +34,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         private async Task<string> GetProviderName(uint providerId)
         {
             var provider = await _providerService.GetDetails(providerId);
-            return provider.ProviderName;
+            return provider.Name;
         }
 
         private string GenerateStartDateDescription(DateTime startDate, DateTime endDate)

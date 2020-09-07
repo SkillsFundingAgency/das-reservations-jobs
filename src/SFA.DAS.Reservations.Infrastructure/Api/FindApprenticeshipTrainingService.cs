@@ -30,7 +30,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
             return JsonConvert.DeserializeObject<StandardApiResponse>(json);
         }
 
-        public async Task<ProviderApiResponse> GetProvider(int ukPrn)
+        public async Task<ProviderApiResponse> GetProvider(uint ukPrn)
         {
             AddHeaders();
 

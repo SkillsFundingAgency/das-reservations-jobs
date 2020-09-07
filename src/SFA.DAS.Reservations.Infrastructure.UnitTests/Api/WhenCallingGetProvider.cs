@@ -18,7 +18,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
     { 
         [Test, MoqAutoData]
         public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Providers_Returned(
-            int ukPrn,
+            uint ukPrn,
             string baseUrl,
             string apiKey,
             Domain.ImportTypes.ProviderApiResponse providerApiResponse,
@@ -46,7 +46,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
         
         [Test, AutoData]
         public void And_Response_Not_200_Then_Exception_Is_Thrown(
-            int ukPrn,
+            uint ukPrn,
             string baseUrl,
             string apiKey,
             Mock<IOptions<ReservationsJobs>> configuration)
