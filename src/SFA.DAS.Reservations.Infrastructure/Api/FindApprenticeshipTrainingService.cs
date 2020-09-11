@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -29,6 +28,19 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<StandardApiResponse>(json);
+        }
+
+        public async Task<ProviderApiResponse> GetProvider(uint ukPrn)
+        {
+            AddHeaders();
+
+            var response = await _client.GetAsync(_configuration.ReservationsApimUrl)
+                .ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<ProviderApiResponse>(json);
         }
         
         private void AddHeaders()

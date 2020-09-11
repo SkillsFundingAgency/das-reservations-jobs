@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             var tokens = await builder.BuildTokens(createdEvent);
 
-            tokens[TokenKeyNames.ProviderName].Should().Be(provider.ProviderName);
+            tokens[TokenKeyNames.ProviderName].Should().Be(provider.Name);
         }
 
         [Test, MoqAutoData]
