@@ -25,7 +25,7 @@ You are also able to run in **LOCAL** mode, for this you need the following depe
 
 - Docker
 - SQL Server, can be hosted on docker - the database that is part of the [das-reservations-api](https://github.com/SkillsFundingAgency/das-reservations-api) should be published
-- Elastic Search running on docker - there is a [docker compose file](https://github.com/SkillsFundingAgency/das-reservations-jobs/docker) which will setup ElasticSearch and Kibana for you
+- Elastic Search running on docker - there is a [docker compose file](https://github.com/SkillsFundingAgency/das-reservations-jobs/tree/master/docker) which will setup ElasticSearch and Kibana for you
 - Azure Storage - an entry should be created with a PartitionKey of **LOCAL** and a **RowKey** of `SFA.DAS.Reservations.Jobs_1.0` and a **Data** property
 
 Your configuration file for Data should look like the following:
