@@ -14,6 +14,9 @@ The reservations jobs repository provides Azure Functions to help maintain data 
 
 ## Local running
 
+### Publish Database
+The reservations jobs repository provides Azure Functions to help maintain data within the reservations database. It directly relies on the database implementation provided in [das-reservations-api](https://github.com/SkillsFundingAgency/das-reservations-api) for the datacontext. Publish database first to run this project locally.
+
 You are able to run in **DEV** mode the Jobs functions using an in memory database by doing the following:
 
 - Clone repository
