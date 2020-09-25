@@ -89,3 +89,7 @@ These functions deal with changing the state of reservation information and cons
 The first two DraftApprenticeship Events come from the Approvals/Commitments solultion. The CreatedEvent marks a reservation as used so a further apprenticeship cannot be assigned to it. The DeletedEvent frees that reservation up to be used against another apprenticeship. The two Reservation events are triggers for the elastic index to be updated with those reservations for the providers that have permissions. 
 
 Also off the back of any reservation created or deleted by a provider, if that employer has their notification settings set to receive emails, then they will get an email informing them that someone has deleted or created a reservation on their behalf.
+
+#### Note
+To populate the courses for local testing, run the SFA.DAS.Reservations.Functions.RefreshCourse. 
+Then use this url (provided it is running on port 7071) to refresh the list of courses: http://localhost:7071/api/RefreshCourseHttp
