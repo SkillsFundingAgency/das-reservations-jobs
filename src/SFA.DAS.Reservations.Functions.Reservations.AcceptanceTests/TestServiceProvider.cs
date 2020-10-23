@@ -81,6 +81,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
                 {
                     new KeyValuePair<string, string>("ConfigurationStorageConnectionString", "UseDevelopmentStorage=true;"),
                     new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
+                    new KeyValuePair<string, string>("AppName", "sfa-reservations-jobs-reservation-status"),
                     new KeyValuePair<string, string>("EnvironmentName", "DEV"),
                     new KeyValuePair<string, string>("Version", "1.0"),
                     new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
