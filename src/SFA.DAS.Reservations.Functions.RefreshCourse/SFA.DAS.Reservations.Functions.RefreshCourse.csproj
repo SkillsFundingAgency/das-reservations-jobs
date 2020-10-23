@@ -30,9 +30,9 @@
     </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(OutDir)$(ProjectName).deps.json $(OutDir)bin\function.deps.json" />
+    <Copy SourceFiles="$(OutDir)$(ProjectName).deps.json" DestinationFiles="$(OutDir)/bin/function.deps.json" />
   </Target>
   <Target Name="PostPublish" BeforeTargets="Publish">
-    <Exec Command="copy $(PublishDir)$(ProjectName).deps.json $(PublishDir)bin\function.deps.json" />
+    <Copy SourceFiles="$(PublishDir)$(ProjectName).deps.json" DestinationFiles="$(PublishDir)/bin/function.deps.json" />
   </Target>
 </Project>
