@@ -14,6 +14,7 @@ namespace SFA.DAS.Reservations.Data
         DbSet<Account> Accounts { get; set; }
         DatabaseFacade Database { get; }
         int SaveChanges();
+        void TrackChanges(bool enable = true);
     }
     public class ReservationsDataContext :DbContext, IReservationsDataContext
     {
@@ -40,6 +41,11 @@ namespace SFA.DAS.Reservations.Data
 
         public ReservationsDataContext(DbContextOptions options) : base(options)
         {
+        }
+        
+        public void TrackChanges(bool enable = true)
+        {
+            base.ChangeTracker.QueryTrackingBehavior = enable ? QueryTrackingBehavior.TrackAll : QueryTrackingBehavior.NoTracking;
         }
 
         public override int SaveChanges()

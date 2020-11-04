@@ -64,6 +64,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
                             && x.Status != (int)ReservationStatus.Deleted
                             && x.Status != (int)ReservationStatus.Change
                             && x.AccountLegalEntityId.Equals(expectedAccountLegalEntityId)));
+            _dataContext.Verify(x=>x.TrackChanges(false), Times.Once);
+            _dataContext.Verify(x=>x.TrackChanges(true), Times.Once);
         }
     }
 }

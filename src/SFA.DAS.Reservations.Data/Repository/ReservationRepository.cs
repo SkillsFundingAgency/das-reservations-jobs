@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,11 +69,14 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
         {
-            return _dataContext.Reservations
+            _dataContext.TrackChanges(false);
+            var allNonLevyForAccountLegalEntity = _dataContext.Reservations
                 .Where(c=>c.AccountLegalEntityId.Equals(accountLegalEntityId) 
                           && c.Status != (byte)ReservationStatus.Deleted
                           && c.Status != (byte)ReservationStatus.Change
                           && !c.IsLevyAccount).ToArray();
+            _dataContext.TrackChanges(true);
+            return allNonLevyForAccountLegalEntity;
         }
     }
 }
