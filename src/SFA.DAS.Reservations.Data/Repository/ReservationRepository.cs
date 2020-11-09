@@ -73,14 +73,11 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
         {
-            _dataContext.TrackChanges(false);
-            var allNonLevyForAccountLegalEntity = _dataContext.Reservations
+            return _dataContext.Reservations
                 .Where(c=>c.AccountLegalEntityId.Equals(accountLegalEntityId) 
                           && c.Status != (byte)ReservationStatus.Deleted
                           && c.Status != (byte)ReservationStatus.Change
                           && !c.IsLevyAccount).ToArray();
-            _dataContext.TrackChanges(true);
-            return allNonLevyForAccountLegalEntity;
         }
     }
 }
