@@ -36,15 +36,19 @@ namespace SFA.DAS.Reservations.Data.Repository
                     throw new InvalidOperationException($"Reservation not found in database with ReservationId: {reservationId}");
                 }
 
-                if (status == ReservationStatus.Pending 
-                    && reservation.Status != (short) ReservationStatus.Confirmed
-                    && !reservation.ConfirmedDate.HasValue
-                    && !reservation.CohortId.HasValue
-                    && !reservation.DraftApprenticeshipId.HasValue
-                    )
+                if (!reservation.IsLevyAccount)
                 {
-                    throw new DbUpdateException($"Unable to change reservation {reservationId} to pending as it has not been confirmed", (Exception) null);
+                    if (status == ReservationStatus.Pending 
+                        && reservation.Status != (short) ReservationStatus.Confirmed
+                        && !reservation.ConfirmedDate.HasValue
+                        && !reservation.CohortId.HasValue
+                        && !reservation.DraftApprenticeshipId.HasValue
+                    )
+                    {
+                        throw new DbUpdateException($"Unable to change reservation {reservationId} to pending as it has not been confirmed", (Exception) null);
+                    }    
                 }
+                
 
                 reservation.Status = (short)status;
 
