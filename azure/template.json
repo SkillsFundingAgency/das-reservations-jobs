@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "serviceName": {
@@ -58,6 +58,27 @@
     "functionsExtensionVersion": {
       "type": "string",
       "defaultValue": "~3"
+    },
+    "resourceGroupLocation": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object"
+    },
+    "sharedEnvResourceGroup": {
+      "type": "string"
+    },
+    "sharedEnvVirtualNetworkName": {
+      "type": "string"
+    },
+    "subnetObject": {
+      "type": "object"
+    },
+    "subnetServiceEndpointList": {
+      "type": "array"
+    },
+    "subnetDelegations": {
+      "type": "array"
     }
   },
   "variables": {
@@ -69,12 +90,53 @@
     "functionAppNameReservation": "[concat(variables('resourcePrefix'),'-rsrv-fa')]",
     "functionAppNameLegalEntities": "[concat(variables('resourcePrefix'),'-rsrv-le')]",
     "functionAppNameProviderPermissions": "[concat(variables('resourcePrefix'),'-rsrv-prv')]",
+    "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
     "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
   },
   "resources": [
     {
-      "apiVersion": "2017-05-10",
+        "apiVersion": "2020-06-01",
+        "name": "[variables('resourceGroupName')]",
+        "type": "Microsoft.Resources/resourceGroups",
+        "location": "[parameters('resourceGroupLocation')]",
+        "tags": "[parameters('tags')]",
+        "properties": {
+        }
+    },
+    {
+        "apiVersion": "2020-06-01",
+        "name": "worker-app-service-subnet",
+        "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "virtualNetworkName": {
+                    "value": "[parameters('sharedEnvVirtualNetworkName')]"
+                },
+                "subnetName": {
+                    "value": "[parameters('subnetObject').name]"
+                },
+                "subnetAddressPrefix": {
+                    "value": "[parameters('subnetObject').addressSpace]"
+                },
+                "serviceEndpointList": {
+                    "value": "[parameters('subnetServiceEndpointList')]"
+                },
+                "delegations": {
+                    "value": "[parameters('subnetDelegations')]"
+                }
+            }
+        }
+    },
+    {
+      "apiVersion": "2020-06-01",
       "name": "worker-app-service-plan",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -83,7 +145,6 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-
           "appServicePlanName": {
             "value": "[variables('appServicePlanName')]"
           },
@@ -103,8 +164,9 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-insights",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -123,8 +185,9 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-insights-rsrv",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -143,8 +206,9 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-insights-lgle",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -163,8 +227,9 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "storage-account",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -180,8 +245,9 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-csr",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -197,7 +263,10 @@
             "value": "[variables('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[resourceGroup().name]"
+            "value": "[variables('resourceGroupName')]"
+          },
+          "subnetResourceId": {
+            "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": [
@@ -252,8 +321,9 @@
       ]
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-rsrv",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -269,7 +339,10 @@
             "value": "[variables('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[resourceGroup().name]"
+            "value": "[variables('resourceGroupName')]"
+          },
+          "subnetResourceId": {
+            "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": [
@@ -332,8 +405,9 @@
       ]
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-legalentities",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -349,7 +423,10 @@
             "value": "[variables('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[resourceGroup().name]"
+            "value": "[variables('resourceGroupName')]"
+          },
+          "subnetResourceId": {
+            "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": [
@@ -412,8 +489,9 @@
       ]
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-rsrv-idx",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -429,7 +507,10 @@
             "value": "[variables('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[resourceGroup().name]"
+            "value": "[variables('resourceGroupName')]"
+          },
+          "subnetResourceId": {
+            "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": [
@@ -485,8 +566,9 @@
       ]
     },
     {
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2020-06-01",
       "name": "function-app-rsrv-prv",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -502,7 +584,10 @@
             "value": "[variables('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
-            "value": "[resourceGroup().name]"
+            "value": "[variables('resourceGroupName')]"
+          },
+          "subnetResourceId": {
+            "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": [
@@ -582,6 +667,10 @@
     "functionAppNameProviderPermissions": {
       "type": "string",
       "value": "[variables('functionAppNameProviderPermissions')]"
+    },
+    "ResourceGroupName": {
+        "type": "string",
+        "value": "[variables('resourceGroupName')]"
     }
   }
 }
