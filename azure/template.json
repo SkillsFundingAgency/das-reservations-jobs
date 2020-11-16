@@ -29,10 +29,10 @@
       "defaultValue": "1"
     },
     "configurationStorageConnectionString": {
-      "type": "string"
+      "type": "securestring"
     },
     "nServiceBusConnectionString": {
-      "type": "string"
+      "type": "securestring"
     },
     "nServiceBusLicense": {
       "type": "string"
@@ -252,7 +252,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -269,48 +269,50 @@
             "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
-            "value": [
-              {
-                "name": "ConfigurationStorageConnectionString",
-                "value": "[parameters('configurationStorageConnectionString')]"
-              },
-              {
-                "name": "ConfigNames",
-                "value": "[parameters('configNames')]"
-              },
-              {
-                "name": "EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "Version",
-                "value": "[parameters('version')]"
-              },
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
-              },
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "[parameters('functionsExtensionVersion')]"
-              },
-              {
-                "name": "AppName",
-                "value": "das-reservations-jobs-refresh-course"
-              },
-              {
-                "name": "LoggingRedisConnectionString",
-                "value": "[parameters('loggingRedisConnectionString')]"
-              },
-              {
-                "name": "FUNCTIONS_WORKER_RUNTIME",
-                "value": "dotnet"
-              }
-            ]
+            "value": {
+              "array": [
+                {
+                  "name": "ConfigurationStorageConnectionString",
+                  "value": "[parameters('configurationStorageConnectionString')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[parameters('configNames')]"
+                },
+                {
+                  "name": "EnvironmentName",
+                  "value": "[parameters('environmentName')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "[parameters('version')]"
+                },
+                {
+                  "name": "AzureWebJobsStorage",
+                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                },
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                },
+                {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "[parameters('functionsExtensionVersion')]"
+                },
+                {
+                  "name": "AppName",
+                  "value": "das-reservations-jobs-refresh-course"
+                },
+                {
+                  "name": "LoggingRedisConnectionString",
+                  "value": "[parameters('loggingRedisConnectionString')]"
+                },
+                {
+                  "name": "FUNCTIONS_WORKER_RUNTIME",
+                  "value": "dotnet"
+                }
+              ]
+            }
           }
         }
       },
@@ -328,7 +330,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -345,56 +347,58 @@
             "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
-            "value": [
-              {
-                "name": "ConfigurationStorageConnectionString",
-                "value": "[parameters('configurationStorageConnectionString')]"
-              },
-              {
-                "name": "NServiceBusConnectionString",
-                "value": "[parameters('nServiceBusConnectionString')]"
-              },
-              {
-                "name": "NServiceBusLicense",
-                "value": "[parameters('nServiceBusLicense')]"
-              },
-              {
-                "name": "ConfigNames",
-                "value": "[parameters('configNames')]"
-              },
-              {
-                "name": "EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "Version",
-                "value": "[parameters('version')]"
-              },
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('function-app-insights-rsrv').outputs.InstrumentationKey.value]"
-              },
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "[parameters('functionsExtensionVersion')]"
-              },
-              {
-                "name": "AppName",
-                "value": "das-reservations-jobs-reservation-status"
-              },
-              {
-                "name": "LoggingRedisConnectionString",
-                "value": "[parameters('loggingRedisConnectionString')]"
-              },
-              {
-                "name": "FUNCTIONS_WORKER_RUNTIME",
-                "value": "dotnet"
-              }
-            ]
+            "value": {
+              "array": [
+                {
+                  "name": "ConfigurationStorageConnectionString",
+                  "value": "[parameters('configurationStorageConnectionString')]"
+                },
+                {
+                  "name": "NServiceBusConnectionString",
+                  "value": "[parameters('nServiceBusConnectionString')]"
+                },
+                {
+                  "name": "NServiceBusLicense",
+                  "value": "[parameters('nServiceBusLicense')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[parameters('configNames')]"
+                },
+                {
+                  "name": "EnvironmentName",
+                  "value": "[parameters('environmentName')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "[parameters('version')]"
+                },
+                {
+                  "name": "AzureWebJobsStorage",
+                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                },
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "[reference('function-app-insights-rsrv').outputs.InstrumentationKey.value]"
+                },
+                {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "[parameters('functionsExtensionVersion')]"
+                },
+                {
+                  "name": "AppName",
+                  "value": "das-reservations-jobs-reservation-status"
+                },
+                {
+                  "name": "LoggingRedisConnectionString",
+                  "value": "[parameters('loggingRedisConnectionString')]"
+                },
+                {
+                  "name": "FUNCTIONS_WORKER_RUNTIME",
+                  "value": "dotnet"
+                }
+              ]
+            }
           }
         }
       },
@@ -412,7 +416,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -429,56 +433,58 @@
             "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
-            "value": [
-              {
-                "name": "ConfigurationStorageConnectionString",
-                "value": "[parameters('configurationStorageConnectionString')]"
-              },
-              {
-                "name": "NServiceBusConnectionString",
-                "value": "[parameters('nServiceBusConnectionString')]"
-              },
-              {
-                "name": "NServiceBusLicense",
-                "value": "[parameters('nServiceBusLicense')]"
-              },
-              {
-                "name": "ConfigNames",
-                "value": "[parameters('configNames')]"
-              },
-              {
-                "name": "EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "Version",
-                "value": "[parameters('version')]"
-              },
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('function-app-insights-lgle').outputs.InstrumentationKey.value]"
-              },
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "[parameters('functionsExtensionVersion')]"
-              },
-              {
-                "name": "AppName",
-                "value": "das-reservations-jobs-legal-entities"
-              },
-              {
-                "name": "LoggingRedisConnectionString",
-                "value": "[parameters('loggingRedisConnectionString')]"
-              },
-              {
-                "name": "FUNCTIONS_WORKER_RUNTIME",
-                "value": "dotnet"
-              }
-            ]
+            "value": {
+              "array": [
+                {
+                  "name": "ConfigurationStorageConnectionString",
+                  "value": "[parameters('configurationStorageConnectionString')]"
+                },
+                {
+                  "name": "NServiceBusConnectionString",
+                  "value": "[parameters('nServiceBusConnectionString')]"
+                },
+                {
+                  "name": "NServiceBusLicense",
+                  "value": "[parameters('nServiceBusLicense')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[parameters('configNames')]"
+                },
+                {
+                  "name": "EnvironmentName",
+                  "value": "[parameters('environmentName')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "[parameters('version')]"
+                },
+                {
+                  "name": "AzureWebJobsStorage",
+                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                },
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "[reference('function-app-insights-lgle').outputs.InstrumentationKey.value]"
+                },
+                {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "[parameters('functionsExtensionVersion')]"
+                },
+                {
+                  "name": "AppName",
+                  "value": "das-reservations-jobs-legal-entities"
+                },
+                {
+                  "name": "LoggingRedisConnectionString",
+                  "value": "[parameters('loggingRedisConnectionString')]"
+                },
+                {
+                  "name": "FUNCTIONS_WORKER_RUNTIME",
+                  "value": "dotnet"
+                }
+              ]
+            }
           }
         }
       },
@@ -496,7 +502,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -513,48 +519,50 @@
             "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
-            "value": [
-              {
-                "name": "ConfigurationStorageConnectionString",
-                "value": "[parameters('configurationStorageConnectionString')]"
-              },
-              {
-                "name": "ConfigNames",
-                "value": "[parameters('configNames')]"
-              },
-              {
-                "name": "EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "Version",
-                "value": "[parameters('version')]"
-              },
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
-              },
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "[parameters('functionsExtensionVersion')]"
-              },
-              {
-                "name": "AppName",
-                "value": "das-reservations-jobs-reservation-index"
-              },
-              {
-                "name": "LoggingRedisConnectionString",
-                "value": "[parameters('loggingRedisConnectionString')]"
-              },
-              {
-                "name": "FUNCTIONS_WORKER_RUNTIME",
-                "value": "dotnet"
-              }
-            ]
+            "value": {
+              "array": [
+                {
+                  "name": "ConfigurationStorageConnectionString",
+                  "value": "[parameters('configurationStorageConnectionString')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[parameters('configNames')]"
+                },
+                {
+                  "name": "EnvironmentName",
+                  "value": "[parameters('environmentName')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "[parameters('version')]"
+                },
+                {
+                  "name": "AzureWebJobsStorage",
+                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                },
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                },
+                {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "[parameters('functionsExtensionVersion')]"
+                },
+                {
+                  "name": "AppName",
+                  "value": "das-reservations-jobs-reservation-index"
+                },
+                {
+                  "name": "LoggingRedisConnectionString",
+                  "value": "[parameters('loggingRedisConnectionString')]"
+                },
+                {
+                  "name": "FUNCTIONS_WORKER_RUNTIME",
+                  "value": "dotnet"
+                }
+              ]
+            }
           }
         }
       },
@@ -573,7 +581,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -590,52 +598,54 @@
             "value": "[reference('worker-app-service-subnet').outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
-            "value": [
-              {
-                "name": "ConfigurationStorageConnectionString",
-                "value": "[parameters('configurationStorageConnectionString')]"
-              },
-              {
-                "name": "NServiceBusConnectionString",
-                "value": "[parameters('nServiceBusConnectionString')]"
-              },
-              {
-                "name": "NServiceBusLicense",
-                "value": "[parameters('nServiceBusLicense')]"
-              },
-              {
-                "name": "ConfigNames",
-                "value": "[parameters('configNames')]"
-              },
-              {
-                "name": "EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "Version",
-                "value": "[parameters('version')]"
-              },
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
-              },
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "[parameters('functionsExtensionVersion')]"
-              },
-              {
-                "name": "AppName",
-                "value": "das-reservations-jobs-reservation-provider"
-              },
-              {
-                "name": "LoggingRedisConnectionString",
-                "value": "[parameters('loggingRedisConnectionString')]"
-              }
-            ]
+            "value": {
+              "array": [
+                {
+                  "name": "ConfigurationStorageConnectionString",
+                  "value": "[parameters('configurationStorageConnectionString')]"
+                },
+                {
+                  "name": "NServiceBusConnectionString",
+                  "value": "[parameters('nServiceBusConnectionString')]"
+                },
+                {
+                  "name": "NServiceBusLicense",
+                  "value": "[parameters('nServiceBusLicense')]"
+                },
+                {
+                  "name": "ConfigNames",
+                  "value": "[parameters('configNames')]"
+                },
+                {
+                  "name": "EnvironmentName",
+                  "value": "[parameters('environmentName')]"
+                },
+                {
+                  "name": "Version",
+                  "value": "[parameters('version')]"
+                },
+                {
+                  "name": "AzureWebJobsStorage",
+                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                },
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                },
+                {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "[parameters('functionsExtensionVersion')]"
+                },
+                {
+                  "name": "AppName",
+                  "value": "das-reservations-jobs-reservation-provider"
+                },
+                {
+                  "name": "LoggingRedisConnectionString",
+                  "value": "[parameters('loggingRedisConnectionString')]"
+                }
+              ]
+            }
           }
         }
       },
