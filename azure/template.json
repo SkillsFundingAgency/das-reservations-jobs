@@ -35,7 +35,7 @@
       "type": "securestring"
     },
     "nServiceBusLicense": {
-      "type": "string"
+      "type": "securestring"
     },
     "configNames": {
       "type": "string",
