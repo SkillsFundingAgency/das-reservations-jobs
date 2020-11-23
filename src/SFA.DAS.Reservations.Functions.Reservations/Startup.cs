@@ -114,26 +114,24 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             var nLogConfiguration = new NLogConfiguration();
 
-            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            services.AddLogging((options) =>
             {
-                services.AddLogging((options) =>
+                //options.AddConfiguration(Configuration.GetSection("Logging"));
+                options.SetMinimumLevel(LogLevel.Information);
+
+                options.AddConsole();
+                options.AddDebug();
+                nLogConfiguration.ConfigureNLog(Configuration);
+                options.AddNLog(new NLogProviderOptions
                 {
-                    options.AddConfiguration(Configuration.GetSection("Logging"));
-                    options.SetMinimumLevel(LogLevel.Trace);
-                    options.AddNLog(new NLogProviderOptions
-                    {
-                        CaptureMessageTemplates = true,
-                        CaptureMessageProperties = true
-                    });
-                    options.AddConsole();
-                    options.AddDebug();
-                    nLogConfiguration.ConfigureNLog(Configuration);
+                    CaptureMessageTemplates = true,
+                    CaptureMessageProperties = true
                 });
-            }
+            });
 
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            //services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
-            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
+            //services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
