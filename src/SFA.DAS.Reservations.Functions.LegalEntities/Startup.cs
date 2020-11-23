@@ -93,7 +93,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             {
                 services.AddLogging((options) =>
                 {
-                    options.AddConfiguration(Configuration.GetSection("Logging"));
+                    //options.AddConfiguration(Configuration.GetSection("Logging"));
                     options.SetMinimumLevel(LogLevel.Trace);
                     options.AddNLog(new NLogProviderOptions
                     {
