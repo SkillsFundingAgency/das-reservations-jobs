@@ -107,9 +107,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
                 });
             }
 
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            //services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
-            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
+            //services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             if (Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
