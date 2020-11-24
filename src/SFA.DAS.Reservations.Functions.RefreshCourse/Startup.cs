@@ -77,7 +77,6 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             services.AddLogging((options) =>
             {
-                options.AddConfiguration(Configuration.GetSection("Logging"));
                 options.SetMinimumLevel(LogLevel.Information);
                 
                 options.AddConsole();
@@ -89,10 +88,6 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
                     CaptureMessageProperties = true
                 });
             });
-
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-
-            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IStandardApiClient>(x => new StandardApiClient(config.ApprenticeshipBaseUrl));
             services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));

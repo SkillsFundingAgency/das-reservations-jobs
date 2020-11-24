@@ -93,7 +93,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             {
                 services.AddLogging((options) =>
                 {
-                    //options.AddConfiguration(Configuration.GetSection("Logging"));
                     options.SetMinimumLevel(LogLevel.Trace);
                     options.AddNLog(new NLogProviderOptions
                     {
@@ -106,10 +105,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
                     nLogConfiguration.ConfigureNLog(Configuration);
                 });
             }
-
-            //services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-
-            //services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             if (Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {

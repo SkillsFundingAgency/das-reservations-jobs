@@ -118,7 +118,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             {
                 services.AddLogging((options) =>
                 {
-                    //options.AddConfiguration(Configuration.GetSection("Logging"));
                     options.SetMinimumLevel(LogLevel.Information);
 
                     options.AddConsole();
@@ -131,10 +130,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                     });
                 });
             }
-
-            //services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-
-            //services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
             services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
