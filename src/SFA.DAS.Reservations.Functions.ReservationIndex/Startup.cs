@@ -80,7 +80,6 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             services.AddLogging((options) =>
             {
-                options.AddConfiguration(Configuration.GetSection("Logging"));
                 options.SetMinimumLevel(LogLevel.Trace);
                 options.AddNLog(new NLogProviderOptions
                 {
@@ -92,11 +91,6 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
-
-
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-
-            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IReservationIndexRefreshHandler,ReservationIndexRefreshHandler>();
             services.AddTransient<IReservationService,ReservationService>();

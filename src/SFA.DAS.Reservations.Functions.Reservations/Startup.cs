@@ -43,8 +43,8 @@ using SFA.DAS.Reservations.Infrastructure.Logging;
 
 namespace SFA.DAS.Reservations.Functions.Reservations
 {
-     public class Startup : IWebJobsStartup
-     {
+    public class Startup : IWebJobsStartup
+    {
         public void Configure(IWebJobsBuilder builder)
         {
 
@@ -52,10 +52,10 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
         }
-     }
+    }
 
-     public class ServiceProviderBuilder : IServiceProviderBuilder
-     {
+    public class ServiceProviderBuilder : IServiceProviderBuilder
+    {
         private const string EncodingConfigKey = "SFA.DAS.Encoding";
         public ServiceCollection ServiceCollection { get; set; }
 
@@ -78,11 +78,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                         options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
                         options.EnvironmentName = configuration["EnvironmentName"];
                         options.PreFixConfigurationKeys = false;
-                        options.ConfigurationKeysRawJsonResult = new[] {EncodingConfigKey};
+                        options.ConfigurationKeysRawJsonResult = new[] { EncodingConfigKey };
                     }
                 );
             }
-            
+
             Configuration = config.Build();
         }
 
@@ -94,9 +94,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-            
+
             services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
-            services.AddSingleton<IAccountApiConfiguration>(cfg =>  cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
+            services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
 
             services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
             services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
@@ -118,34 +118,30 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             {
                 services.AddLogging((options) =>
                 {
-                    options.AddConfiguration(Configuration.GetSection("Logging"));
-                    options.SetMinimumLevel(LogLevel.Trace);
+                    options.SetMinimumLevel(LogLevel.Information);
+
+                    options.AddConsole();
+                    options.AddDebug();
+                    nLogConfiguration.ConfigureNLog(Configuration);
                     options.AddNLog(new NLogProviderOptions
                     {
                         CaptureMessageTemplates = true,
                         CaptureMessageProperties = true
                     });
-                    options.AddConsole();
-                    options.AddDebug();
-                    nLogConfiguration.ConfigureNLog(Configuration);
                 });
             }
 
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-
-            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
-
-            services.AddTransient<IConfirmReservationHandler,ConfirmReservationHandler>();
-            services.AddTransient<IApprenticeshipDeletedHandler,ApprenticeshipDeletedHandler>();
+            services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
+            services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
             services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
             services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
             services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
 
-            services.AddTransient<IReservationService,ReservationService>();
+            services.AddTransient<IReservationService, ReservationService>();
             services.AddTransient<IProviderService, ProviderService>();
-            
-            services.AddTransient<IReservationRepository,ReservationRepository>();
-            services.AddTransient<IAccountRepository,AccountRepository>();
+
+            services.AddTransient<IReservationRepository, ReservationRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -158,7 +154,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             }
 
             services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
-            
+
             services.AddTransient<IIndexRegistry, IndexRegistry>();
 
             services.AddElasticSearch(jobsConfig, Configuration["EnvironmentName"]);
