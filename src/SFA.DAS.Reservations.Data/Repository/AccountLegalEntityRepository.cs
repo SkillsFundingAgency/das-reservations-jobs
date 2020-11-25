@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
+using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
