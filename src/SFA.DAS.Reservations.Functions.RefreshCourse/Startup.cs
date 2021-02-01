@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
@@ -78,7 +78,6 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             services.AddLogging((options) =>
             {
-                options.AddConfiguration(Configuration.GetSection("Logging"));
                 options.SetMinimumLevel(LogLevel.Information);
                 
                 options.AddConsole();
@@ -91,12 +90,8 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
                 });
             });
 
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-
-            services.AddSingleton(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
-
             services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
-            
+
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
             services.AddTransient<ICourseService, CourseService>();
 

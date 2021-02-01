@@ -14,6 +14,9 @@ The reservations jobs repository provides Azure Functions to help maintain data 
 
 ## Local running
 
+### Publish Database
+The reservations jobs repository provides Azure Functions to help maintain data within the reservations database. It directly relies on the database implementation provided in [das-reservations-api](https://github.com/SkillsFundingAgency/das-reservations-api) for the datacontext. Publish database first to run this project locally.
+
 You are able to run in **DEV** mode the Jobs functions using an in memory database by doing the following:
 
 - Clone repository
@@ -25,7 +28,7 @@ You are also able to run in **LOCAL** mode, for this you need the following depe
 
 - Docker
 - SQL Server, can be hosted on docker - the database that is part of the [das-reservations-api](https://github.com/SkillsFundingAgency/das-reservations-api) should be published
-- Elastic Search running on docker - there is a [docker compose file](https://github.com/SkillsFundingAgency/das-reservations-jobs/docker) which will setup ElasticSearch and Kibana for you
+- Elastic Search running on docker - there is a [docker compose file](https://github.com/SkillsFundingAgency/das-reservations-jobs/tree/master/docker) which will setup ElasticSearch and Kibana for you
 - Azure Storage - an entry should be created with a PartitionKey of **LOCAL** and a **RowKey** of `SFA.DAS.Reservations.Jobs_1.0` and a **Data** property
 
 Your configuration file for Data should look like the following:
@@ -89,3 +92,7 @@ These functions deal with changing the state of reservation information and cons
 The first two DraftApprenticeship Events come from the Approvals/Commitments solultion. The CreatedEvent marks a reservation as used so a further apprenticeship cannot be assigned to it. The DeletedEvent frees that reservation up to be used against another apprenticeship. The two Reservation events are triggers for the elastic index to be updated with those reservations for the providers that have permissions. 
 
 Also off the back of any reservation created or deleted by a provider, if that employer has their notification settings set to receive emails, then they will get an email informing them that someone has deleted or created a reservation on their behalf.
+
+#### Note
+To populate the courses for local testing, run the SFA.DAS.Reservations.Functions.RefreshCourse. 
+Then use this url (provided it is running on port 7071) to refresh the list of courses: http://localhost:7071/api/RefreshCourseHttp

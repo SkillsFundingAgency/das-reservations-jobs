@@ -86,6 +86,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             _reservationEntity = new Reservation
             {
                 Id = reservationId,
+                IsLevyAccount = false,
                 Status = (short)status
             };
             _dataContext.Setup(x => x.Reservations.FindAsync(_reservationEntity.Id)).ReturnsAsync(_reservationEntity);
@@ -93,6 +94,26 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             Assert.ThrowsAsync<DbUpdateException>(() => _reservationRepository.Update(reservationId, ReservationStatus.Pending));
             
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
+        }
+
+        [TestCase(ReservationStatus.Completed)]
+        [TestCase(ReservationStatus.Pending)]
+        [TestCase(ReservationStatus.Deleted)]
+        [TestCase(ReservationStatus.Change)]
+        public async Task Then_The_Reservation_Status_Check_Is_Ignored_For_Levy_Reservations(ReservationStatus status)
+        {
+            var reservationId = Guid.NewGuid();
+            _reservationEntity = new Reservation
+            {
+                Id = reservationId,
+                IsLevyAccount = true,
+                Status = (short)status
+            };
+            _dataContext.Setup(x => x.Reservations.FindAsync(_reservationEntity.Id)).ReturnsAsync(_reservationEntity);
+
+            await _reservationRepository.Update(reservationId, ReservationStatus.Pending);
+            
+            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
         }
         
         [Test]

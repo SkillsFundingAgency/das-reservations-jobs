@@ -4,7 +4,7 @@
     "lang": "painless"
   },
   "query": {
-    "match": {
+    "match_phrase": {
       "reservationId": "{reservationId}"
     }
   }

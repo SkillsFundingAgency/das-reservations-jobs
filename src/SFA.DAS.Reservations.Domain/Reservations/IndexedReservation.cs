@@ -77,7 +77,8 @@ namespace SFA.DAS.Reservations.Domain.Reservations
                 CourseId = source.CourseId,
                 CourseTitle = source.CourseName,
                 CourseLevel = source.CourseLevel,
-                ProviderId = source.ProviderId
+                ProviderId = source.ProviderId,
+                Status = (short)source.Status
             };
         }
     }
