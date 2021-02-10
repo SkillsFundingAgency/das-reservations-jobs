@@ -3,9 +3,10 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
-using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Application.Providers.Services;
+using SFA.DAS.Reservations.Domain.ImportTypes;
+using SFA.DAS.Reservations.Domain.Providers;
+using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Providers.Services
@@ -14,19 +15,18 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Providers.Services
     {
         [Test, MoqAutoData]
         public async Task Then_Gets_Provider_Details_From_Api(
-            uint providerId,
-            Provider providerFromApi,
-            [Frozen] Mock<IProviderApiClient> mockApiClient,
+            uint ukPrn,
+            ProviderApiResponse providerFromApi,
+            [Frozen] Mock<IFindApprenticeshipTrainingService> mockApiClient,
             ProviderService service)
         {
             mockApiClient
-                .Setup(client => client.GetAsync(providerId))
+                .Setup(client => client.GetProvider(ukPrn))
                 .ReturnsAsync(providerFromApi);
 
-            var providerDetails = await service.GetDetails(providerId);
+            var providerDetails = await service.GetDetails(ukPrn);
 
-            providerDetails.Should().BeEquivalentTo(providerFromApi, options => 
-                options.ExcludingMissingMembers());
+            providerDetails.Should().BeEquivalentTo((ProviderDetails)providerFromApi);
         }
     }
 }
