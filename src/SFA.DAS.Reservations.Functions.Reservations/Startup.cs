@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +17,6 @@ using SFA.DAS.Encoding;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
-using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
