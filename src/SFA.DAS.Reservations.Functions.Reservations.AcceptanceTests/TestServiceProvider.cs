@@ -7,10 +7,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
-using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
+using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
@@ -36,8 +36,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyHashedAccountId);
             serviceCollection.AddSingleton(encodingService.Object);
             
-            var mockProviderApiClient = new Mock<IProviderApiClient>();
-            serviceCollection.AddSingleton(mockProviderApiClient.Object);
+            var findApprenticeshipTrainingService = new Mock<IFindApprenticeshipTrainingService>();
+            serviceCollection.AddSingleton(findApprenticeshipTrainingService.Object);
 
             var mockAccountApiClient = new Mock<IAccountApiClient>();
             serviceCollection.AddSingleton(mockAccountApiClient.Object);
