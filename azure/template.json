@@ -68,6 +68,12 @@
     "sharedEnvResourceGroup": {
       "type": "string"
     },
+    "sharedApimResourceGroup": {
+      "type": "string"
+    },
+    "sharedApimName": {
+      "type": "string"
+    },
     "sharedEnvVirtualNetworkName": {
       "type": "string"
     },
@@ -95,43 +101,43 @@
   },
   "resources": [
     {
-        "apiVersion": "2020-06-01",
-        "name": "[variables('resourceGroupName')]",
-        "type": "Microsoft.Resources/resourceGroups",
-        "location": "[parameters('resourceGroupLocation')]",
-        "tags": "[parameters('tags')]",
-        "properties": {
-        }
+      "apiVersion": "2020-06-01",
+      "name": "[variables('resourceGroupName')]",
+      "type": "Microsoft.Resources/resourceGroups",
+      "location": "[parameters('resourceGroupLocation')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+      }
     },
     {
-        "apiVersion": "2020-06-01",
-        "name": "worker-app-service-subnet",
-        "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-        "type": "Microsoft.Resources/deployments",
-        "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "virtualNetworkName": {
-                    "value": "[parameters('sharedEnvVirtualNetworkName')]"
-                },
-                "subnetName": {
-                    "value": "[parameters('subnetObject').name]"
-                },
-                "subnetAddressPrefix": {
-                    "value": "[parameters('subnetObject').addressSpace]"
-                },
-                "serviceEndpointList": {
-                    "value": "[parameters('subnetServiceEndpointList')]"
-                },
-                "delegations": {
-                    "value": "[parameters('subnetDelegations')]"
-                }
-            }
+      "apiVersion": "2020-06-01",
+      "name": "worker-app-service-subnet",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[parameters('sharedEnvVirtualNetworkName')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetObject').name]"
+          },
+          "subnetAddressPrefix": {
+            "value": "[parameters('subnetObject').addressSpace]"
+          },
+          "serviceEndpointList": {
+            "value": "[parameters('subnetServiceEndpointList')]"
+          },
+          "delegations": {
+            "value": "[parameters('subnetDelegations')]"
+          }
         }
+      }
     },
     {
       "apiVersion": "2020-06-01",
@@ -240,6 +246,30 @@
         "parameters": {
           "storageAccountName": {
             "value": "[variables('storageAccountName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2020-06-01",
+      "name": "apim-product-subscription",
+      "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apimName": {
+            "value": "[parameters('sharedApimName')]"
+          },
+          "subscriptionName": {
+            "value": "[variables('functionAppNameReservation')]"
+          },
+          "subscriptionScope": {
+            "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ReservationsOuterApi')]"
           }
         }
       }
@@ -679,8 +709,8 @@
       "value": "[variables('functionAppNameProviderPermissions')]"
     },
     "ResourceGroupName": {
-        "type": "string",
-        "value": "[variables('resourceGroupName')]"
+      "type": "string",
+      "value": "[variables('resourceGroupName')]"
     }
   }
 }
