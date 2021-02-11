@@ -32,7 +32,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
                 Content = new StringContent(JsonConvert.SerializeObject(importStandards)),
                 StatusCode = HttpStatusCode.Accepted
             };
-            var httpMessageHandler = HttpMessageHandlerBuilder.SetupMessageHandlerMock(response, new Uri(baseUrl), apiKey);
+            var httpMessageHandler = HttpMessageHandlerBuilder.SetupMessageHandlerMock(response, new Uri(baseUrl + "/trainingcourses"), apiKey);
             var client = new HttpClient(httpMessageHandler);
             var apprenticeshipService = new FindApprenticeshipTrainingService(client, configuration.Object);
             
@@ -58,7 +58,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api
                 Content = new StringContent(""),
                 StatusCode = HttpStatusCode.BadRequest
             };
-            var httpMessageHandler = HttpMessageHandlerBuilder.SetupMessageHandlerMock(response, new Uri(baseUrl), apiKey);
+            var httpMessageHandler = HttpMessageHandlerBuilder.SetupMessageHandlerMock(response, new Uri(baseUrl + "/trainingcourses"), apiKey);
             var client = new HttpClient(httpMessageHandler);
             var apprenticeshipService = new FindApprenticeshipTrainingService(client, configuration.Object);
             
