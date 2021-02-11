@@ -3,7 +3,6 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +17,6 @@ using SFA.DAS.Encoding;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
-using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
@@ -33,8 +31,10 @@ using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Providers;
+using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
+using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
@@ -138,6 +138,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
 
             services.AddTransient<IReservationService, ReservationService>();
+            
+            services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
             services.AddTransient<IProviderService, ProviderService>();
 
             services.AddTransient<IReservationRepository, ReservationRepository>();
@@ -165,7 +167,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
                 var newClient = clientFactory.CreateClient();
                 services.AddSingleton(provider => newClient);
-                services.AddTransient<IProviderApiClient>(provider => new ProviderApiClient(jobsConfig.ApprenticeshipBaseUrl));
                 services.AddTransient<IAccountApiClient, AccountApiClient>();
                 services.AddHttpClient<INotificationsService, NotificationsService>(
                     client =>

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apprenticeships.Api.Client;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
 using SFA.DAS.Reservations.Domain.ImportTypes;
 using SFA.DAS.Reservations.Domain.RefreshCourse;

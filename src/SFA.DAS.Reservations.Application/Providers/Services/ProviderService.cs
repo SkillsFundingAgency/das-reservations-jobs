@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 

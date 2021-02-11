@@ -23,7 +23,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
         {
             AddHeaders();
 
-            var response = await _client.GetAsync(_configuration.ReservationsApimUrl).ConfigureAwait(false);
+            var response = await _client.GetAsync(_configuration.ReservationsApimUrl + "/trainingcourses").ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -34,7 +34,7 @@ namespace SFA.DAS.Reservations.Infrastructure.Api
         {
             AddHeaders();
 
-            var response = await _client.GetAsync(_configuration.ReservationsApimUrl)
+            var response = await _client.GetAsync(_configuration.ReservationsApimUrl + $"/providers/{ukPrn}")
                 .ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();

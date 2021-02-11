@@ -62,7 +62,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             handler.Handle(TestData.ReservationCreatedEvent).Wait();
         }
 
-        [When(@"a created reservation event is triggered for a levy employer")]
+        [When(@"a create reservation event is triggered for a levy employer")]
         public void WhenACreatedReservationEventIsTriggeredForALevyEmployer()
         {
             TestData.ReservationCreatedEvent.CourseId = null;
