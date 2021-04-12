@@ -37,11 +37,12 @@ Your configuration file for Data should look like the following:
 {
   "ReservationsJobs": {
     "ConnectionString": "Data Source=.;Initial Catalog=SFA.DAS.Reservations;User Id=[YOUR USERNAME];Password=[YOUR PASSWORD];Pooling=False;Connect Timeout=30",
-    "ApprenticeshipBaseUrl": "[URL for apprenticeship info service]",
     "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=[ACCOUNT_NAME];AccountKey=[ACCOUNT_KEY];EndpointSuffix=core.windows.net;",
     "ElasticSearchPassword":"[ELASTIC_PWD]",
     "ElasticSearchServerUrl":"[ELASTIC_URL]",
-    "ElasticSearchUsername":"[ELASTIC_USERNAME]"
+    "ElasticSearchUsername":"[ELASTIC_USERNAME]",
+    "ReservationsApimUrl" : "[Apim_Base_Url]",
+    "ReservationsApimSubscriptionKey" :"[Apim_key]"
   },
   "NotificationsApi": {
     "ApiBaseUrl": "",
@@ -76,7 +77,7 @@ This function is responsible for consuming events from ProviderPermissions. It h
 Provider permission information is stored for use of building the elastic search index used for providers. When an event is received we add or remove the employers reservations for that provider to be able to search against.
 
 ### SFA.DAS.Reservations.Functions.RefreshCourse
-This is a timed job, runs at midnight and refreshes all Standards into the `Course` table pulling data from the Apprenticeship Info Service API. It can also be manually invoked via a HTTP POST request.
+This is a timed job, runs at midnight and refreshes all Standards into the `Course` table pulling data from the Reservations Outer API on APIM - you can request a subscription key if you are within the ESFA organisation. If not then you should clone [das-apim-endpoints](https://github.com/SkillsFundingAgency/das-apim-endpoints) and follow the setup instructions to run the reservations outer api. The function can also be manually invoked via a HTTP POST request.
 
 ### SFA.DAS.Reservations.Functions.ReservationIndex
 This is a timed job, runs at midnight and refreshes all indexes for all providers. It can be manually invoked via a HTTP POST which will rebuild all indexes. 
