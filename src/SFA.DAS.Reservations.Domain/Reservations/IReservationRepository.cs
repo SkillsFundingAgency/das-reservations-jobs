@@ -8,5 +8,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
     {
         Task Update(Guid reservationId, ReservationStatus status, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null);
         IEnumerable<Entities.Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId);
+        Task<Entities.Reservation> GetReservationById(Guid reservationId);
     }
 }

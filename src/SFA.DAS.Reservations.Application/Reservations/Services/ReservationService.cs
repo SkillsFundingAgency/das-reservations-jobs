@@ -17,15 +17,40 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
         private readonly ILogger<ReservationService> _logger;
 
         public ReservationService(
-            IReservationRepository reservationsRepository, 
+            IReservationRepository reservationsRepository,
             IReservationIndexRepository indexRepository,
-            IProviderPermissionRepository permissionsRepository, 
+            IProviderPermissionRepository permissionsRepository,
             ILogger<ReservationService> logger)
         {
             _reservationsRepository = reservationsRepository;
             _indexRepository = indexRepository;
             _permissionsRepository = permissionsRepository;
             _logger = logger;
+        }
+
+        public async Task UpdateReservationStatus(Guid reservationId, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null)
+        {
+            if (reservationId == null || reservationId.Equals(Guid.Empty))
+                throw new ArgumentException("Reservation ID must be set", nameof(reservationId));
+
+            var reservation = await _reservationsRepository.GetReservationById(reservationId);
+
+            if (reservation is null)
+                throw new Exception($"Can't get Reservation with ID {reservationId}");
+
+            var reservationStatus = (ReservationStatus)reservation.Status;
+
+            var reservationStatusToSet = reservationStatus == ReservationStatus.Change
+                ? ReservationStatus.Deleted
+                : ReservationStatus.Pending;
+
+            await UpdateReservationStatus(
+                reservationId,
+                reservationStatusToSet,
+                confirmedDate,
+                cohortId,
+                draftApprenticeshipId);
+
         }
 
         public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null)
@@ -38,10 +63,10 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             try
             {
                 await _reservationsRepository.Update(
-                    reservationId, 
-                    status, 
-                    confirmedDate, 
-                    cohortId, 
+                    reservationId,
+                    status,
+                    confirmedDate,
+                    cohortId,
                     draftApprenticeshipId);
                 await _indexRepository.SaveReservationStatus(reservationId, status);
 
@@ -107,7 +132,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             foreach (var providerPermission in permissions)
             {
                 IndexedReservation indexedReservation = reservation;
-                indexedReservation.IndexedProviderId = (uint) providerPermission.ProviderId;
+                indexedReservation.IndexedProviderId = (uint)providerPermission.ProviderId;
                 indexedReservations.Add(indexedReservation);
             }
 

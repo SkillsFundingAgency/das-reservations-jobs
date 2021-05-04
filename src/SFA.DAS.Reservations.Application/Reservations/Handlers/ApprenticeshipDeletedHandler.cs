@@ -14,10 +14,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
         }
         public async Task Handle(Guid reservationId)
         {
-            await _reservationService.UpdateReservationStatus(
-                reservationId, 
-                ReservationStatus.Pending);
-           
+            await _reservationService.UpdateReservationStatus(reservationId);
         }
     }
 }

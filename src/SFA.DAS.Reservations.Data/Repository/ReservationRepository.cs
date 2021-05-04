@@ -14,7 +14,6 @@ namespace SFA.DAS.Reservations.Data.Repository
     {
         private readonly IReservationsDataContext _dataContext;
 
-
         public ReservationRepository(IReservationsDataContext dataContext)
         {
             _dataContext = dataContext;
@@ -79,5 +78,15 @@ namespace SFA.DAS.Reservations.Data.Repository
                           && c.Status != (byte)ReservationStatus.Change
                           && !c.IsLevyAccount).ToArray();
         }
+
+        public async Task<Reservation> GetReservationById(Guid reservationId)
+        {
+            var reservation = await _dataContext.Reservations
+                .FirstOrDefaultAsync(c => c.Id.Equals(reservationId))
+                .ConfigureAwait(false);
+
+            return reservation;
+        }
+
     }
 }
