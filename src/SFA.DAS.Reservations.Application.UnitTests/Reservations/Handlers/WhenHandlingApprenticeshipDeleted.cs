@@ -21,8 +21,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 
             mockReservationService
                 .Verify(service => service.UpdateReservationStatus(
-                        deletedEventGuid, 
-                        ReservationStatus.Pending,
+                        deletedEventGuid,
                         null,
                         null,
                         null), 

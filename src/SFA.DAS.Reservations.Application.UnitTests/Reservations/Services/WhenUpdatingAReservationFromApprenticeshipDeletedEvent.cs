@@ -91,7 +91,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test, AutoData]
-        public async Task ThenIfReservationHasStatusChangedWillSaveWithStatusPending(
+        public async Task ThenIfReservationIsNotStatusChangedWillSaveWithStatusPending(
             Guid reservationId,
             DateTime confirmedDate,
             long cohortId,
@@ -107,7 +107,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Act
             await _service.UpdateReservationStatus(
                 reservationId,
-                ReservationStatus.Deleted,
                 confirmedDate,
                 cohortId,
                 draftApprenticeshipId);
