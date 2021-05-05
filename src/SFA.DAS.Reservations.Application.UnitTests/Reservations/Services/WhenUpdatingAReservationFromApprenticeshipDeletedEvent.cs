@@ -42,7 +42,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         }
 
         [Test]
-        public void ThenWillThrowExceptionIfNoReservationFoundForAGivenId()
+        public async Task ThenReservationStatusIsNotChangedIfNoReservationFoundForAGivenId()
         {
             //Arrange
             var reservationId = Guid.NewGuid();
@@ -53,7 +53,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 .Returns(Task.FromResult(reservation));
 
             //Act
-            var exception = Assert.ThrowsAsync<Exception>(() => _service.UpdateReservationStatus(reservationId));
+            await _service.UpdateReservationStatus(reservationId);
+
+            _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, It.IsAny<ReservationStatus>()), Times.Never);
         }
         
         [Test, AutoData]

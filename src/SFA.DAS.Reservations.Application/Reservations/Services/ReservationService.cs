@@ -36,7 +36,10 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             var reservation = await _reservationsRepository.GetReservationById(reservationId);
 
             if (reservation is null)
-                throw new Exception($"Can't get Reservation with ID {reservationId}");
+            {
+                _logger.LogWarning($"Reservation {reservationId} was not found in the database");
+                return;
+            }
 
             var reservationStatus = (ReservationStatus)reservation.Status;
 
@@ -50,7 +53,6 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 confirmedDate,
                 cohortId,
                 draftApprenticeshipId);
-
         }
 
         public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null)
