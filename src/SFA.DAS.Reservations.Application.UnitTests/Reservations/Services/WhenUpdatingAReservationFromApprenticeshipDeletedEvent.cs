@@ -32,9 +32,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 _reservationIndex.Object,
                 Mock.Of<IProviderPermissionRepository>(),
                 _logger.Object);
-
-
-            _logger.Setup(x => x.LogWarning(It.IsAny<string>()));
         }
 
         [Test]
@@ -64,7 +61,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Assert
             Assert.IsNull(result);
 
-            _logger.Verify(x => x.LogWarning(It.IsAny<string>()), Times.Once);
+
+            _logger.Verify(
+                x => x.Log(
+                    It.Is<LogLevel>(l => l == LogLevel.Warning),
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => true),
+                    It.IsAny<Exception>(),
+                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)));
         }
         
       
