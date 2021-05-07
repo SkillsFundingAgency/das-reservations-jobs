@@ -10,6 +10,6 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         Task AddReservationToReservationsIndex(Reservation reservation);
         Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId);
         Task AddProviderToSearchIndex(uint providerId, long accountLegalEntityId);
-        Task UpdateReservationStatus(Guid reservationId, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null);
+        Task<Reservation> GetReservation(Guid reservationId);
     }
 }

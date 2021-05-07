@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
@@ -17,18 +18,23 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         private ReservationService _service;
         private Mock<IReservationRepository> _repository;
         private Mock<IReservationIndexRepository> _reservationIndex;
+        private Mock<ILogger<ReservationService>> _logger;
 
         [SetUp]
         public void Arrange()
         {
             _repository = new Mock<IReservationRepository>();
             _reservationIndex = new Mock<IReservationIndexRepository>();
+            _logger = new Mock<ILogger<ReservationService>>();
 
             _service = new ReservationService(
                 _repository.Object,
                 _reservationIndex.Object,
                 Mock.Of<IProviderPermissionRepository>(),
-                Mock.Of<ILogger<ReservationService>>());
+                _logger.Object);
+
+
+            _logger.Setup(x => x.LogWarning(It.IsAny<string>()));
         }
 
         [Test]
@@ -38,11 +44,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             var reservationId = Guid.Empty;
 
             //Act
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateReservationStatus(reservationId));
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.GetReservation(reservationId));
         }
 
         [Test]
-        public async Task ThenReservationStatusIsNotChangedIfNoReservationFoundForAGivenId()
+        public async Task ThenIfNoReservationFoundForAGivenIdReturnNull()
         {
             //Arrange
             var reservationId = Guid.NewGuid();
@@ -50,80 +56,18 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _repository
                 .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
-                .Returns(Task.FromResult(reservation));
+                .ReturnsAsync(reservation);
 
             //Act
-            await _service.UpdateReservationStatus(reservationId);
+            var result = await _service.GetReservation(reservationId);
 
-            _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, It.IsAny<ReservationStatus>()), Times.Never);
+            //Assert
+            Assert.IsNull(result);
+
+            _logger.Verify(x => x.LogWarning(It.IsAny<string>()), Times.Once);
         }
         
-        [Test, AutoData]
-        public async Task ThenIfReservationHasStatusChangedWillSaveWithStatusDeleted(
-            Guid reservationId,
-            DateTime confirmedDate,
-            long cohortId,
-            long draftApprenticeshipId)
-        {
-            //Arrange
-            _repository.Setup(x => x.GetReservationById(It.IsAny<Guid>()))
-                .Returns(Task.FromResult(new Reservation
-                {
-                    Status = (short)ReservationStatus.Change
-                }));
-
-            //Act
-            await _service.UpdateReservationStatus(
-                reservationId,
-                ReservationStatus.Deleted,
-                confirmedDate,
-                cohortId,
-                draftApprenticeshipId);
-
-            //Assert
-            _repository.Verify(r => r.Update(
-                reservationId,
-                ReservationStatus.Deleted,
-                confirmedDate,
-                cohortId,
-                draftApprenticeshipId),
-                Times.Once);
-
-            _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, ReservationStatus.Deleted), Times.Once);
-        }
-
-        [Test, AutoData]
-        public async Task ThenIfReservationIsNotStatusChangedWillSaveWithStatusPending(
-            Guid reservationId,
-            DateTime confirmedDate,
-            long cohortId,
-            long draftApprenticeshipId)
-        {
-            //Arrange
-            _repository.Setup(x => x.GetReservationById(It.IsAny<Guid>()))
-                .Returns(Task.FromResult(new SFA.DAS.Reservations.Domain.Entities.Reservation
-                {
-                    Status = (short)ReservationStatus.Confirmed
-                }));
-
-            //Act
-            await _service.UpdateReservationStatus(
-                reservationId,
-                confirmedDate,
-                cohortId,
-                draftApprenticeshipId);
-
-            //Assert
-            _repository.Verify(r => r.Update(
-                    reservationId,
-                    ReservationStatus.Pending,
-                    confirmedDate,
-                    cohortId,
-                    draftApprenticeshipId),
-                Times.Once);
-
-            _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, ReservationStatus.Pending), Times.Once);
-        }
+      
 
     }
 }

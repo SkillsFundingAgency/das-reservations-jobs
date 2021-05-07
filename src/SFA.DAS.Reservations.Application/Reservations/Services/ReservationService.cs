@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
-using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Services
 {
@@ -28,7 +27,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _logger = logger;
         }
 
-        public async Task UpdateReservationStatus(Guid reservationId, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null)
+        public async Task<Reservation> GetReservation(Guid reservationId)
         {
             if (reservationId == null || reservationId.Equals(Guid.Empty))
                 throw new ArgumentException("Reservation ID must be set", nameof(reservationId));
@@ -38,21 +37,10 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             if (reservation is null)
             {
                 _logger.LogWarning($"Reservation {reservationId} was not found in the database");
-                return;
+                return null;
             }
 
-            var reservationStatus = (ReservationStatus)reservation.Status;
-
-            var reservationStatusToSet = reservationStatus == ReservationStatus.Change
-                ? ReservationStatus.Deleted
-                : ReservationStatus.Pending;
-
-            await UpdateReservationStatus(
-                reservationId,
-                reservationStatusToSet,
-                confirmedDate,
-                cohortId,
-                draftApprenticeshipId);
+            return new Reservation(reservation);
         }
 
         public async Task UpdateReservationStatus(Guid reservationId, ReservationStatus status, DateTime? confirmedDate = null, long? cohortId = null, long? draftApprenticeshipId = null)
@@ -171,7 +159,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             _logger.LogInformation($"[{indexedReservations.Count}] new documents have been created for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
         }
 
-        private static IndexedReservation MapReservation(Reservation entity, uint indexedProviderId)
+        private static IndexedReservation MapReservation(Domain.Entities.Reservation entity, uint indexedProviderId)
         {
             return new IndexedReservation
             {

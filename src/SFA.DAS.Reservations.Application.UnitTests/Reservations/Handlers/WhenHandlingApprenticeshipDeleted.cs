@@ -11,20 +11,67 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 {
     public class WhenHandlingApprenticeshipDeleted
     {
-        [Test, MoqAutoData]
-        public async Task Then_Calls_Service_With_ReservationId(
-            Guid deletedEventGuid,
-            [Frozen] Mock<IReservationService> mockReservationService,
-            ApprenticeshipDeletedHandler handler)
-        {
-            await handler.Handle(deletedEventGuid);
+        private Mock<IReservationService> _reservationService;
+        private ApprenticeshipDeletedHandler _handler;
 
-            mockReservationService
+        [SetUp]
+        public void Arrange()
+        {
+            _reservationService = new Mock<IReservationService>();
+            _handler = new ApprenticeshipDeletedHandler(_reservationService.Object);
+        }
+        
+        [Test]
+        public async Task ThenIfReservationHasStatusChangedWillSaveWithStatusDeleted()
+        {
+            //Arrange
+            Guid deletedEventGuid = Guid.NewGuid();
+
+           _reservationService.Setup(x => x.GetReservation(deletedEventGuid))
+                .ReturnsAsync(new Reservation
+                {
+                    Id = deletedEventGuid,
+                    Status = ReservationStatus.Change
+                });
+            
+            //Act
+            await _handler.Handle(deletedEventGuid);
+
+            //Assert
+            _reservationService
                 .Verify(service => service.UpdateReservationStatus(
                         deletedEventGuid,
+                        ReservationStatus.Deleted,
                         null,
                         null,
-                        null), 
+                        null),
+                    Times.Once);
+        }
+
+        [Test]
+        public async Task ThenIfReservationIsNotStatusChangedWillSaveWithStatusPending()
+        {
+            //Arrange
+            Guid deletedEventGuid = Guid.NewGuid();
+
+            _reservationService.Setup(x => x.GetReservation(deletedEventGuid))
+                .ReturnsAsync(new Reservation
+                {
+                    Id = deletedEventGuid,
+                    Status = ReservationStatus.Confirmed
+                });
+
+            //Act
+            await _handler.Handle(deletedEventGuid);
+
+            //Assert
+            _reservationService
+                .Verify(service => service.UpdateReservationStatus(
+                        deletedEventGuid,
+                        ReservationStatus.Pending,
+                        null,
+                        null,
+                        null),
                     Times.Once);
         }
     }
