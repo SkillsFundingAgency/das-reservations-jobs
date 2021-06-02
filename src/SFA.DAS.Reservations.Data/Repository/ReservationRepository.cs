@@ -47,9 +47,12 @@ namespace SFA.DAS.Reservations.Data.Repository
                         throw new DbUpdateException($"Unable to change reservation {reservationId} to pending as it has not been confirmed", (Exception) null);
                     }    
                 }
-                
 
-                reservation.Status = (short)status;
+                // do not update status of 'change' reservation unless deleting.
+                if (reservation.Status != (short)ReservationStatus.Change || status == ReservationStatus.Deleted)
+                {
+                    reservation.Status = (short)status;
+                }
 
                 switch (status)
                 {

@@ -17,11 +17,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         }
         
         [Given(@"I have a (.*) reservation")]
-        public void GivenIHaveAReservation(string reservationStatus)
+        public void GivenIHaveAReservation(ReservationStatus reservationStatus)
         {
-            Enum.TryParse(reservationStatus, true, out ReservationStatus status);
-
-            TestData.Reservation.Status = (short)status;
+            TestData.Reservation.Status = (short)reservationStatus;
 
             var dbContext = Services.GetService<ReservationsDataContext>();
 
@@ -69,11 +67,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         public void ThenTheReservationStatusWillNotBeConfirmed()
         {
             var dbContext = Services.GetService<ReservationsDataContext>();
-            var reservation = dbContext.Reservations.Find(TestData.ReservationId);
-            Assert.IsNull(reservation);
-            var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
-            var mock = Mock.Get(reservationIndexRepository);
-            mock.Verify(x=>x.SaveReservationStatus(TestData.ReservationId,ReservationStatus.Confirmed), Times.Never);
+            var reservation = dbContext.Reservations.Find(TestData.ReservationId) ?? new Domain.Entities.Reservation();
+            Assert.AreNotEqual(ReservationStatus.Confirmed, (ReservationStatus)reservation.Status);
         }
     }
 }
