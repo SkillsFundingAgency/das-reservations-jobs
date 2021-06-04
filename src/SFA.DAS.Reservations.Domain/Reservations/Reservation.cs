@@ -1,5 +1,6 @@
 ﻿using System;
 using SFA.DAS.Reservations.Messages;
+using SFA.DAS.Reservations;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {
@@ -28,9 +29,31 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public uint? ProviderId { get; set; }
         public bool EmployerDeleted { get; set; }
 
+        public Reservation()
+        {
+        }
+
+        public Reservation(Domain.Entities.Reservation source)
+        {
+
+            Id = source.Id;
+            Status = (ReservationStatus)source.Status;
+            AccountId = source.AccountId;
+            AccountLegalEntityId = source.AccountLegalEntityId;
+            AccountLegalEntityName = source.AccountLegalEntityName;
+            StartDate = source.StartDate.GetValueOrDefault();
+            EndDate = source.ExpiryDate.GetValueOrDefault();
+            CreatedDate = source.CreatedDate;
+            CourseId = source.CourseId;
+            CourseName = source.Course.Title;
+            CourseLevel = source.Course.Level;
+            ProviderId = source.ProviderId;
+
+        }
+
         public static implicit operator Reservation(ReservationCreatedEvent source)
         {
-            return new Reservation            
+            return new Reservation
             {
                 Id = source.Id,
                 Status = ReservationStatus.Pending,
@@ -47,5 +70,7 @@ namespace SFA.DAS.Reservations.Domain.Reservations
                 EmployerDeleted = false
             };
         }
+
+       
     }
 }

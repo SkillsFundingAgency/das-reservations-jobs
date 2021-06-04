@@ -14,17 +14,16 @@ namespace SFA.DAS.Reservations.Data.Repository
     {
         private readonly IReservationsDataContext _dataContext;
 
-
         public ReservationRepository(IReservationsDataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
         public async Task Update(
-            Guid reservationId, 
-            ReservationStatus status, 
-            DateTime? confirmedDate = null, 
-            long? cohortId = null, 
+            Guid reservationId,
+            ReservationStatus status,
+            DateTime? confirmedDate = null,
+            long? cohortId = null,
             long? draftApprenticeshipId = null)
         {
             using (var transaction = _dataContext.Database.BeginTransaction())
@@ -38,15 +37,15 @@ namespace SFA.DAS.Reservations.Data.Repository
 
                 if (!reservation.IsLevyAccount)
                 {
-                    if (status == ReservationStatus.Pending 
-                        && reservation.Status != (short) ReservationStatus.Confirmed
+                    if (status == ReservationStatus.Pending
+                        && reservation.Status != (short)ReservationStatus.Confirmed
                         && !reservation.ConfirmedDate.HasValue
                         && !reservation.CohortId.HasValue
                         && !reservation.DraftApprenticeshipId.HasValue
                     )
                     {
-                        throw new DbUpdateException($"Unable to change reservation {reservationId} to pending as it has not been confirmed", (Exception) null);
-                    }    
+                        throw new DbUpdateException($"Unable to change reservation {reservationId} to pending as it has not been confirmed", (Exception)null);
+                    }
                 }
 
                 // do not update status of 'change' reservation unless deleting.
@@ -63,6 +62,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                         reservation.DraftApprenticeshipId = draftApprenticeshipId;
                         break;
                     case ReservationStatus.Pending:
+                    case ReservationStatus.Deleted:
                         reservation.ConfirmedDate = null;
                         reservation.CohortId = null;
                         reservation.DraftApprenticeshipId = null;
@@ -77,10 +77,20 @@ namespace SFA.DAS.Reservations.Data.Repository
         public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
         {
             return _dataContext.Reservations
-                .Where(c=>c.AccountLegalEntityId.Equals(accountLegalEntityId) 
+                .Where(c => c.AccountLegalEntityId.Equals(accountLegalEntityId)
                           && c.Status != (byte)ReservationStatus.Deleted
                           && c.Status != (byte)ReservationStatus.Change
                           && !c.IsLevyAccount).ToArray();
         }
+
+        public async Task<Reservation> GetReservationById(Guid reservationId)
+        {
+            var reservation = await _dataContext.Reservations
+                .FirstOrDefaultAsync(c => c.Id.Equals(reservationId))
+                .ConfigureAwait(false);
+
+            return reservation;
+        }
+
     }
 }
