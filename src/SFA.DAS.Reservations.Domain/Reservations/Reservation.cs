@@ -45,8 +45,8 @@ namespace SFA.DAS.Reservations.Domain.Reservations
             EndDate = source.ExpiryDate.GetValueOrDefault();
             CreatedDate = source.CreatedDate;
             CourseId = source.CourseId;
-            CourseName = source.Course.Title;
-            CourseLevel = source.Course.Level;
+            CourseName = source.Course?.Title;
+            CourseLevel = source.Course?.Level;
             ProviderId = source.ProviderId;
 
         }
