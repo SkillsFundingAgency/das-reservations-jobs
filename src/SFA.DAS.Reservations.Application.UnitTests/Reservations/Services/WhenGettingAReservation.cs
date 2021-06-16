@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Testing.AutoFixture;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
@@ -15,60 +14,37 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 {
     public class WhenGettingAReservation
     {
-        private ReservationService _service;
-        private Mock<IReservationRepository> _repository;
-        private Mock<IReservationIndexRepository> _reservationIndex;
-        private Mock<ILogger<ReservationService>> _logger;
 
-        [SetUp]
-        public void Arrange()
-        {
-            _repository = new Mock<IReservationRepository>();
-            _reservationIndex = new Mock<IReservationIndexRepository>();
-            _logger = new Mock<ILogger<ReservationService>>();
-
-            _service = new ReservationService(
-                _repository.Object,
-                _reservationIndex.Object,
-                Mock.Of<IProviderPermissionRepository>(),
-                _logger.Object);
-        }
-
-        [Test]
-        public void ThenWillThrowExceptionIfReservationIdIsInvalid()
+        [Test, MoqAutoData]
+        public void ThenWillThrowExceptionIfReservationIdIsInvalid(
+            ReservationService service)
         {
             //Arrange
             var reservationId = Guid.Empty;
 
             //Act
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.GetReservation(reservationId));
+            var exception = Assert.ThrowsAsync<ArgumentException>(() => service.GetReservation(reservationId));
         }
 
-        [Test]
-        public async Task ThenIfNoReservationFoundForAGivenIdReturnNull()
+        [Test, MoqAutoData]
+        public async Task ThenIfNoReservationFoundForAGivenIdReturnNull(
+            Guid reservationId,
+            [Frozen] Mock<IReservationRepository> repository,
+            [Frozen] Mock<ILogger> logger,
+            ReservationService service)
         {
             //Arrange
-            var reservationId = Guid.NewGuid();
             Reservation reservation = null;
 
-            _repository
+            repository
                 .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
                 .ReturnsAsync(reservation);
 
             //Act
-            var result = await _service.GetReservation(reservationId);
+            var result = await service.GetReservation(reservationId);
 
             //Assert
             Assert.IsNull(result);
-
-
-            _logger.Verify(
-                x => x.Log(
-                    It.Is<LogLevel>(l => l == LogLevel.Warning),
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => true),
-                    It.IsAny<Exception>(),
-                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)));
         }
 
         [Test, MoqAutoData]
