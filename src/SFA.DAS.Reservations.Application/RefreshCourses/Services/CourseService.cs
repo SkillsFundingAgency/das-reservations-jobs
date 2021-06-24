@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
@@ -25,7 +26,7 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
                 CourseId = course.Id,
                 Title = course.Title,
                 Level = course.Level,
-                EffectiveTo = course.EffectiveTo
+                EffectiveTo = course.EffectiveTo == DateTime.MinValue ? null : course.EffectiveTo
             };
         }
 

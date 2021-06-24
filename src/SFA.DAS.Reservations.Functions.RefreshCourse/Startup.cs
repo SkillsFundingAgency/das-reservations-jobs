@@ -2,14 +2,12 @@
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Client;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
@@ -19,6 +17,7 @@ using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Functions.RefreshCourse;
+using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
@@ -89,8 +88,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
                 });
             });
 
-            services.AddTransient<IStandardApiClient>(x => new StandardApiClient(config.ApprenticeshipBaseUrl));
-            services.AddTransient<IFrameworkApiClient>(x => new FrameworkApiClient(config.ApprenticeshipBaseUrl));
+            services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
 
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
             services.AddTransient<ICourseService, CourseService>();

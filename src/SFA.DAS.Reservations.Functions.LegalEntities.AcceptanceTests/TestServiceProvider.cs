@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
-using SFA.DAS.Providers.Api.Client;
 using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
@@ -46,9 +45,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
 
             serviceCollection.AddSingleton(encodingService.Object);
             
-            var mockProviderApiClient = new Mock<IProviderApiClient>();
-            serviceCollection.AddSingleton(mockProviderApiClient.Object);
-
             var mockAccountApiClient = new Mock<IAccountApiClient>();
             serviceCollection.AddSingleton(mockAccountApiClient.Object);
 

@@ -151,5 +151,55 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             _reservationEntity.CohortId.Should().Be(cohortId);
             _reservationEntity.DraftApprenticeshipId.Should().Be(draftApprenticeshipId);
         }
+
+        [Test, AutoData]
+        public async Task And_Status_Confirmed_Then_Reservation_Status_Not_Updated_For_Changed_Records(
+           DateTime confirmedDate,
+           long cohortId,
+           long draftApprenticeshipId)
+        {
+            // Arrange
+            _reservationEntity.Status = 4;
+
+            //Act
+            await _reservationRepository.Update(
+                _reservationEntity.Id,
+                ReservationStatus.Confirmed,
+                confirmedDate,
+                cohortId,
+                draftApprenticeshipId);
+
+            //Assert 
+            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _reservationEntity.Status.Should().Be((short)ReservationStatus.Change);
+            _reservationEntity.ConfirmedDate.Should().Be(confirmedDate);
+            _reservationEntity.CohortId.Should().Be(cohortId);
+            _reservationEntity.DraftApprenticeshipId.Should().Be(draftApprenticeshipId);
+        }
+
+        [Test, AutoData]
+        public async Task And_Status_Deleted_Then_Reservation_Status_Updated_For_Changed_Records(
+           DateTime confirmedDate,
+           long cohortId,
+           long draftApprenticeshipId)
+        {
+            // Arrange
+            _reservationEntity.Status = 4;
+
+            //Act
+            await _reservationRepository.Update(
+                _reservationEntity.Id,
+                ReservationStatus.Deleted,
+                confirmedDate,
+                cohortId,
+                draftApprenticeshipId);
+
+            //Assert 
+            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _reservationEntity.Status.Should().Be((short)ReservationStatus.Deleted);
+            _reservationEntity.ConfirmedDate.Should().Be(null);
+            _reservationEntity.CohortId.Should().Be(null);
+            _reservationEntity.DraftApprenticeshipId.Should().Be(null);
+        }
     }
 }
