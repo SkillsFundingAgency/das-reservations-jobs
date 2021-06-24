@@ -38,8 +38,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             //Arrange
             var expectedAccountLegalEntity = new AccountLegalEntity
             {
-                Id = Guid.NewGuid(),
-                ReservationLimit = 1,
+                Id = Guid.NewGuid(),                
                 AccountId = 1234,
                 LegalEntityId = 543,
                 AccountLegalEntityId = 5677,
@@ -67,8 +66,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             //Arrange
             var expectedAccountLegalEntity = new AccountLegalEntity
             {
-                Id = Guid.NewGuid(),
-                ReservationLimit = 1,
+                Id = Guid.NewGuid(),                
                 AccountId = 1234,
                 LegalEntityId = 543,
                 AccountLegalEntityId = 5677,
