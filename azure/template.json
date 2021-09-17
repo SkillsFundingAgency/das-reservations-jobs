@@ -171,7 +171,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-insights",
+      "name": "function-app-insights-crs",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -234,6 +234,48 @@
     },
     {
       "apiVersion": "2020-06-01",
+      "name": "function-app-insights-prv",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('functionAppNameProviderPermissions')]"
+          },
+          "attachedService": {
+            "value": "[variables('functionAppNameProviderPermissions')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2020-06-01",
+      "name": "function-app-insights-idx",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('functionAppNameReservationIndex')]"
+          },
+          "attachedService": {
+            "value": "[variables('functionAppNameReservationIndex')]"
+          }
+        }
+      }
+    },    
+    {
+      "apiVersion": "2020-06-01",
       "name": "storage-account",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
@@ -276,7 +318,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-csr",
+      "name": "function-app-crs",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -323,7 +365,7 @@
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                  "value": "[reference('function-app-insights-crs').outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -347,9 +389,7 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan",
-        "function-app-insights",
-        "storage-account"
+        "worker-app-service-plan"
       ]
     },
     {
@@ -433,9 +473,7 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan",
-        "function-app-insights-rsrv",
-        "storage-account"
+        "worker-app-service-plan"
       ]
     },
     {
@@ -519,9 +557,7 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan",
-        "function-app-insights-lgle",
-        "storage-account"
+        "worker-app-service-plan"
       ]
     },
     {
@@ -573,7 +609,7 @@
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                  "value": "[reference('function-app-insights-idx').outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -598,9 +634,7 @@
       },
 
       "dependsOn": [
-        "worker-app-service-plan",
-        "function-app-insights",
-        "storage-account"
+        "worker-app-service-plan"
       ]
     },
     {
@@ -660,7 +694,7 @@
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                  "value": "[reference('function-app-insights-prv').outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -679,11 +713,8 @@
           }
         }
       },
-
       "dependsOn": [
-        "worker-app-service-plan",
-        "function-app-insights",
-        "storage-account"
+        "worker-app-service-plan"
       ]
     }
   ],
