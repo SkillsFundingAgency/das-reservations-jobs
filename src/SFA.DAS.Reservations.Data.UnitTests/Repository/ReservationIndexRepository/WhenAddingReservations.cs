@@ -51,10 +51,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             _clientMock.Verify(c => 
                 c.CreateMany(
                     ExpectedIndexName,
-                    It.Is<List<string>>(x=>JsonConvert.DeserializeObject<IndexedReservation>(
+                    It.Is<IEnumerable<string>>(x=>JsonConvert.DeserializeObject<IndexedReservation>(
                         x.Skip(1).First()).ReservationId.Equals(firstReservation) 
-                                           && x.First().Equals(@"{ ""index"":{""_id"":""" + indexedProviderId + "_" + accountLegalEntityId + "_"+ firstReservation + @"""} }")
-                                           && x.Last().Equals(Environment.NewLine)))
+                                           && x.First().Equals(@"{ ""index"":{""_id"":""" + indexedProviderId + "_" + accountLegalEntityId + "_"+ firstReservation + @"""} }")))
                 , Times.Once);
         }
 

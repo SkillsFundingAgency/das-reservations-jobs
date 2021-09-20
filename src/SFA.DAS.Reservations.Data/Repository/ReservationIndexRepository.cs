@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.Configuration;
@@ -28,14 +29,19 @@ namespace SFA.DAS.Reservations.Data.Repository
         public async Task Add(IEnumerable<IndexedReservation> reservations)
         {
             var listOfJsonReservations = new List<string>();
+
             foreach (var reservation in reservations)
             {
-                listOfJsonReservations.Add(@"{ ""index"":{""_id"":"""+ reservation.Id + @"""} }");
+                listOfJsonReservations.Add(@"{ ""index"":{""_id"":""" + reservation.Id + @"""} }");
                 listOfJsonReservations.Add(JsonConvert.SerializeObject(reservation));
             }
-            listOfJsonReservations.Add(Environment.NewLine);
             
-            await _client.CreateMany(_registry.CurrentIndexName, listOfJsonReservations);
+            var reservationBatches = BatchReservationDocs(listOfJsonReservations);
+
+            foreach (var batch in reservationBatches)
+            {
+                await _client.CreateMany(_registry.CurrentIndexName, batch);
+            }
         }
 
         public async Task DeleteIndices(uint daysOld)
@@ -69,5 +75,14 @@ namespace SFA.DAS.Reservations.Data.Repository
             
             await _registry.Add(indexName);
         }
+
+        private static IEnumerable<IEnumerable<string>> BatchReservationDocs(List<string> listOfJsonReservations)
+        {
+            var maxItems = 10000;
+            return listOfJsonReservations.Select((item, inx) => new { item, inx })
+                    .GroupBy(x => x.inx / maxItems)
+                    .Select(g => g.Select(x => x.item));
+        }
+
     }
 }
