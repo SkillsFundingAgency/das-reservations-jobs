@@ -101,43 +101,43 @@
   },
   "resources": [
     {
-        "apiVersion": "2020-06-01",
-        "name": "[variables('resourceGroupName')]",
-        "type": "Microsoft.Resources/resourceGroups",
-        "location": "[parameters('resourceGroupLocation')]",
-        "tags": "[parameters('tags')]",
-        "properties": {
-        }
+      "apiVersion": "2020-06-01",
+      "name": "[variables('resourceGroupName')]",
+      "type": "Microsoft.Resources/resourceGroups",
+      "location": "[parameters('resourceGroupLocation')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+      }
     },
     {
-        "apiVersion": "2020-06-01",
-        "name": "worker-app-service-subnet",
-        "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-        "type": "Microsoft.Resources/deployments",
-        "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "virtualNetworkName": {
-                    "value": "[parameters('sharedEnvVirtualNetworkName')]"
-                },
-                "subnetName": {
-                    "value": "[parameters('subnetObject').name]"
-                },
-                "subnetAddressPrefix": {
-                    "value": "[parameters('subnetObject').addressSpace]"
-                },
-                "serviceEndpointList": {
-                    "value": "[parameters('subnetServiceEndpointList')]"
-                },
-                "delegations": {
-                    "value": "[parameters('subnetDelegations')]"
-                }
-            }
+      "apiVersion": "2020-06-01",
+      "name": "worker-app-service-subnet",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[parameters('sharedEnvVirtualNetworkName')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetObject').name]"
+          },
+          "subnetAddressPrefix": {
+            "value": "[parameters('subnetObject').addressSpace]"
+          },
+          "serviceEndpointList": {
+            "value": "[parameters('subnetServiceEndpointList')]"
+          },
+          "delegations": {
+            "value": "[parameters('subnetDelegations')]"
+          }
         }
+      }
     },
     {
       "apiVersion": "2020-06-01",
@@ -273,7 +273,7 @@
           }
         }
       }
-    },    
+    },
     {
       "apiVersion": "2020-06-01",
       "name": "storage-account",
@@ -382,6 +382,10 @@
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
+                },
+                {
+                  "name": "WEBSITE_RUN_FROM_PACKAGE",
+                  "value": "1"
                 }
               ]
             }
@@ -466,6 +470,10 @@
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
+                },
+                {
+                  "name": "WEBSITE_RUN_FROM_PACKAGE",
+                  "value": "1"
                 }
               ]
             }
@@ -550,6 +558,10 @@
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
+                },
+                {
+                  "name": "WEBSITE_RUN_FROM_PACKAGE",
+                  "value": "1"
                 }
               ]
             }
@@ -626,6 +638,10 @@
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
+                },
+                {
+                  "name": "WEBSITE_RUN_FROM_PACKAGE",
+                  "value": "1"
                 }
               ]
             }
@@ -707,6 +723,10 @@
                 {
                   "name": "LoggingRedisConnectionString",
                   "value": "[parameters('loggingRedisConnectionString')]"
+                },
+                {
+                  "name": "WEBSITE_RUN_FROM_PACKAGE",
+                  "value": "1"
                 }
               ]
             }
@@ -740,8 +760,8 @@
       "value": "[variables('functionAppNameProviderPermissions')]"
     },
     "ResourceGroupName": {
-        "type": "string",
-        "value": "[variables('resourceGroupName')]"
+      "type": "string",
+      "value": "[variables('resourceGroupName')]"
     }
   }
 }
