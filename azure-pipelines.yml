@@ -15,19 +15,13 @@ variables:
 
 pool:
   name: 'DAS - Continuous Integration Agents'
-  demands: LATEST_DOTNET_VERSION -equals 3.1
+  demands: LATEST_DOTNET_VERSION -equals 2.2
 
 steps:
-- task: gitversion/setup@0
-  displayName: gitversion/setup
+- task: gittools.gitversion-preview.gitversion-task.GitVersion@5
+  displayName: GitVersion
   inputs:
-    versionSpec: 5.x
-
-- task: gitversion/execute@0
-  displayName: gitversion/execute
-  inputs:
-    useConfigFile: true
-    configFilePath: GitVersion.yml
+    updateAssemblyInfo: true
 
 - task: DotNetCoreCLI@2
   displayName: Restore
