@@ -18,6 +18,7 @@ using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Functions.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure.Api;
+using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
@@ -96,7 +97,8 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
             services.AddTransient<IStoreCourseHandler, StoreCourseHandler>();
 
-            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
+            services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
+
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider =>
                 provider.GetService<ReservationsDataContext>());
 
