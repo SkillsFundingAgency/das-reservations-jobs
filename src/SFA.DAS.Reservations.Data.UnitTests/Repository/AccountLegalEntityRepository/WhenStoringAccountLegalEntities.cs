@@ -57,7 +57,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
 
             //Assert 
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
-            _dbContextTransaction.Verify(x => x.Commit(), Times.Once);
         }
 
         [Test]
