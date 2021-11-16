@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -23,7 +24,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Add(Account account)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+            using (var transaction = new TransactionScope())
             {
                 var existingEntity = await _dataContext.Accounts.FindAsync(account.Id);
 
@@ -36,7 +37,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 {
                     await _dataContext.Accounts.AddAsync(account);
                     _dataContext.SaveChanges();
-                    transaction.Commit();
+                    transaction.Complete();
                 }
                 catch (DbUpdateException e)
                 {
@@ -44,7 +45,6 @@ namespace SFA.DAS.Reservations.Data.Repository
                         && (sqlException.Number == UniqueConstraintViolation || sqlException.Number == UniqueKeyViolation))
                     {
                         _logger.LogWarning($"AccountRepository: Rolling back Id:{account.Id} - item already exists.");
-                        transaction.Rollback();
                     }
                 }
             }
@@ -52,7 +52,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task UpdateName(Account account)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+            using (var transaction = new TransactionScope())
             {
                 var entity = await _dataContext.Accounts.FindAsync(account.Id);
 
@@ -63,17 +63,16 @@ namespace SFA.DAS.Reservations.Data.Repository
                 }
                 else
                 {
-                    throw new DbUpdateException($"Update Account Name - Record not found AccountId:{account.Id}", (Exception) null);
+                    throw new DbUpdateException($"Update Account Name - Record not found AccountId:{account.Id}", (Exception)null);
                 }
-                
 
-                transaction.Commit();
+                transaction.Complete();
             }
         }
 
         public async Task UpdateLevyStatus(Account account)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+            using (var transaction = new TransactionScope())
             {
                 var entity = await _dataContext.Accounts.FindAsync(account.Id);
 
@@ -84,11 +83,10 @@ namespace SFA.DAS.Reservations.Data.Repository
                 }
                 else
                 {
-                    throw new DbUpdateException($"Update Account Levy Status - Record not found AccountId:{account.Id}", (Exception) null);
+                    throw new DbUpdateException($"Update Account Levy Status - Record not found AccountId:{account.Id}", (Exception)null);
                 }
-                
 
-                transaction.Commit();
+                transaction.Complete();
             }
         }
     }

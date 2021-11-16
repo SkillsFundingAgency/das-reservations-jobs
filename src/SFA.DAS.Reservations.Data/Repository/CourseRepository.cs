@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Transactions;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using Course = SFA.DAS.Reservations.Domain.Entities.Course;
 
@@ -15,7 +16,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Add(Course course)
         {
-            using (var transaction = _reservationsDataContext.Database.BeginTransaction())
+            using (var transaction = new TransactionScope())
             {
                 var courseStored = await _reservationsDataContext.Apprenticeships.FindAsync(course.CourseId);
 
@@ -30,7 +31,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                     await _reservationsDataContext.Apprenticeships.AddAsync(course);
                 }
                 _reservationsDataContext.SaveChanges();
-                transaction.Commit();
+                transaction.Complete();
             }
         }
     }
