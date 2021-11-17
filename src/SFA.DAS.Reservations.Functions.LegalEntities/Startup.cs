@@ -28,6 +28,7 @@ using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.Validation;
 using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
+using SFA.DAS.Reservations.Infrastructure.DatabaseInjection;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
@@ -113,9 +114,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             }
             else
             {
-                services.AddDbContext<ReservationsDataContext>(options =>
-                    options.UseSqlServer(config.ConnectionString));
+                services.AddDbContext<ReservationsDataContext>(options => DatabaseInjectionHelper.GetDataContext(config.ConnectionString, Configuration["EnvironmentName"]));
             }
+
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
 
             services.AddTransient<IAzureQueueService, AzureQueueService>();

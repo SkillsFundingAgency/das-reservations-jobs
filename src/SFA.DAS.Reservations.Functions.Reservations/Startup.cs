@@ -35,6 +35,7 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Infrastructure.Api;
+using SFA.DAS.Reservations.Infrastructure.DatabaseInjection;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
@@ -186,8 +187,9 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             }
             else
             {
-                services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(jobsConfig.ConnectionString));
+                services.AddDbContext<ReservationsDataContext>(options => DatabaseInjectionHelper.GetDataContext(jobsConfig.ConnectionString, Configuration["EnvironmentName"]));
             }
+
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
 
             return services.BuildServiceProvider();
