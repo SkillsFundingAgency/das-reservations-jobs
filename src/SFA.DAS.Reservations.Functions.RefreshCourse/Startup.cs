@@ -24,7 +24,7 @@ using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.DatabaseInjection;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
-using DatabaseInjectionHelper = SFA.DAS.Reservations.Functions.RefreshCourse.DIExtensions.DatabaseInjectionHelper;
+
 
 [assembly: WebJobsStartup(typeof(Startup))]
 
