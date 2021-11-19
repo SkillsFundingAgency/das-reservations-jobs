@@ -1,6 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data
@@ -15,7 +20,7 @@ namespace SFA.DAS.Reservations.Data
         DatabaseFacade Database { get; }
         int SaveChanges();
     }
-    public class ReservationsDataContext :DbContext, IReservationsDataContext
+    public class ReservationsDataContext : DbContext, IReservationsDataContext
     {
         public override DatabaseFacade Database
         {
@@ -29,17 +34,46 @@ namespace SFA.DAS.Reservations.Data
 
         public DbSet<Account> Accounts { get; set; }
 
+        private readonly IConfiguration _configuration;
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
+        private ReservationsJobs _reservationsJobsConfig;
+
         public ReservationsDataContext()
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseLazyLoadingProxies();
-        }
-
         public ReservationsDataContext(DbContextOptions options) : base(options)
         {
+        }
+
+        public ReservationsDataContext(IConfiguration configuration, ReservationsJobs jobsConfig, DbContextOptions options, AzureServiceTokenProvider azureServiceTokenProvider) : base(options)
+        {
+            _reservationsJobsConfig = jobsConfig;
+            _azureServiceTokenProvider = azureServiceTokenProvider;
+            _configuration = configuration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (_configuration == null || _azureServiceTokenProvider == null)
+            {
+                return;
+            }
+
+            const string azureResource = "https://database.windows.net/";
+
+            var connection = new SqlConnection
+            {
+                ConnectionString = _reservationsJobsConfig.ConnectionString,
+                AccessToken = _azureServiceTokenProvider.GetAccessTokenAsync(azureResource).Result,
+            };
+
+            optionsBuilder.UseSqlServer(connection, options =>
+                options.EnableRetryOnFailure(
+                    5,
+                    TimeSpan.FromSeconds(20),
+                    null
+                ));
         }
 
         public override int SaveChanges()

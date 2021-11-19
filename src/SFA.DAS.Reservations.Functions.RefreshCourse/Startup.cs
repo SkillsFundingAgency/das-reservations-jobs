@@ -101,7 +101,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
             services.AddTransient<IStoreCourseHandler, StoreCourseHandler>();
             
-            services.AddDatabase(config, Configuration["EnvironmentName"]);
+            services.AddDatabase(serviceProvider, config, Configuration["EnvironmentName"]);
             
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider =>
                 provider.GetService<ReservationsDataContext>());
