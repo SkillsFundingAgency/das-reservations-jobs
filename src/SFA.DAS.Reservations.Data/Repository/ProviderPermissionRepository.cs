@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 
@@ -31,7 +30,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Add(ProviderPermission permission)
         {
-            using (var transaction = new TransactionScope())
+            using (var transaction = _dataContext.Database.BeginTransaction())
             {
                 var existingPermission = await _dataContext.ProviderPermissions.FindAsync(permission.AccountId,
                     permission.AccountLegalEntityId, permission.ProviderId);
@@ -47,7 +46,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 }
 
                 _dataContext.SaveChanges();
-                transaction.Complete();
+                transaction.Commit();
             }
         }
     }

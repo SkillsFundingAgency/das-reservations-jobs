@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
 using SFA.DAS.Reservations.Domain.Reservations;
@@ -27,7 +26,7 @@ namespace SFA.DAS.Reservations.Data.Repository
             long? cohortId = null,
             long? draftApprenticeshipId = null)
         {
-            using (var transaction = new TransactionScope())
+            using (var transaction = _dataContext.Database.BeginTransaction())
             {
                 var reservation = await _dataContext.Reservations.FindAsync(reservationId);
 
@@ -71,7 +70,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 }
 
                 _dataContext.SaveChanges();
-                transaction.Complete();
+                transaction.Commit();
             }
         }
 

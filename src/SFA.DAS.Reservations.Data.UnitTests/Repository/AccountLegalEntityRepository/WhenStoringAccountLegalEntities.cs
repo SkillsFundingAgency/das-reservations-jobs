@@ -27,9 +27,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             _dbContext = new Mock<DbContext>();
             _dataContext = new Mock<IReservationsDataContext>();
             _dataFacade = new Mock<DatabaseFacade>(_dbContext.Object);
-            
+
             _dataFacade.Setup(x => x.BeginTransaction()).Returns(_dbContextTransaction.Object);
-            
+
         }
 
         [Test]
@@ -38,14 +38,14 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             //Arrange
             var expectedAccountLegalEntity = new AccountLegalEntity
             {
-                Id = Guid.NewGuid(),                
+                Id = Guid.NewGuid(),
                 AccountId = 1234,
                 LegalEntityId = 543,
                 AccountLegalEntityId = 5677,
                 AgreementSigned = true,
                 AccountLegalEntityName = "Test"
             };
-            
+
             _dataContext.Setup(x => x.AccountLegalEntities)
                 .ReturnsDbSet(new List<AccountLegalEntity>());
             _dataContext.Setup(x => x.Database)
@@ -57,6 +57,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
 
             //Assert 
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _dbContextTransaction.Verify(x => x.Commit(), Times.Once);
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             //Arrange
             var expectedAccountLegalEntity = new AccountLegalEntity
             {
-                Id = Guid.NewGuid(),                
+                Id = Guid.NewGuid(),
                 AccountId = 1234,
                 LegalEntityId = 543,
                 AccountLegalEntityId = 5677,
@@ -74,7 +75,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             };
 
             _dataContext.Setup(x => x.AccountLegalEntities)
-                .ReturnsDbSet(new List<AccountLegalEntity>{ expectedAccountLegalEntity });
+                .ReturnsDbSet(new List<AccountLegalEntity> { expectedAccountLegalEntity });
             _dataContext.Setup(x => x.Database)
                 .Returns(_dataFacade.Object);
             _accountLegalEntityRepository = new Data.Repository.AccountLegalEntityRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountLegalEntityRepository>>());

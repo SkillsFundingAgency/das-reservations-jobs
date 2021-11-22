@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,10 @@ namespace SFA.DAS.Reservations.Infrastructure.Database
                     ConnectionString = config.ConnectionString,
                     AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(azureResource).Result
                 };
+                
+                var optionsBuilder = new DbContextOptionsBuilder<ReservationsDataContext>().UseSqlServer(managedIdentitySqlConnection);
 
-                services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(managedIdentitySqlConnection));
+                services.AddDbContext<ReservationsDataContext>(options => new ReservationsDataContext(optionsBuilder.Options));
             }
         }
     }
