@@ -15,23 +15,20 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Add(Course course)
         {
-            using (var transaction = _reservationsDataContext.Database.BeginTransaction())
-            {
-                var courseStored = await _reservationsDataContext.Apprenticeships.FindAsync(course.CourseId);
+            var courseStored = await _reservationsDataContext.Apprenticeships.FindAsync(course.CourseId);
 
-                if (courseStored != null)
-                {
-                    courseStored.Level = course.Level;
-                    courseStored.Title = course.Title;
-                    courseStored.EffectiveTo = course.EffectiveTo;
-                }
-                else
-                {
-                    await _reservationsDataContext.Apprenticeships.AddAsync(course);
-                }
-                _reservationsDataContext.SaveChanges();
-                transaction.Commit();
+            if (courseStored != null)
+            {
+                courseStored.Level = course.Level;
+                courseStored.Title = course.Title;
+                courseStored.EffectiveTo = course.EffectiveTo;
             }
+            else
+            {
+                await _reservationsDataContext.Apprenticeships.AddAsync(course);
+            }
+            _reservationsDataContext.SaveChanges();
+
         }
     }
 }

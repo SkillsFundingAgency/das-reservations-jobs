@@ -49,7 +49,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 IsLevy = false
             };
             
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
 
             if (dbContext.Apprenticeships.Find(TestData.Course.CourseId) == null)
             {

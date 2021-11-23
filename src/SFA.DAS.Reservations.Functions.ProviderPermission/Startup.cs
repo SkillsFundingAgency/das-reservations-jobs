@@ -97,8 +97,6 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
 
-            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
-
             services.AddTransient<IAzureQueueService, AzureQueueService>();
             services.AddTransient<IReservationService, ReservationService>();
             services.AddTransient<IProviderPermissionService, ProviderPermissionService>();

@@ -21,7 +21,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         {
             TestData.Reservation.Status = (short)reservationStatus;
 
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
 
             dbContext.Reservations.Add(TestData.Reservation);
             dbContext.SaveChanges();
@@ -51,7 +51,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation status will be confirmed")]
         public void ThenTheReservationStatusWillBeConfirmed()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var reservation = dbContext.Reservations.Find(TestData.ReservationId);
             Assert.AreEqual(ReservationStatus.Confirmed,(ReservationStatus)reservation.Status);
             Assert.AreEqual(TestData.DraftApprenticeshipCreatedEvent.CreatedOn,reservation.ConfirmedDate);
@@ -66,7 +66,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation status will not be confirmed")]
         public void ThenTheReservationStatusWillNotBeConfirmed()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var reservation = dbContext.Reservations.Find(TestData.ReservationId) ?? new Domain.Entities.Reservation();
             Assert.AreNotEqual(ReservationStatus.Confirmed, (ReservationStatus)reservation.Status);
         }

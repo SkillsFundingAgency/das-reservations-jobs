@@ -105,7 +105,6 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
                 
-            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
             //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
             return services.BuildServiceProvider();

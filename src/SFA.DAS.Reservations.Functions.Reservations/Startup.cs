@@ -181,7 +181,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             }
 
             services.AddDatabaseRegistration(jobsConfig, Configuration["EnvironmentName"]);
-            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
             return services.BuildServiceProvider();
         }
     }

@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 LegalEntityId = 123
             };
 
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale => 
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 
@@ -53,7 +53,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 LegalEntityId = 123
             };
 
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale => 
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 
@@ -69,7 +69,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityId = TestData.AccountLegalEntity.AccountLegalEntityId + 1,
             };
 
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 
@@ -94,7 +94,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the legal entity should be available")]
         public void ThenTheLegalEntityShouldBeAvailable()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 
@@ -109,7 +109,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the legal entity should not be available")]
         public void ThenTheLegalEntityShouldNotBeAvailable()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 

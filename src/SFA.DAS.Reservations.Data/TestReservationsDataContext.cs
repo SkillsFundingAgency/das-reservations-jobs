@@ -1,47 +1,31 @@
-﻿using System.Data;
-using System.Data.Common;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data
 {
-    public interface IReservationsDataContext
+    public class TestReservationsDataContext : DbContext, IReservationsDataContext
     {
-        DbSet<Reservation> Reservations { get; set; }
-        DbSet<Course> Apprenticeships { get; set; }
-        DbSet<AccountLegalEntity> AccountLegalEntities { get; set; }
-        DbSet<ProviderPermission> ProviderPermissions { get; set; }
-        DbSet<Account> Accounts { get; set; }
-        DatabaseFacade Database { get; }
-        int SaveChanges();
-    }
-    public class ReservationsDataContext : DbContext, IReservationsDataContext
-    {
-        public override DatabaseFacade Database
-        {
-            get { return base.Database; }
-        }
 
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Course> Apprenticeships { get; set; }
         public DbSet<AccountLegalEntity> AccountLegalEntities { get; set; }
         public DbSet<ProviderPermission> ProviderPermissions { get; set; }
-
         public DbSet<Account> Accounts { get; set; }
 
-        private readonly IDbConnection _connection;
 
-        public ReservationsDataContext( DbContextOptions<ReservationsDataContext> options, IDbConnection connection) : base(options)
+        public TestReservationsDataContext()
         {
-            _connection = connection;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
+            optionsBuilder.UseLazyLoadingProxies();
         }
+
+        public TestReservationsDataContext(DbContextOptions options) : base(options)
+        {
+        }
+
 
         public override int SaveChanges()
         {
@@ -58,5 +42,6 @@ namespace SFA.DAS.Reservations.Data
 
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }

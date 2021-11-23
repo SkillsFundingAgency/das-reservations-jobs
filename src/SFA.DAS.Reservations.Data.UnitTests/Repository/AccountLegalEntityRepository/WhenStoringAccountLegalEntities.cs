@@ -28,8 +28,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
             _dataContext = new Mock<IReservationsDataContext>();
             _dataFacade = new Mock<DatabaseFacade>(_dbContext.Object);
 
-            _dataFacade.Setup(x => x.BeginTransaction()).Returns(_dbContextTransaction.Object);
-
         }
 
         [Test]
@@ -57,7 +55,6 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountLegalEntityRepos
 
             //Assert 
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
-            _dbContextTransaction.Verify(x => x.Commit(), Times.Once);
         }
 
         [Test]

@@ -108,8 +108,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             }
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
-            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
-
+           
             services.AddTransient<IAzureQueueService, AzureQueueService>();
             services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
             services.AddTransient<IAccountsService, AccountsService>();

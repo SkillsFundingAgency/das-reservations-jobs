@@ -25,7 +25,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation status will be pending")]
         public void ThenTheReservationStatusWillBePending()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var reservation = dbContext.Reservations.Find(TestData.ReservationId);
             Assert.AreEqual(ReservationStatus.Pending, (ReservationStatus)reservation.Status);
             var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
@@ -36,7 +36,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation does not cause a re-queue")]
         public void ThenTheReservationDoesNotCauseARe_Queue()
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+            var dbContext = Services.GetService<TestReservationsDataContext>();
             var reservation = dbContext.Reservations.Find(TestData.ReservationId);
             Assert.IsNull(reservation);
             var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
