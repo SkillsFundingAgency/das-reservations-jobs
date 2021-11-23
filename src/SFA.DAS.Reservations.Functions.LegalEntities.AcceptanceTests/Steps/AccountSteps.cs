@@ -21,7 +21,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Given(@"I have a non levy account")]
         public void WhenIHaveANonLevyAccount()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             
             var account = dbContext.Accounts.SingleOrDefault(e => e.Id.Equals(TestData.NonLevyAccount.Id));
 
@@ -95,7 +95,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the account should be marked as a levy")]
         public void ThenTheAccountShouldBeMarkedAsLevy()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var account = dbContext.Accounts.SingleOrDefault(acc =>
                 acc.Id.Equals(TestData.NonLevyAccount.Id));
 
@@ -107,7 +107,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the account is created")]
         public void ThenTheAccountIsCreated()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var account = dbContext.Accounts.SingleOrDefault(acc =>
                 acc.Id.Equals(TestData.NonLevyAccount.Id));
 
@@ -117,7 +117,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the account name is updated")]
         public void ThenTheAccountNameIsUpdated()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var account = dbContext.Accounts.SingleOrDefault(acc =>
                 acc.Id.Equals(TestData.NonLevyAccount.Id));
             Assert.IsNotNull(account);
@@ -127,7 +127,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the account is not duplicated")]
         public void ThenTheAccountIsNotDuplicated()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var numberOfAccounts = dbContext.Accounts.Count(c => c.Id.Equals(TestData.NonLevyAccount.Id));
 
             Assert.AreEqual(1, numberOfAccounts);

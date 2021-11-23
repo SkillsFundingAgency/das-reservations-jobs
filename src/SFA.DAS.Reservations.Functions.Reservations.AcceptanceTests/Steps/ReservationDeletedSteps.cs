@@ -23,7 +23,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         {
             TestData.Reservation.Status = (short)ReservationStatus.Deleted;
 
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
 
             dbContext.Reservations.Add(TestData.Reservation);
             dbContext.SaveChanges();

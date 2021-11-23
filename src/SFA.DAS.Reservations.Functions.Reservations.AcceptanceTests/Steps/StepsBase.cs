@@ -57,7 +57,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             };
 
             
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
 
             if (dbContext.Apprenticeships.Find(TestData.Course.CourseId) == null)
             {

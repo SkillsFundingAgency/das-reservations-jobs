@@ -33,14 +33,30 @@ namespace SFA.DAS.Reservations.Data
 
         private readonly IDbConnection _connection;
 
-        public ReservationsDataContext( DbContextOptions<ReservationsDataContext> options, IDbConnection connection) : base(options)
+
+        public ReservationsDataContext()
+        {
+        }
+
+        public ReservationsDataContext(DbContextOptions options) : base(options)
+        {
+        }
+        
+        public ReservationsDataContext(DbContextOptions<ReservationsDataContext> options, IDbConnection connection) : base(options)
         {
             _connection = connection;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
+            if (_connection != null)
+            {
+                optionsBuilder.UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
+            }
+            else
+            {
+                optionsBuilder.UseLazyLoadingProxies();
+            }
         }
 
         public override int SaveChanges()

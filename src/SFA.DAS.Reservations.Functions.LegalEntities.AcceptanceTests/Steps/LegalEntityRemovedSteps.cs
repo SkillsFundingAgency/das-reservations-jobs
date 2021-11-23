@@ -19,7 +19,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Given(@"I have an existing unsigned, non levy legal entity")]
         public void GivenIHaveAnExistingLegalEntity()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the legal entity should no longer be available")]
         public void ThenTheLegalEntityShouldNoLongerBeAvailable()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 

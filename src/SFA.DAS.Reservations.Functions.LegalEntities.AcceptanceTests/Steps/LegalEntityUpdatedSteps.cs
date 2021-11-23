@@ -43,7 +43,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         [Then(@"the legal entity should be signed")]
         public void ThenTheLegalEntityStateShouldBeSigned()
         {
-            var dbContext = Services.GetService<TestReservationsDataContext>();
+            var dbContext = Services.GetService<ReservationsDataContext>();
             var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
                 ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
 
