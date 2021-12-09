@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Data;
+using System.Data.Common;
 using System.IO;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +22,7 @@ using SFA.DAS.Reservations.Domain.Infrastructure;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Functions.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure.Api;
+using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
@@ -96,9 +101,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
             services.AddTransient<IStoreCourseHandler, StoreCourseHandler>();
 
-            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
-            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider =>
-                provider.GetService<ReservationsDataContext>());
+            services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
 
             services.AddTransient<ICourseRepository, CourseRepository>();
 

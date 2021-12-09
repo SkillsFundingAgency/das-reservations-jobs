@@ -26,8 +26,7 @@ namespace SFA.DAS.Reservations.Data.Repository
             long? cohortId = null,
             long? draftApprenticeshipId = null)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
-            {
+
                 var reservation = await _dataContext.Reservations.FindAsync(reservationId);
 
                 if (reservation == null)
@@ -70,8 +69,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 }
 
                 _dataContext.SaveChanges();
-                transaction.Commit();
-            }
+              
         }
 
         public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)

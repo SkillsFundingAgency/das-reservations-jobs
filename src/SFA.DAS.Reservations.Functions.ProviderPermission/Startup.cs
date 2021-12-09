@@ -24,6 +24,7 @@ using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ProviderPermission;
 using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
+using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
@@ -94,8 +95,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
 
-            services.AddDbContext<ReservationsDataContext>(options => options.UseSqlServer(config.ConnectionString));
-            services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
+            services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
 
             services.AddTransient<IAzureQueueService, AzureQueueService>();
             services.AddTransient<IReservationService, ReservationService>();

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Domain.Entities;
@@ -15,7 +17,7 @@ namespace SFA.DAS.Reservations.Data
         DatabaseFacade Database { get; }
         int SaveChanges();
     }
-    public class ReservationsDataContext :DbContext, IReservationsDataContext
+    public class ReservationsDataContext : DbContext, IReservationsDataContext
     {
         public override DatabaseFacade Database
         {
@@ -29,17 +31,32 @@ namespace SFA.DAS.Reservations.Data
 
         public DbSet<Account> Accounts { get; set; }
 
+        private readonly IDbConnection _connection;
+
+
         public ReservationsDataContext()
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseLazyLoadingProxies();
-        }
-
         public ReservationsDataContext(DbContextOptions options) : base(options)
         {
+        }
+        
+        public ReservationsDataContext(DbContextOptions<ReservationsDataContext> options, IDbConnection connection) : base(options)
+        {
+            _connection = connection;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (_connection != null)
+            {
+                optionsBuilder.UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
+            }
+            else
+            {
+                optionsBuilder.UseLazyLoadingProxies();
+            }
         }
 
         public override int SaveChanges()

@@ -23,73 +23,64 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Add(Account account)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+
+            var existingEntity = await _dataContext.Accounts.FindAsync(account.Id);
+
+            if (existingEntity != null)
             {
-                var existingEntity = await _dataContext.Accounts.FindAsync(account.Id);
+                return;
+            }
 
-                if (existingEntity != null)
-                {
-                    return;
-                }
+            try
+            {
+                await _dataContext.Accounts.AddAsync(account);
+                _dataContext.SaveChanges();
 
-                try
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.GetBaseException() is SqlException sqlException
+                    && (sqlException.Number == UniqueConstraintViolation || sqlException.Number == UniqueKeyViolation))
                 {
-                    await _dataContext.Accounts.AddAsync(account);
-                    _dataContext.SaveChanges();
-                    transaction.Commit();
-                }
-                catch (DbUpdateException e)
-                {
-                    if (e.GetBaseException() is SqlException sqlException
-                        && (sqlException.Number == UniqueConstraintViolation || sqlException.Number == UniqueKeyViolation))
-                    {
-                        _logger.LogWarning($"AccountRepository: Rolling back Id:{account.Id} - item already exists.");
-                        transaction.Rollback();
-                    }
+                    _logger.LogWarning($"AccountRepository: Rolling back Id:{account.Id} - item already exists.");
+
                 }
             }
+
         }
 
         public async Task UpdateName(Account account)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+
+            var entity = await _dataContext.Accounts.FindAsync(account.Id);
+
+            if (entity != null)
             {
-                var entity = await _dataContext.Accounts.FindAsync(account.Id);
-
-                if (entity != null)
-                {
-                    entity.Name = account.Name;
-                    _dataContext.SaveChanges();
-                }
-                else
-                {
-                    throw new DbUpdateException($"Update Account Name - Record not found AccountId:{account.Id}", (Exception) null);
-                }
-                
-
-                transaction.Commit();
+                entity.Name = account.Name;
+                _dataContext.SaveChanges();
             }
+            else
+            {
+                throw new DbUpdateException($"Update Account Name - Record not found AccountId:{account.Id}", (Exception)null);
+            }
+
         }
 
         public async Task UpdateLevyStatus(Account account)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+
+            var entity = await _dataContext.Accounts.FindAsync(account.Id);
+
+            if (entity != null)
             {
-                var entity = await _dataContext.Accounts.FindAsync(account.Id);
-
-                if (entity != null)
-                {
-                    entity.IsLevy = account.IsLevy;
-                    _dataContext.SaveChanges();
-                }
-                else
-                {
-                    throw new DbUpdateException($"Update Account Levy Status - Record not found AccountId:{account.Id}", (Exception) null);
-                }
-                
-
-                transaction.Commit();
+                entity.IsLevy = account.IsLevy;
+                _dataContext.SaveChanges();
             }
+            else
+            {
+                throw new DbUpdateException($"Update Account Levy Status - Record not found AccountId:{account.Id}", (Exception)null);
+            }
+
         }
     }
 }

@@ -30,24 +30,20 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Add(ProviderPermission permission)
         {
-            using (var transaction = _dataContext.Database.BeginTransaction())
+            var existingPermission = await _dataContext.ProviderPermissions.FindAsync(permission.AccountId,
+                permission.AccountLegalEntityId, permission.ProviderId);
+
+            if (existingPermission == null)
             {
-                var existingPermission = await _dataContext.ProviderPermissions.FindAsync(permission.AccountId,
-                    permission.AccountLegalEntityId, permission.ProviderId);
-
-                if (existingPermission == null)
-                {
-                    await _dataContext.ProviderPermissions.AddAsync(permission);
-                }
-                else
-                {
-                    existingPermission.CanCreateCohort = permission.CanCreateCohort;
-
-                }
-
-                _dataContext.SaveChanges();
-                transaction.Commit();
+                await _dataContext.ProviderPermissions.AddAsync(permission);
             }
+            else
+            {
+                existingPermission.CanCreateCohort = permission.CanCreateCohort;
+
+            }
+
+            _dataContext.SaveChanges();
         }
     }
 }
