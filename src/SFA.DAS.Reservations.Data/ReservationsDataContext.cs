@@ -51,7 +51,9 @@ namespace SFA.DAS.Reservations.Data
         {
             if (_connection != null)
             {
-                optionsBuilder.UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
+                optionsBuilder
+                    .UseLazyLoadingProxies()
+                    .UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
             }
             else
             {
