@@ -41,7 +41,7 @@ namespace SFA.DAS.Reservations.Data
         public ReservationsDataContext(DbContextOptions options) : base(options)
         {
         }
-        
+
         public ReservationsDataContext(DbContextOptions<ReservationsDataContext> options, IDbConnection connection) : base(options)
         {
             _connection = connection;
@@ -55,10 +55,8 @@ namespace SFA.DAS.Reservations.Data
                     .UseLazyLoadingProxies()
                     .UseSqlServer(_connection as DbConnection, options => options.EnableRetryOnFailure(3));
             }
-            else
-            {
-                optionsBuilder.UseLazyLoadingProxies();
-            }
+
+            optionsBuilder.UseLazyLoadingProxies();
         }
 
         public override int SaveChanges()
