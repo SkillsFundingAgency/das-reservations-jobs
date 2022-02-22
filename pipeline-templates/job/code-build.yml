@@ -1,0 +1,92 @@
+jobs:
+- job: CodeBuild
+  pool:
+    name: DAS - Continuous Integration Agents
+    demands: LATEST_DOTNET_VERSION -equals 3.1
+    workspace:
+      clean: all
+  variables:
+  - name: BuildConfiguration
+    value: release
+  - group: BUILD Management Resources
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+      SonarCloudProjectKey: SkillsFundingAgency_das-reservations-jobs
+
+  - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
+
+jobs:
+- job: CodeBuild
+  pool:
+    name: DAS - Continuous Integration Agents
+    demands: LATEST_DOTNET_VERSION -equals 3.1
+    workspace:
+      clean: all
+  variables:
+  - name: BuildConfiguration
+    value: release
+  - group: BUILD Management Resources
+  steps:
+  - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+
+  - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+    parameters:
+      SonarCloudProjectKey: SkillsFundingAgency_das-employer-incentives-functions
+
+  - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App Course'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.Reservations.Functions.RefreshCourse/SFA.DAS.Reservations.Functions.RefreshCourse.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App Reservation'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.Reservations.Functions.Reservations/SFA.DAS.Reservations.Functions.Reservations.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App LegalEntities'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.Reservations.Functions.LegalEntities/SFA.DAS.Reservations.Functions.LegalEntities.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+  
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App ReservationIndex'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.Reservations.Functions.ReservationIndex/SFA.DAS.Reservations.Functions.ReservationIndex.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Function App ProviderPermissions'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/SFA.DAS.Reservations.Functions.ProviderPermission/SFA.DAS.Reservations.Functions.ProviderPermission.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    Contents: |
+     azure/**
+    TargetFolder: '$(build.artifactstagingdirectory)/publish'
+    OverWrite: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)/publish'
