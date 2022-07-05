@@ -88,6 +88,10 @@
     },
     "sharedSQLServerName": {
       "type": "string"
+    },
+    "utcValue": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
     }
   },
   "variables": {
@@ -114,7 +118,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "reservations-jobs-subnet",
+      "name": "[concat('reservations-jobs-subnet-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -144,7 +148,7 @@
     },
     {
       "apiVersion": "2021-04-01",
-      "name": "reservations-jobs-sql-firewall-rule",
+      "name": "[concat('reservations-jobs-sql-firewall-rule-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -158,14 +162,14 @@
             "value": "[parameters('sharedSQLServerName')]"
           },
           "subnetResourceIdList": {
-            "value": "[createArray(reference('reservations-jobs-subnet').outputs.SubnetResourceId.value)]"
+            "value": "[createArray(reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
           }
         }
       }
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "worker-app-service-plan",
+      "name": "[concat('worker-app-service-plan-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -195,7 +199,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-insights-crs",
+      "name": "[concat('function-app-insights-crs-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -216,7 +220,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-insights-rsrv",
+      "name": "[concat('function-app-insights-rsrv-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -237,7 +241,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-insights-lgle",
+      "name": "[concat('function-app-insights-lgle-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -258,7 +262,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-insights-prv",
+      "name": "[concat('function-app-insights-prv-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -279,7 +283,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-insights-idx",
+      "name": "[concat('function-app-insights-idx-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -300,7 +304,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "storage-account",
+      "name": "[concat('storage-account-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -321,7 +325,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "apim-product-subscription",
+      "name": "[concat('apim-product-subscription-', parameters('utcValue'))]",
       "resourceGroup": "[parameters('sharedApimResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -345,7 +349,7 @@
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-crs",
+      "name": "[concat('function-app-crs-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -365,7 +369,7 @@
             "value": "[variables('resourceGroupName')]"
           },
           "subnetResourceId": {
-            "value": "[reference('reservations-jobs-subnet').outputs.SubnetResourceId.value]"
+            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": {
@@ -388,11 +392,11 @@
                 },
                 {
                   "name": "AzureWebJobsStorage",
-                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights-crs').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('function-app-insights-crs-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -420,12 +424,12 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan"
+        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-rsrv",
+      "name": "[concat('function-app-rsrv-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -445,7 +449,7 @@
             "value": "[variables('resourceGroupName')]"
           },
           "subnetResourceId": {
-            "value": "[reference('reservations-jobs-subnet').outputs.SubnetResourceId.value]"
+            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": {
@@ -476,11 +480,11 @@
                 },
                 {
                   "name": "AzureWebJobsStorage",
-                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights-rsrv').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('function-app-insights-rsrv-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -508,12 +512,12 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan"
+        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-legalentities",
+      "name": "[concat('function-app-legalentities-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -533,7 +537,7 @@
             "value": "[variables('resourceGroupName')]"
           },
           "subnetResourceId": {
-            "value": "[reference('reservations-jobs-subnet').outputs.SubnetResourceId.value]"
+            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": {
@@ -564,11 +568,11 @@
                 },
                 {
                   "name": "AzureWebJobsStorage",
-                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights-lgle').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('function-app-insights-lgle-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -596,12 +600,12 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan"
+        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-rsrv-idx",
+      "name": "[concat('function-app-rsrv-idx-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -621,7 +625,7 @@
             "value": "[variables('resourceGroupName')]"
           },
           "subnetResourceId": {
-            "value": "[reference('reservations-jobs-subnet').outputs.SubnetResourceId.value]"
+            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": {
@@ -644,11 +648,11 @@
                 },
                 {
                   "name": "AzureWebJobsStorage",
-                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights-idx').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('function-app-insights-idx-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -677,12 +681,12 @@
       },
 
       "dependsOn": [
-        "worker-app-service-plan"
+        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
     },
     {
       "apiVersion": "2020-06-01",
-      "name": "function-app-rsrv-prv",
+      "name": "[concat('function-app-rsrv-prv-', parameters('utcValue'))]",
       "resourceGroup": "[variables('resourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -702,7 +706,7 @@
             "value": "[variables('resourceGroupName')]"
           },
           "subnetResourceId": {
-            "value": "[reference('reservations-jobs-subnet').outputs.SubnetResourceId.value]"
+            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
           },
           "functionAppAppSettings": {
             "value": {
@@ -733,11 +737,11 @@
                 },
                 {
                   "name": "AzureWebJobsStorage",
-                  "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('function-app-insights-prv').outputs.InstrumentationKey.value]"
+                  "value": "[reference(concat('function-app-insights-prv-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -761,7 +765,7 @@
         }
       },
       "dependsOn": [
-        "worker-app-service-plan"
+        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
     }
   ],
