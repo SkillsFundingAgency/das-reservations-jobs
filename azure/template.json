@@ -86,6 +86,9 @@
     "subnetDelegations": {
       "type": "array"
     },
+    "workerAccessRestrictions": {
+      "type": "array"
+    },
     "sharedSQLServerName": {
       "type": "string"
     },
@@ -451,6 +454,9 @@
           "subnetResourceId": {
             "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
           },
+          "ipSecurityRestrictions": {
+            "value": "[parameters('workerAccessRestrictions')]"
+          },
           "functionAppAppSettings": {
             "value": {
               "array": [
@@ -538,6 +544,9 @@
           },
           "subnetResourceId": {
             "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+          },
+          "ipSecurityRestrictions": {
+            "value": "[parameters('workerAccessRestrictions')]"
           },
           "functionAppAppSettings": {
             "value": {
@@ -707,6 +716,9 @@
           },
           "subnetResourceId": {
             "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+          },
+          "ipSecurityRestrictions": {
+            "value": "[parameters('workerAccessRestrictions')]"
           },
           "functionAppAppSettings": {
             "value": {
