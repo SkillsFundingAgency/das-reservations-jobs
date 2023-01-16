@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         protected Guid UserId;
         protected readonly TestData TestData;
         protected readonly IServiceProvider Services;
-
+        private ReservationsDataContext dbContext;
         public StepsBase(TestServiceProvider serviceProvider, TestData testData)
         {
             Services = serviceProvider;
@@ -39,6 +39,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             InitialiseUserDetails();
         }
 
+
+        [AfterScenario]
+        public void DisposeTestDatabaseData()
+        {
+            dbContext.Database.EnsureDeleted();
+        }
+
         private void InitialiseTestDatabaseData()
         {
             TestData.Course = new Course
@@ -47,7 +54,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 Level = 1,
                 Title = "Tester"
             };
-            
+
             TestData.AccountLegalEntity = new AccountLegalEntity
             {
                 AccountId = AccountId,
@@ -56,8 +63,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 AgreementSigned = true
             };
 
-            
-            var dbContext = Services.GetService<ReservationsDataContext>();
+
+            dbContext = Services.GetService<ReservationsDataContext>();
 
             if (dbContext.Apprenticeships.Find(TestData.Course.CourseId) == null)
             {
@@ -66,7 +73,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 
             var legalEntity = dbContext.AccountLegalEntities
                 .SingleOrDefault(e => e.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
-            
+
             if (legalEntity == null)
             {
                 dbContext.AccountLegalEntities.Add(TestData.AccountLegalEntity);
@@ -74,7 +81,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 dbContext.SaveChanges();
             }
         }
-        
+
         private void InitialiseTestDataReservation()
         {
             TestData.ReservationId = Guid.NewGuid();
@@ -133,13 +140,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         private void InitialiseProviderPermission()
         {
             TestData.ProviderPermission = new ProviderPermission
-                { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
+            { AccountId = 1, AccountLegalEntityId = 1, CanCreateCohort = true, ProviderId = 1 };
         }
 
         private void InitialiseUserDetails()
         {
             TestData.UserDetails = new UserDetails
-                {CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = ""};
+            { CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = "" };
         }
     }
 }

@@ -21,8 +21,8 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests
                 10, 11, 12, 
                 13, 14, Guid.NewGuid(), 
                 "test@example.com", "Test", 
-                "Tester", new HashSet<Operation>(), DateTime.Now );
-            
+                "Tester", new HashSet<Operation>(), null, DateTime.Now);
+
             //Act
             await HandleProviderPermissionUpdatedEvent.Run(
                 message,

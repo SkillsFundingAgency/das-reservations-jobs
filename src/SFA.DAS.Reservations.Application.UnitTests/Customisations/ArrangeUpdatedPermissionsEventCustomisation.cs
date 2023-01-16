@@ -21,7 +21,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Customisations
                 10, 11, 12,
                 13, 14, Guid.NewGuid(),
                 "test@example.com", "Test",
-                "Tester", new HashSet<Operation> {_operation}, DateTime.Now);
+                "Tester", new HashSet<Operation> {_operation}, null, DateTime.Now);
             fixture.Inject(permissionEvent);
         }
     }

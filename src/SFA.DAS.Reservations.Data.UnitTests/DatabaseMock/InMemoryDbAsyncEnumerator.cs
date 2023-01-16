@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
@@ -15,20 +14,9 @@ namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
             this.innerEnumerator = enumerator;
         }
 
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public Task<bool> MoveNext(CancellationToken cancellationToken)
-        {
-            return Task.FromResult(this.innerEnumerator.MoveNext());
-        }
-
         public T Current => this.innerEnumerator.Current;
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual async ValueTask Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -42,5 +30,15 @@ namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
             }
         }
 
+        public ValueTask<bool> MoveNextAsync()
+        {
+            return ValueTask.FromResult(this.innerEnumerator.MoveNext());
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

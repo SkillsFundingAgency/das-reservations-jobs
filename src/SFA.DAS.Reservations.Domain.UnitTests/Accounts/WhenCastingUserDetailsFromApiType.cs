@@ -12,9 +12,12 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Accounts
         public void Then_Maps_Matching_Fields(TeamMemberViewModel source)
         {
             UserDetails userDetails = source;
+            userDetails.Should().BeEquivalentTo(source, options =>
+                    options.ExcludingMissingMembers()
+                    .Excluding(c => c.Status)
+                    );
 
-            userDetails.Should().BeEquivalentTo(source, options => 
-                options.ExcludingMissingMembers());
+            userDetails.Status.Should().Be((byte)source.Status);
         }
     }
 }

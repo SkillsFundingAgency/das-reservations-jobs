@@ -37,7 +37,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Accounts.Services
 
             var response = await service.GetAccountUsers(accountId);
 
-            response.Should().BeEquivalentTo(apiTeamMembers);
+            response.Should().BeEquivalentTo(apiTeamMembers, options => options
+                .Excluding(c => c.Status)
+            );
+
+            foreach (var exp in apiTeamMembers)
+                response.Should().Contain(act =>
+                    act.Status.Equals((byte)exp.Status)
+                );
+
         }
     }
 }

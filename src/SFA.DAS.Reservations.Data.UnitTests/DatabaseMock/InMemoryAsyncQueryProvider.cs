@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
 {
@@ -36,20 +35,20 @@ namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
             return this.innerQueryProvider.Execute<TResult>(expression);
         }
 
-        public Task<object> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
+        public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
         {
-            return Task.FromResult(this.Execute(expression));
-        }
+            var expectedResultType = typeof(TResult).GetGenericArguments()[0];
+            var executionResult = typeof(IQueryProvider)
+                .GetMethod(
+                    name: nameof(IQueryProvider.Execute),
+                    genericParameterCount: 1,
+                    types: new[] { typeof(Expression) })
+                .MakeGenericMethod(expectedResultType)
+                .Invoke(this, new[] { expression });
 
-        public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
-        {
-
-            return Task.FromResult(this.Execute<TResult>(expression)).ToAsyncEnumerable();
-        }
-
-        public Task<TResult> ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(this.Execute<TResult>(expression));
+            return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))
+                ?.MakeGenericMethod(expectedResultType)
+                .Invoke(null, new[] { executionResult });
         }
     }
 }

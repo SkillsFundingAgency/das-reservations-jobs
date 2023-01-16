@@ -125,7 +125,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddTransient<IAccountNameUpdatedHandler, AccountNameUpdatedHandler>();
 
             services.AddSingleton<IValidator<AddedLegalEntityEvent>, AddAccountLegalEntityValidator>();
-
+            services.AddLogging();
             //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
 
             return services.BuildServiceProvider();
