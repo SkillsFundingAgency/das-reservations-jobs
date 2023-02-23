@@ -111,7 +111,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
             services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
             services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
             services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
-
+            services.AddLogging();
             return services.BuildServiceProvider();
         }
     }

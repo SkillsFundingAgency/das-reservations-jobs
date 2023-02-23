@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NServiceBus;
-using SFA.DAS.NServiceBus;
-using SFA.DAS.NServiceBus.AzureServiceBus;
-using SFA.DAS.NServiceBus.NewtonsoftJsonSerializer;
+using SFA.DAS.NServiceBus.Configuration;
+using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
+using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Domain.Reservations;
@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.TestConsole
                     10, 11, 12,
                     13, 14, Guid.NewGuid(),
                     "test@example.com", "Test",
-                    "Tester", new HashSet<Operation>(), DateTime.Now);
+                    "Tester", new HashSet<Operation>(),null, DateTime.Now);
 
                 await endpointInstance.Publish(message);
 

@@ -23,7 +23,9 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Reservations
                     .Excluding(c=>c.CourseName)
                     .Excluding(c=>c.EmployerDeleted)
                     .Excluding(c=>c.EndDate)
+                    .Excluding(c => c.Status)
                 );
+            result.Status.Should().Be((byte)source.Status);
             result.Id.Should().Be($"{0}_{source.AccountLegalEntityId}_{source.Id}");
         }
     }

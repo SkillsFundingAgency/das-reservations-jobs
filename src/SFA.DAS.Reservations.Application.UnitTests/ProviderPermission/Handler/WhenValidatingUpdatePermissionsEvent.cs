@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Handler
                 0, 11, 12,	
                 13, 14, Guid.NewGuid(),	
                 "test@example.com", "Test",	
-                "Tester", new HashSet<Operation> { Operation.Recruitment }, DateTime.Now);	
+                "Tester", new HashSet<Operation> { Operation.Recruitment }, null, DateTime.Now);	
 
             //Act	
             var result = validator.Validate(permissionEvent);
@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Handler
                 1, 0, 12,	
                 13, 14, Guid.NewGuid(),	
                 "test@example.com", "Test",	
-                "Tester", new HashSet<Operation> { Operation.Recruitment }, DateTime.Now);	
+                "Tester", new HashSet<Operation> { Operation.Recruitment }, null, DateTime.Now);	
 
             //Act	
             var result = validator.Validate(permissionEvent);
@@ -56,7 +56,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Handler
                 1, 11, 12,	
                 13, 0, Guid.NewGuid(),	
                 "test@example.com", "Test",	
-                "Tester", new HashSet<Operation> { Operation.Recruitment }, DateTime.Now);	
+                "Tester", new HashSet<Operation> { Operation.Recruitment }, null, DateTime.Now);	
 
             //Act	
             var result = validator.Validate(permissionEvent);

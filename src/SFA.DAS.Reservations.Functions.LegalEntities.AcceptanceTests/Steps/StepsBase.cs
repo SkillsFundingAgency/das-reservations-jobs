@@ -16,14 +16,20 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
         protected Guid UserId;
         protected readonly TestData TestData;
         protected readonly IServiceProvider Services;
+        private ReservationsDataContext dbContext;
 
         public StepsBase(TestServiceProvider serviceProvider, TestData testData)
         {
             Services = serviceProvider;
             TestData = testData;
         }
-        
-        
+
+        [AfterScenario]
+        public void DisposeTestDatabaseData()
+        {
+            dbContext.Database.EnsureDeleted();
+        }
+
         [BeforeScenario()]
         public void InitialiseTestDatabaseData()
         {
@@ -49,7 +55,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 IsLevy = false
             };
             
-            var dbContext = Services.GetService<ReservationsDataContext>();
+             dbContext = Services.GetService<ReservationsDataContext>();
 
             if (dbContext.Apprenticeships.Find(TestData.Course.CourseId) == null)
             {

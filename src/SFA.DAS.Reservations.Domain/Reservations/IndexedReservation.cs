@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
@@ -25,12 +26,12 @@ namespace SFA.DAS.Reservations.Domain.Reservations
 
                 if (StartDate.HasValue)
                 {
-                    period += $"{StartDate:MMM yyyy}";
+                    period += $"{StartDate.Value.ToString("MMM yyyy", CultureInfo.InvariantCulture)}";
                 }
 
                 if (ExpiryDate.HasValue)
                 {
-                    period += $" to {ExpiryDate:MMM yyyy}";
+                    period += $" to {ExpiryDate.Value.ToString("MMM yyyy", CultureInfo.InvariantCulture)}";
                 }
 
                 return period;

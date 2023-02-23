@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="7.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
-    <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.6.2276" />
-    <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="2.1.1507" />
-    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.1623" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.6.3195" />
+    <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="8.29.1" />
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.3195" />
     <PackageReference Include="SFA.DAS.EmployerFinance.Messages" Version="1.6.1639" />
-    <PackageReference Include="SFA.DAS.ProviderRelationships.Messages" Version="3.2.15" />
+    <PackageReference Include="SFA.DAS.ProviderRelationships.Messages" Version="4.0.19" />
     <PackageReference Include="SFA.DAS.Reservations.Messages" Version="0.2.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
