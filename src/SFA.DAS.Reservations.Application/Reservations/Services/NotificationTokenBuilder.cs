@@ -32,7 +32,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 {TokenKeyNames.StartDateDescription, GenerateStartDateDescription(notificationEvent.StartDate, notificationEvent.EndDate)},
                 {TokenKeyNames.CourseDescription, GenerateCourseDescription(notificationEvent.CourseName, notificationEvent.CourseLevel)},
                 {TokenKeyNames.HashedAccountId, GetHashedAccountId(notificationEvent.AccountId)},
-                {TokenKeyNames.BaseUrl, _configuration.ApprenticeshipBaseUrl}
+                {TokenKeyNames.BaseUrl, _configuration.ReservationsBaseUrl}
             };
         }
 

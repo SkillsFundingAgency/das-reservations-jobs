@@ -48,14 +48,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             [Frozen] Mock<IEncodingService> mockEncodingService,
             ReservationsJobs config)
         {
-            config.ApprenticeshipBaseUrl = "https://apprenticeships/";
+            config.ReservationsBaseUrl = "https://apprenticeships";
 
             NotificationTokenBuilder builder =
                 new NotificationTokenBuilder(mockProviderService.Object, mockEncodingService.Object, config);
 
             var tokens = await builder.BuildTokens(createdEvent);
 
-            tokens[TokenKeyNames.BaseUrl].Should().Be(config.ApprenticeshipBaseUrl);
+            tokens[TokenKeyNames.BaseUrl].Should().Be(config.ReservationsBaseUrl);
         }
 
         [Test, MoqAutoData]
