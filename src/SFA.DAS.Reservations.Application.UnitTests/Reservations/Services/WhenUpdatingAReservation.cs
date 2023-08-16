@@ -93,8 +93,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 .ThrowsAsync(new InvalidOperationException());
 
             //Act
-            await _service.RefreshReservationIndex();
-            
+            await _service.UpdateReservationStatus(reservationId, status);
+
             //Assert
             _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
         }
