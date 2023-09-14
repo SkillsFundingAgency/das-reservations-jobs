@@ -72,13 +72,13 @@ namespace SFA.DAS.Reservations.Data.Repository
               
         }
 
-        public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
+        public async Task<List<Reservation>> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
         {
-            return _dataContext.Reservations
+            return await _dataContext.Reservations
                 .Where(c => c.AccountLegalEntityId.Equals(accountLegalEntityId)
                           && c.Status != (byte)ReservationStatus.Deleted
                           && c.Status != (byte)ReservationStatus.Change
-                          && !c.IsLevyAccount).ToArray();
+                          && !c.IsLevyAccount).ToListAsync();
         }
 
         public async Task<Reservation> GetReservationById(Guid reservationId)
