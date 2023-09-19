@@ -31,7 +31,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public async Task Then_Updates_Index_With_New_Doc_For_Each_AccountLegalEntity(
             uint providerId,
             long accountLegalEntityId,
-            List<Reservation> reservationsFound,
+            Task<List<Reservation>> reservationsFound,
             [Frozen] Mock<IReservationRepository> mockReservationsRepo,
             [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
             ReservationService service)
@@ -46,8 +46,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             await service.AddProviderToSearchIndex(providerId, accountLegalEntityId);
 
-            actualIndexedReservations.Count().Should().Be(reservationsFound.Count);
-            foreach (var reservation in reservationsFound)
+            actualIndexedReservations.Count().Should().Be(reservationsFound.Result.Count);
+            foreach (var reservation in reservationsFound.Result)
             {
                 var actualReservation = actualIndexedReservations.Single(indexedReservation =>
                     indexedReservation.ReservationId == reservation.Id);
@@ -82,7 +82,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             IEnumerable<IndexedReservation> actualIndexedReservations = new List<IndexedReservation>();
             mockReservationsRepo
                 .Setup(repository => repository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId))
-                .Returns(new List<Reservation>());
+                .ReturnsAsync(new List<Reservation>());
             mockIndexRepo
                 .Setup(repository => repository.Add(It.IsAny<IEnumerable<IndexedReservation>>()))
                 .Callback((IEnumerable<IndexedReservation> res) => actualIndexedReservations = res);

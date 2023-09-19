@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -50,13 +51,13 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         }
 
         [Test]
-        public void Then_Returns_All_Non_Levy_Non_Deleted_Non_Change_Reservations_For_AccountLegalEntity()
+        public async Task Then_Returns_All_Non_Levy_Non_Deleted_Non_Change_Reservations_For_AccountLegalEntityAsync()
         {
             //Arrange
             var expectedAccountLegalEntityId = 2;
 
             //Act
-            var reservations = _reservationRepository.GetAllNonLevyForAccountLegalEntity(expectedAccountLegalEntityId);
+            var reservations = await _reservationRepository.GetAllNonLevyForAccountLegalEntity(expectedAccountLegalEntityId);
 
             //Assert 
             reservations.Should().BeEquivalentTo(_expectedReservations
