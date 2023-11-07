@@ -94,7 +94,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Act
             await _service.UpdateReservationStatus(reservationId, status);
-
+            
             //Assert
             _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
         }

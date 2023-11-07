@@ -76,16 +76,15 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
                 if (permissions != null)
                 {
-                    var indexedReservationsTasks = new List<Task<List<IndexedReservation>>>();
-
                     foreach (var permission in permissions)
                     {
-                        indexedReservationsTasks.Add(ProcessPermissionAsync(permission));
+                        var matchingReservations = _reservationsRepository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
+                        if (matchingReservations != null && matchingReservations.Any())
+                        {
+                            indexedReservations.AddRange(matchingReservations.Select(c =>
+                                MapReservation(c, Convert.ToUInt32(permission.ProviderId))));
+                        }
                     }
-
-                    var indexedReservationsLists = await Task.WhenAll(indexedReservationsTasks);
-
-                    indexedReservations = indexedReservationsLists.SelectMany(list => list).ToList();                                       
                 }
 
                 if (!indexedReservations.Any())
@@ -104,20 +103,6 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 _logger.LogError($"ReservationService: Unable to create new index: {e.Message}", e);
                 throw;
             }
-        }
-        
-        private async Task<List<IndexedReservation>> ProcessPermissionAsync(Domain.Entities.ProviderPermission permission)
-        {
-            var indexedReservations = new List<IndexedReservation>();
-            var matchingReservations = await _reservationsRepository.GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId);
-    
-            if (matchingReservations != null && matchingReservations.Any())
-            {
-                indexedReservations.AddRange(matchingReservations.Select(c =>
-                    MapReservation(c, Convert.ToUInt32(permission.ProviderId))));
-            }
-
-            return indexedReservations;
         }
 
         public async Task AddReservationToReservationsIndex(Domain.Reservations.Reservation reservation)
@@ -159,7 +144,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
             var indexedReservations = new List<IndexedReservation>();
 
-            var matchingReservations = await _reservationsRepository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId);
+            var matchingReservations = _reservationsRepository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId)?.ToList();
 
             _logger.LogInformation($"[{matchingReservations.Count}] providers found for ProviderId [{providerId}], AccountLegalEntityId [{accountLegalEntityId}].");
 
