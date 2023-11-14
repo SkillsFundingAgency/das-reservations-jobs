@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Reservations.Services;
+using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Testing.AutoFixture;
@@ -38,6 +39,23 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             tokens[TokenKeyNames.StartDateDescription].Should()
                 .Be($"{createdEvent.StartDate:MMM yyyy} to {createdEvent.EndDate:MMM yyyy}");
+        }
+
+        [Test, MoqAutoData]
+        public async Task Then_Adds_BaseUrl_To_Tokens(
+            ReservationCreatedNotificationEvent createdEvent,
+            [Frozen] Mock<IProviderService> mockProviderService,
+            [Frozen] Mock<IEncodingService> mockEncodingService,
+            ReservationsJobs config)
+        {
+            config.ReservationsBaseUrl = "https://apprenticeships";
+
+            NotificationTokenBuilder builder =
+                new NotificationTokenBuilder(mockProviderService.Object, mockEncodingService.Object, config);
+
+            var tokens = await builder.BuildTokens(createdEvent);
+
+            tokens[TokenKeyNames.BaseUrl].Should().Be(config.ReservationsBaseUrl);
         }
 
         [Test, MoqAutoData]
