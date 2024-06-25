@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
@@ -77,7 +77,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var notificationsService = Services.GetService<INotificationsService>();
             var mock = Mock.Get(notificationsService);
 
-            mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()), Times.Once);
+            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()), Times.Once);
         }
     }
 }
