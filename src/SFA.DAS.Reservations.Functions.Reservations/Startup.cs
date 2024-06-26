@@ -131,6 +131,8 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
         services.AddSingleton(new ReservationJobsEnvironment(_configuration["EnvironmentName"]));
 
+        services.AddNServiceBus(jobsConfig);
+
         if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
