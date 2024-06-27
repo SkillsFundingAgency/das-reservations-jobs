@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.TestConsole
     {
         public async Task Run()
         {
-            var connectionString = NServiceBus.AzureFunction.Infrastructure.EnvironmentVariables.NServiceBusConnectionString;
+            var connectionString = NServiceBus.AzureFunction.Configuration.EnvironmentVariables.NServiceBusConnectionString;
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Reservations.TestConsole")
                 .UseAzureServiceBusTransport(connectionString, r =>
                 {

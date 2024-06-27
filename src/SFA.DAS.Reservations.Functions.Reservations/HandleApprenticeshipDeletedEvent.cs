@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.CommitmentsV2.Messages.Events;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
+using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.Attributes;
@@ -14,7 +14,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
     {
         [FunctionName("HandleApprenticeshipDeletedEvent")]
         public static async Task Run(
-            [NServiceBusTrigger(EndPoint = QueueNames.DraftApprenticeshipDeleted)] DraftApprenticeshipDeletedEvent message, 
+            [NServiceBusTrigger(Endpoint = QueueNames.DraftApprenticeshipDeleted)] DraftApprenticeshipDeletedEvent message, 
             [Inject]ILogger<DraftApprenticeshipDeletedEvent> log, 
             [Inject] IApprenticeshipDeletedHandler handler)
         {

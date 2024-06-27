@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
-using SFA.DAS.Reservations.Domain.Notifications;
+using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.Attributes;
@@ -15,7 +14,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
     {
         [FunctionName("HandleReservationCreatedEvent")]
         public static async Task Run(
-            [NServiceBusTrigger(EndPoint = QueueNames.ReservationCreated)] ReservationCreatedEvent message,
+            [NServiceBusTrigger(Endpoint = QueueNames.ReservationCreated)] ReservationCreatedEvent message,
             [Inject] ILogger<ReservationCreatedEvent> log,
             [Inject] IReservationCreatedHandler handler)
         {

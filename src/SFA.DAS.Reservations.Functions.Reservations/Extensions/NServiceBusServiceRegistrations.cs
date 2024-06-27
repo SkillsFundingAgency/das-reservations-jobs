@@ -5,7 +5,6 @@ using NServiceBus;
 using SFA.DAS.NServiceBus.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
-using SFA.DAS.NServiceBus.Configuration.NLog;
 using SFA.DAS.NServiceBus.Hosting;
 using SFA.DAS.Reservations.Domain.Configuration;
 
@@ -27,8 +26,7 @@ public static class NServiceBusServiceRegistrations
                     .UseErrorQueue($"{EndpointName}-errors")
                     .UseLicense(configuration.NServiceBusLicense)
                     .UseMessageConventions()
-                    .UseNewtonsoftJsonSerializer()
-                    .UseNLogFactory();
+                    .UseNewtonsoftJsonSerializer();
 
                 if (hostingEnvironment.IsDevelopment())
                 {

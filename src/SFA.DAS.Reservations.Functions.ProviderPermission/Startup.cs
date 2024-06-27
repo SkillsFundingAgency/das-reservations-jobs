@@ -2,19 +2,16 @@
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
+using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
@@ -38,7 +35,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
         {
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
-            builder.AddExtension<NServiceBusExtensionConfig>();
+            builder.AddExtension<NServiceBusExtensionConfigProvider>();
         }
     }
     internal class ServiceProviderBuilder : IServiceProviderBuilder

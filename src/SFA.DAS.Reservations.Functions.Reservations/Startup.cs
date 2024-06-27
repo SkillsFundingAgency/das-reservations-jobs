@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
+using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
@@ -44,7 +44,7 @@ public class Startup : IWebJobsStartup
     {
         builder.AddExecutionContextBinding();
         builder.AddDependencyInjection<ServiceProviderBuilder>();
-        builder.AddExtension<NServiceBusExtensionConfig>();
+        builder.AddExtension<NServiceBusExtensionConfigProvider>();
     }
 }
 

@@ -2,9 +2,6 @@
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,14 +9,13 @@ using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.EAS.Account.Api.Client;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
+using SFA.DAS.EmployerAccounts.Messages.Events;
+using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Validators;
 using SFA.DAS.Reservations.Application.Accounts.Handlers;
 using SFA.DAS.Reservations.Application.Accounts.Services;
-using SFA.DAS.EmployerAccounts.Messages.Events;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -42,7 +38,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
         {
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
-            builder.AddExtension<NServiceBusExtensionConfig>();
+            builder.AddExtension<NServiceBusExtensionConfigProvider>();
         }
     }
 
