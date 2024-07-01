@@ -5,7 +5,6 @@ using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
@@ -129,12 +128,10 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IIndexRegistry, IndexRegistry>();
 
-       // services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
+        services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
         services.AddSingleton(new ReservationJobsEnvironment(_configuration["EnvironmentName"]));
-        
-        var logger = serviceProvider.GetLogger(nameof(Startup),_configuration);
-
-        services.AddNServiceBus(jobsConfig, logger);
+       
+        services.AddNServiceBus(jobsConfig);
 
         if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
