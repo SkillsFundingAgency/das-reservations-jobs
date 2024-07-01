@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentAssertions.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
@@ -62,10 +65,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
 
             var mockNotificationTokenBuilder = new Mock<INotificationTokenBuilder>();
             serviceCollection.AddSingleton(mockNotificationTokenBuilder.Object);
-             
+            
             _serviceProvider = serviceProviderBuilder.Build();
-            
-            
         }
 
         public object GetService(Type serviceType)
@@ -84,6 +85,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
                     new KeyValuePair<string, string>("EnvironmentName", "DEV"),
                     new KeyValuePair<string, string>("Version", "1.0"),
                     new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
+                    new KeyValuePair<string, string>("ReservationsJobs:NServiceBusConnectionString", "Endpoint=sb://test.domain."),
                 }
             };
             
