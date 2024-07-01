@@ -129,7 +129,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IIndexRegistry, IndexRegistry>();
 
-        services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
+       // services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
         services.AddSingleton(new ReservationJobsEnvironment(_configuration["EnvironmentName"]));
         
         var logger = serviceProvider.GetLogger(nameof(Startup),_configuration);
