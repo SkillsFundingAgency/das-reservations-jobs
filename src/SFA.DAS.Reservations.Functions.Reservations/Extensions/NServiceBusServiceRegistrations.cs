@@ -32,6 +32,7 @@ public static class NServiceBusServiceRegistrations
         else
         {
             Environment.SetEnvironmentVariable("NServiceBusConnectionString", config.NServiceBusConnectionString);
+            services.AddNServiceBus(logger);
         }
 
         return services;
