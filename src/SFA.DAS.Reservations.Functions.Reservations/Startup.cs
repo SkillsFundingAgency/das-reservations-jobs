@@ -130,8 +130,10 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
         services.AddSingleton(new ReservationJobsEnvironment(_configuration["EnvironmentName"]));
+        
+        var logger = serviceProvider.GetLogger(nameof(Startup));
 
-        services.AddNServiceBus(jobsConfig);
+        services.AddNServiceBus(jobsConfig, logger);
 
         if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
