@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;

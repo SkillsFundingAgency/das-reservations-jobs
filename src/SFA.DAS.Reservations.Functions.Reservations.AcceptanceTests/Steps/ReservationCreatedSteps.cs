@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
-using SFA.DAS.Reservations.Messages;
 using TechTalk.SpecFlow;
-using Reservation = SFA.DAS.Reservations.Domain.Reservations.Reservation;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 {
@@ -87,7 +83,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var notificationsService = Services.GetService<INotificationsService>();
             var mock = Mock.Get(notificationsService);
 
-            mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()),Times.Once);
+            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()),Times.Once);
         }
 
         [Then(@"the employer should not be notified of the (.*) reservation")]
@@ -96,7 +92,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var notificationsService = Services.GetService<INotificationsService>();
             var mock = Mock.Get(notificationsService);
 
-            mock.Verify(x => x.SendNewReservationMessage(It.IsAny<NotificationMessage>()), Times.Never);
+            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()), Times.Never);
         }
     }
 }

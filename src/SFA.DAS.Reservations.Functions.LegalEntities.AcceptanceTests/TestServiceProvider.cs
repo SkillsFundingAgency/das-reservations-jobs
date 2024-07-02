@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
-using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Application.Reservations.Services;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
 {
