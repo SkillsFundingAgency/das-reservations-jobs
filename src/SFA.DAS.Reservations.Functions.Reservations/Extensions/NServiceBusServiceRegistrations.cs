@@ -27,6 +27,7 @@ public static class NServiceBusServiceRegistrations
 
                 var endpointConfiguration = new EndpointConfiguration(EndpointName)
                     .UseErrorQueue()
+                    .UseLicense(configuration.NServiceBusLicense)
                     .UseInstallers()
                     .UseMessageConventions()
                     .UseNewtonsoftJsonSerializer()
