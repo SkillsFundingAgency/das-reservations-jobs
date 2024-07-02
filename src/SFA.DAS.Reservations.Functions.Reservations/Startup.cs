@@ -34,6 +34,7 @@ using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
@@ -167,6 +168,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 services.AddTransient<IAccountApiClient, AccountApiClient>();
                 services.AddTransient<INotificationsService, NotificationsService>();
             }
+            
+            services.AddNServiceBus();
 
             services.AddDatabaseRegistration(jobsConfig, Configuration["EnvironmentName"]);
             return services.BuildServiceProvider();
