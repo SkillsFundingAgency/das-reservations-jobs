@@ -23,7 +23,7 @@ public static class ConfigurationExtensions
                     options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
                     options.EnvironmentName = configuration["EnvironmentName"];
                     options.PreFixConfigurationKeys = false;
-                    options.ConfigurationKeysRawJsonResult = new[] { ConfigKeys.Encoding };
+                    options.ConfigurationKeysRawJsonResult = new[] { ConfigKeys.EncodingService };
                 }
             );
         }

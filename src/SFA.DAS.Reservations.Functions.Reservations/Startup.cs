@@ -35,7 +35,6 @@ using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
-
 namespace SFA.DAS.Reservations.Functions.Reservations;
 
 public class Startup : IWebJobsStartup
@@ -64,10 +63,10 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         var services = ServiceCollection ?? new ServiceCollection();
         services.AddHttpClient();
 
-        services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
+        services.Configure<ReservationsJobs>(_configuration.GetSection(ConfigKeys.ReservationsJobs));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
-        services.Configure<AccountApiConfiguration>(_configuration.GetSection("AccountApiConfiguration"));
+        services.Configure<AccountApiConfiguration>(_configuration.GetSection(ConfigKeys.AccountApi));
         services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
 
         var serviceProvider = services.BuildServiceProvider();
@@ -76,7 +75,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
-            var encodingConfigJson = _configuration.GetSection(ConfigKeys.Encoding).Value;
+            var encodingConfigJson = _configuration.GetSection(ConfigKeys.EncodingService).Value;
             var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
             services.AddSingleton(encodingConfig);
         }
