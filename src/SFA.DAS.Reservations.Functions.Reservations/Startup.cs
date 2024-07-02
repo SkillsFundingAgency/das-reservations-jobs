@@ -48,7 +48,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
     {
         public void Configure(IWebJobsBuilder builder)
         {
-
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
@@ -62,6 +61,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
+
         public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _loggerFactory = loggerFactory;
@@ -89,7 +89,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         public IServiceProvider Build()
         {
-
             var services = ServiceCollection ?? new ServiceCollection();
             services.AddHttpClient();
 
@@ -98,9 +97,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
             services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
-
-            services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
-            services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -139,7 +135,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
 
             services.AddTransient<IReservationService, ReservationService>();
-            
+
             services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
             services.AddTransient<IProviderService, ProviderService>();
 
@@ -169,15 +165,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 var newClient = clientFactory.CreateClient();
                 services.AddSingleton(provider => newClient);
                 services.AddTransient<IAccountApiClient, AccountApiClient>();
-                services.AddHttpClient<INotificationsService, NotificationsService>(
-                    client =>
-                    {
-                        var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
-                        var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
-                        client.BaseAddress = new Uri(notificationsConfig.ApiBaseUrl);
-                        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
-                        client.DefaultRequestHeaders.Add("accept", "application/json");
-                    });
+                services.AddTransient<INotificationsService, NotificationsService>();
             }
 
             services.AddDatabaseRegistration(jobsConfig, Configuration["EnvironmentName"]);
