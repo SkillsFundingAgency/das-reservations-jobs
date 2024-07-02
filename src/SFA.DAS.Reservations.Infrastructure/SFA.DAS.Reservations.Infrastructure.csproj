@@ -1,38 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.5" />
-    <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.2.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.39" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.4.0" />
-    <PackageReference Include="NServiceBus" Version="7.4.0" />
-    <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
-    <PackageReference Include="System.Net.Security" Version="4.3.2" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
-    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
-    <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
-    <PackageReference Include="NLog" Version="5.3.2" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.31" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.49" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.5"/>
+        <PackageReference Include="Elasticsearch.Net" Version="7.17.5"/>
+        <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.39"/>
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.4.0"/>
+        <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76"/>
+        <PackageReference Include="System.Net.Security" Version="4.3.2"/>
+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0"/>
+        <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2"/>
+        <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1"/>
+        <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1"/>
+        <PackageReference Include="NLog" Version="5.3.2"/>
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.11"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.31"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.6"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.Reservations.Application\SFA.DAS.Reservations.Application.csproj" />
-    <ProjectReference Include="..\SFA.DAS.Reservations.Data\SFA.DAS.Reservations.Data.csproj" />
-    <ProjectReference Include="..\SFA.DAS.Reservations.Domain\SFA.DAS.Reservations.Domain.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SFA.DAS.Reservations.Application\SFA.DAS.Reservations.Application.csproj"/>
+        <ProjectReference Include="..\SFA.DAS.Reservations.Data\SFA.DAS.Reservations.Data.csproj"/>
+        <ProjectReference Include="..\SFA.DAS.Reservations.Domain\SFA.DAS.Reservations.Domain.csproj"/>
+    </ItemGroup>
 
 </Project>
