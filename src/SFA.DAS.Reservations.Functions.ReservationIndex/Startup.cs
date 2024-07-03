@@ -2,17 +2,15 @@
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
@@ -35,7 +33,6 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
         {
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
-            
         }
      }
 
@@ -79,16 +76,19 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             var nLogConfiguration = new NLogConfiguration();
 
-            services.AddLogging((options) =>
+            services.AddLogging(builder =>
             {
-                options.SetMinimumLevel(LogLevel.Trace);
-                options.AddNLog(new NLogProviderOptions
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                
+                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.AddNLog(new NLogProviderOptions
                 {
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true
                 });
-                options.AddConsole();
-                options.AddDebug();
+                builder.AddConsole();
+                builder.AddDebug();
 
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
