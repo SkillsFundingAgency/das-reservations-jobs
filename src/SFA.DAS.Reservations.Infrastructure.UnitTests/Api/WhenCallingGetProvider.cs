@@ -2,12 +2,10 @@
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.OuterApi.Requests;
-using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.ImportTypes;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Testing.AutoFixture;
@@ -32,9 +30,7 @@ public class WhenCallingGetProvider
     }
 
     [Test, AutoData]
-    public void And_Response_Not_200_Then_Exception_Is_Thrown(
-        uint ukPrn,
-        Mock<IOuterApiClient> outerApiClient)
+    public void And_Response_Not_200_Then_Exception_Is_Thrown(uint ukPrn, Mock<IOuterApiClient> outerApiClient)
     {
         outerApiClient.Setup(x => x.Get<ProviderApiResponse>(new GetProviderRequest(ukPrn))).Throws<HttpRequestException>();
 

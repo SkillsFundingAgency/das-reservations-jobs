@@ -11,6 +11,7 @@ public class WhenBuildingGetStandardsRequest
     public void Then_The_Url_Is_Correct()
     {
         var actual = new GetStandardsRequest();
+        
         actual.GetUrl.Should().Be("trainingcourses");
     }
 }

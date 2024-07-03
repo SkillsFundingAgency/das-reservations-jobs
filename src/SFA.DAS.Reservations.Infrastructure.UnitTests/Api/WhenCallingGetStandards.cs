@@ -15,9 +15,7 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api;
 public class WhenCallingGetStandards
 {
     [Test, MoqAutoData]
-    public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Standards_Returned(
-        StandardApiResponse response,
-        Mock<IOuterApiClient> outerApiClient)
+    public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Standards_Returned(StandardApiResponse response, Mock<IOuterApiClient> outerApiClient)
     {
         outerApiClient.Setup(x => x.Get<StandardApiResponse>(new GetStandardsRequest())).ReturnsAsync(response);
 
@@ -32,11 +30,11 @@ public class WhenCallingGetStandards
     public void Then_If_It_Is_Not_Successful_An_Exception_Is_Thrown(Mock<IOuterApiClient> outerApiClient)
     {
         outerApiClient.Setup(x => x.Get<StandardApiResponse>(new GetStandardsRequest())).Throws<HttpRequestException>();
-            
+
         var sut = new FindApprenticeshipTrainingService(outerApiClient.Object);
 
         var result = async () => await sut.GetStandards();
-        
+
         result.Should().ThrowAsync<HttpRequestException>();
     }
 }
