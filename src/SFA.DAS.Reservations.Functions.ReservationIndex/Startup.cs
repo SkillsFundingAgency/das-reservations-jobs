@@ -100,7 +100,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
             services.AddTransient<IProviderPermissionRepository,ProviderPermissionRepository>();
             services.AddTransient<IIndexRegistry,IndexRegistry>();
             
-            services.AddElasticSearch(config, Configuration["EnvironmentName"]);
+            services.AddElasticSearch(config);
             services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);

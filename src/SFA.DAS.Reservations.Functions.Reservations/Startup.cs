@@ -95,7 +95,9 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
-        if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        var environmentName = _configuration["EnvironmentName"];
+        
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             var encodingConfigJson = _configuration.GetSection(EncodingConfigKey).Value;
             var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
@@ -104,7 +106,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         var nLogConfiguration = new NLogConfiguration();
 
-        if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             services.AddLogging(options =>
             {
@@ -135,7 +137,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
 
-        if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             services.AddTransient<INotificationsService, NotificationsService>();
             services.AddTransient<IEncodingService, EncodingService>();
@@ -149,10 +151,10 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IIndexRegistry, IndexRegistry>();
 
-        services.AddElasticSearch(jobsConfig, _configuration["EnvironmentName"]);
-        services.AddSingleton(new ReservationJobsEnvironment(_configuration["EnvironmentName"]));
+        services.AddElasticSearch(jobsConfig);
+        services.AddSingleton(new ReservationJobsEnvironment(environmentName));
 
-        if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
             var newClient = clientFactory.CreateClient();
@@ -161,8 +163,8 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             services.AddTransient<INotificationsService, NotificationsService>();
         }
             
-        services.AddNServiceBus();
-        services.AddDatabaseRegistration(jobsConfig, _configuration["EnvironmentName"]);
+        services.AddNServiceBus(environmentName);
+        services.AddDatabaseRegistration(jobsConfig, environmentName);
         
         return services.BuildServiceProvider();
     }

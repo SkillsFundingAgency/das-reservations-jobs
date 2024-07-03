@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NServiceBus;
@@ -15,16 +15,14 @@ public static class NServiceBusServiceRegistrations
 {
     private const string EndpointName = "SFA.DAS.Reservations.Jobs";
 
-    public static IServiceCollection AddNServiceBus(this IServiceCollection services)
+    public static IServiceCollection AddNServiceBus(this IServiceCollection services, string environmentName)
     {
         return services
             .AddSingleton(p =>
             {
-                var sp = services.BuildServiceProvider();
-                var configuration = sp.GetService<IOptions<ReservationsJobs>>().Value;
-
-                var hostingEnvironment = p.GetService<IHostingEnvironment>();
-
+                var serviceProvider = services.BuildServiceProvider();
+                var configuration = serviceProvider.GetService<IOptions<ReservationsJobs>>().Value;
+                
                 var endpointConfiguration = new EndpointConfiguration(EndpointName)
                     .UseErrorQueue()
                     .UseLicense(configuration.NServiceBusLicense)
@@ -33,7 +31,7 @@ public static class NServiceBusServiceRegistrations
                     .UseNewtonsoftJsonSerializer()
                     .UseNLogFactory();
 
-                if (hostingEnvironment.IsDevelopment())
+                if (environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
                 {
                     endpointConfiguration.UseLearningTransport(s => s.AddRouting());
                 }
