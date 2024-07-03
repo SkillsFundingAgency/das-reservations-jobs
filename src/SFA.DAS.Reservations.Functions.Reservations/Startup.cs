@@ -3,8 +3,6 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,7 +10,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client.Configuration;
@@ -22,7 +19,6 @@ using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -95,9 +91,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-
-            services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
-            services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
 
             services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
             services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
@@ -174,7 +167,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
                 var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
                 var newClient = clientFactory.CreateClient();
                 services.AddSingleton(provider => newClient);
-                services.AddTransient<IAccountApiClient, AccountApiClient>();
                 services.AddHttpClient<INotificationsService, NotificationsService>(
                     client =>
                     {

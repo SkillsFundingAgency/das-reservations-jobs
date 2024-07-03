@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="7.4.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.6.3195" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="8.29.1" />
     <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.3195" />
     <PackageReference Include="SFA.DAS.EmployerFinance.Messages" Version="1.6.1639" />

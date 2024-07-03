@@ -2,24 +2,20 @@
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.EAS.Account.Api.Client;
+using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Validators;
 using SFA.DAS.Reservations.Application.Accounts.Handlers;
 using SFA.DAS.Reservations.Application.Accounts.Services;
-using SFA.DAS.EmployerAccounts.Messages.Events;
-using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -80,9 +76,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-
-            services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
-            services.AddSingleton<IAccountApiConfiguration>(cfg =>  cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
             
             var serviceProvider = services.BuildServiceProvider();
 
@@ -112,7 +105,12 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddTransient<IAzureQueueService, AzureQueueService>();
             services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
             services.AddTransient<IAccountsService, AccountsService>();
-            services.AddTransient<IAccountApiClient, AccountApiClient>();
+            
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>((sp, client) =>
+            {
+                var jobsConfig = sp.GetService<ReservationsJobs>();
+                client.BaseAddress = new Uri(jobsConfig.ReservationsApimUrl);
+            });
             
             services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();

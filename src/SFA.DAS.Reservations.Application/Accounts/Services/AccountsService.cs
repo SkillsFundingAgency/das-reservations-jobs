@@ -1,23 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.EAS.Account.Api.Client;
-using SFA.DAS.EAS.Account.Api.Types;
 using SFA.DAS.Reservations.Application.OuterApi;
+using SFA.DAS.Reservations.Application.OuterApi.Requests;
+using SFA.DAS.Reservations.Application.OuterApi.Responses;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Application.Accounts.Services;
 
 public class AccountsService(
-    IAccountApiClient accountApiClient,
     IAccountRepository accountRepository,
     IOuterApiClient outerApiClient) : IAccountsService
 {
     public async Task<IEnumerable<UserDetails>> GetAccountUsers(long accountId)
     {
-        var teamMembers = await accountApiClient.GetAccountUsers(accountId);
-        return teamMembers.Select<TeamMemberViewModel, UserDetails>(model => model);
+        var response = await outerApiClient.Get<GetAccountUsersResponse>(new GetAccountUsersRequest(accountId));
+        
+        return response.AccountUsers.Select(source => new UserDetails
+        {
+            UserRef = source.UserRef,
+            Name = source.Name,
+            Email = source.Email,
+            Role = source.Role,
+            CanReceiveNotifications = source.CanReceiveNotifications,
+            Status = (byte)source.Status
+        });
     }
 
     public async Task CreateAccount(long accountId, string name)
