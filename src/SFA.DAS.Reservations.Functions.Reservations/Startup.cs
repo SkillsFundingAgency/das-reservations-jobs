@@ -18,6 +18,7 @@ using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.Accounts.Services;
+using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -89,7 +90,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         public IServiceProvider Build()
         {
-
             var services = ServiceCollection ?? new ServiceCollection();
             services.AddHttpClient();
 
@@ -140,8 +140,14 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
             services.AddTransient<IReservationService, ReservationService>();
             
-            services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+            services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
             services.AddTransient<IProviderService, ProviderService>();
+
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>((sp, client) =>
+            {
+                var config = sp.GetService<ReservationsJobs>();
+                client.BaseAddress = new Uri(config.ReservationsApimUrl);
+            });
 
             services.AddTransient<IReservationRepository, ReservationRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();

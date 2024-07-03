@@ -3,54 +3,47 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.EAS.Account.Api.Types;
+using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Application.Accounts.Services
+namespace SFA.DAS.Reservations.Application.Accounts.Services;
+
+public class AccountsService(
+    IAccountApiClient accountApiClient,
+    IAccountRepository accountRepository,
+    IOuterApiClient outerApiClient) : IAccountsService
 {
-    public class AccountsService : IAccountsService
+    public async Task<IEnumerable<UserDetails>> GetAccountUsers(long accountId)
     {
-        private readonly IAccountApiClient _accountApiClient;
-        private readonly IAccountRepository _accountRepository;
+        var teamMembers = await accountApiClient.GetAccountUsers(accountId);
+        return teamMembers.Select<TeamMemberViewModel, UserDetails>(model => model);
+    }
 
-        public AccountsService(IAccountApiClient accountApiClient, IAccountRepository accountRepository)
+    public async Task CreateAccount(long accountId, string name)
+    {
+        await accountRepository.Add(new Account
         {
-            _accountApiClient = accountApiClient;
-            _accountRepository = accountRepository;
-        }
+            Id = accountId,
+            Name = name
+        });
+    }
 
-        public async Task<IEnumerable<UserDetails>> GetAccountUsers(long accountId)
+    public async Task UpdateAccountName(long accountId, string name)
+    {
+        await accountRepository.UpdateName(new Account
         {
-            var teamMembers = await _accountApiClient.GetAccountUsers(accountId);
-            var users = teamMembers.Select<TeamMemberViewModel, UserDetails>(model => model);
-            return users;
-        }
+            Id = accountId,
+            Name = name
+        });
+    }
 
-        public async Task CreateAccount(long accountId, string name)
+    public async Task UpdateLevyStatus(long accountId, bool isLevy)
+    {
+        await accountRepository.UpdateLevyStatus(new Account
         {
-            await _accountRepository.Add(new Account
-            {
-                Id = accountId,
-                Name = name
-            });
-        }
-
-        public async Task UpdateAccountName(long accountId, string name)
-        {
-            await _accountRepository.UpdateName(new Account
-            {
-                Id = accountId,
-                Name = name
-            });
-        }
-
-        public async Task UpdateLevyStatus(long accountId, bool isLevy)
-        {
-            await _accountRepository.UpdateLevyStatus(new Account
-            {
-                Id = accountId,
-                IsLevy = isLevy
-            });
-        }
+            Id = accountId,
+            IsLevy = isLevy
+        });
     }
 }
