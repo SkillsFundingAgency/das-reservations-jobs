@@ -19,13 +19,13 @@ public class WhenGettingAccountUsers
         long accountId,
         [Frozen] Mock<IOuterApiClient> outerApiClient,
         GetAccountUsersResponse response,
-        AccountsService service)
+        AccountsService sut)
     {
         outerApiClient
-            .Setup(x => x.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users"))))
+            .Setup(client => client.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users"))))
             .ReturnsAsync(response);
 
-        await service.GetAccountUsers(accountId);
+        await sut.GetAccountUsers(accountId);
 
         outerApiClient.Verify(client => client.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users"))), Times.Once);
     }
@@ -35,13 +35,13 @@ public class WhenGettingAccountUsers
         long accountId,
         [Frozen] Mock<IOuterApiClient> outerApiClient,
         GetAccountUsersResponse response,
-        AccountsService service)
+        AccountsService sut)
     {
         outerApiClient
             .Setup(client => client.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users"))))
             .ReturnsAsync(response);
 
-        var result = (await service.GetAccountUsers(accountId)).ToList();
+        var result = (await sut.GetAccountUsers(accountId)).ToList();
 
         result
             .Should()
