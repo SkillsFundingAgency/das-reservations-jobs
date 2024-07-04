@@ -17,23 +17,23 @@ public class WhenGettingAccountUsers
     [Test, MoqAutoData]
     public async Task Then_Calls_Api(
         long accountId,
-        [Frozen]Mock<IOuterApiClient> outerApiClient,
+        [Frozen] Mock<IOuterApiClient> outerApiClient,
         GetAccountUsersResponse response,
         AccountsService service)
     {
         outerApiClient
             .Setup(x => x.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users"))))
             .ReturnsAsync(response);
-        
+
         await service.GetAccountUsers(accountId);
 
-        outerApiClient.Verify(client => client.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users") )), Times.Once);
+        outerApiClient.Verify(client => client.Get<GetAccountUsersResponse>(It.Is<GetAccountUsersRequest>(y => y.GetUrl.Equals($"accounts/{accountId}/users"))), Times.Once);
     }
 
     [Test, MoqAutoData]
     public async Task Then_Returns_Users_From_Api(
         long accountId,
-        [Frozen]Mock<IOuterApiClient> outerApiClient,
+        [Frozen] Mock<IOuterApiClient> outerApiClient,
         GetAccountUsersResponse response,
         AccountsService service)
     {
@@ -46,13 +46,13 @@ public class WhenGettingAccountUsers
         result
             .Should()
             .BeEquivalentTo(response.AccountUsers, options => options
-            .Excluding(c => c.Status));
+                .Excluding(c => c.Status));
 
-        foreach (var accountUser in response.AccountUsers)
+        foreach (var accountUser in result)
         {
             result
                 .Should()
-                .Contain(userDetails => userDetails.Status.Equals((byte)accountUser.Status));
+                .Contain(userDetails => userDetails.Status.Equals(accountUser.Status));
         }
     }
 }
