@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Domain.Reservations;
 
@@ -45,9 +44,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
 
             serviceCollection.AddSingleton(encodingService.Object);
             
-            var mockAccountApiClient = new Mock<IAccountApiClient>();
-            serviceCollection.AddSingleton(mockAccountApiClient.Object);
-
             var mockNotificationService = new Mock<INotificationsService>();
             serviceCollection.AddSingleton(mockNotificationService.Object);
              
