@@ -45,8 +45,7 @@ public class WhenGettingAccountUsers
 
         result
             .Should()
-            .BeEquivalentTo(response.AccountUsers, options => options
-                .Excluding(c => c.Status));
+            .BeEquivalentTo(response.AccountUsers, options => options);
 
         foreach (var accountUser in result)
         {

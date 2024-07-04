@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Reservations.Domain.Accounts;
 
-public class UserDetails
+public class TeamMember
 {
     public string UserRef { get; set; }
     public string Name { get; set; }

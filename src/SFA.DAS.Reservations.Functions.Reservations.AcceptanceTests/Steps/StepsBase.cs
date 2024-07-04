@@ -145,7 +145,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 
         private void InitialiseUserDetails()
         {
-            TestData.UserDetails = new UserDetails
+            TestData.TeamMember = new TeamMember
             { CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = "" };
         }
     }

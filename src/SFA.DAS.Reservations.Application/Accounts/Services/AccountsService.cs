@@ -13,18 +13,16 @@ public class AccountsService(
     IAccountRepository accountRepository,
     IOuterApiClient outerApiClient) : IAccountsService
 {
-    public async Task<IEnumerable<UserDetails>> GetAccountUsers(long accountId)
+    public async Task<IEnumerable<TeamMember>> GetAccountUsers(long accountId)
     {
         var response = await outerApiClient.Get<GetAccountUsersResponse>(new GetAccountUsersRequest(accountId));
         
-        return response.AccountUsers.Select(source => new UserDetails
+        return response.AccountUsers.Select(source => new TeamMember
         {
             UserRef = source.UserRef,
-            Name = source.Name,
             Email = source.Email,
             Role = source.Role,
             CanReceiveNotifications = source.CanReceiveNotifications,
-            Status = (byte)source.Status
         });
     }
 

@@ -75,7 +75,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task Then_Sends_Message_For_Each_User(
             ReservationDeletedEvent deletedEvent,
-            [ArrangeUsers] List<UserDetails> users,
+            [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             NotifyEmployerOfReservationEventAction action)
@@ -95,7 +95,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         [Test, MoqAutoData]
         public async Task And_User_Not_Subscribed_Then_Skips(
             ReservationDeletedEvent deletedEvent,
-            [ArrangeUsers] List<UserDetails> users,
+            [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             NotifyEmployerOfReservationEventAction action)
@@ -120,7 +120,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_User_Not_In_Owner_Role_Then_Skips(
             ReservationDeletedEvent deletedEvent,
             string otherRole,
-            [ArrangeUsers] List<UserDetails> users,
+            [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             NotifyEmployerOfReservationEventAction action)
@@ -145,7 +145,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_User_Not_In_Transactor_Role_Then_Skips(
             ReservationDeletedEvent deletedEvent,
             string otherRole,
-            [ArrangeUsers(Role = "Transactor")] List<UserDetails> users,
+            [ArrangeUsers(Role = "Transactor")] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
             NotifyEmployerOfReservationEventAction action)
@@ -170,7 +170,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task Then_Sends_Message_With_Correct_Values(
             ReservationDeletedEvent deletedEvent,
             Dictionary<string, string> tokens,
-            [ArrangeUsers] List<UserDetails> users,
+            [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,
@@ -197,7 +197,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_Create_Notification_Then_Sends_Message_With_Create_Template(
             ReservationCreatedEvent createdEvent,
             Dictionary<string, string> tokens,
-            [ArrangeUsers] List<UserDetails> users,
+            [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
             [Frozen] Mock<IAccountsService> mockAccountsService,
             [Frozen] Mock<INotificationsService> mockNotificationsService,

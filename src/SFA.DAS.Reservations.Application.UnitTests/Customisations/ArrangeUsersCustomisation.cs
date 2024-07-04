@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Customisations
 
         public void Customize(IFixture fixture)
         {
-            fixture.Customize<UserDetails>(composer => composer
+            fixture.Customize<TeamMember>(composer => composer
                 .With(user => user.Role, _role)
                 .With(user => user.CanReceiveNotifications, _canReceiveNotifications));
         }
