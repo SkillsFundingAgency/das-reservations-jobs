@@ -2,8 +2,6 @@
 using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Azure.WebJobs.Logging;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +12,6 @@ using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;

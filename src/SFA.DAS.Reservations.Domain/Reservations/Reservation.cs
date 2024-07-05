@@ -1,6 +1,5 @@
 ﻿using System;
 using SFA.DAS.Reservations.Messages;
-using SFA.DAS.Reservations;
 
 namespace SFA.DAS.Reservations.Domain.Reservations
 {

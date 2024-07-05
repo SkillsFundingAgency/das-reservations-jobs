@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update;
 using SFA.DAS.Reservations.Domain.Reservations;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 

@@ -21,7 +21,8 @@ public class WhenGettingAReservation
         var reservationId = Guid.Empty;
 
         //Act
-        Assert.ThrowsAsync<ArgumentException>(() => service.GetReservation(reservationId));
+        var action = () => service.GetReservation(reservationId);
+        action.Should().ThrowAsync<ArgumentException>();
     }
 
     [Test, MoqAutoData]

@@ -65,11 +65,11 @@ public class WhenUpdatingAReservation
         var status = ReservationStatus.Confirmed;
 
         //Act
-        var exception = Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateReservationStatus(reservationId, status));
-
+        var action = () => _service.UpdateReservationStatus(reservationId, status);
+        
         //Assert
-        exception.ParamName.Should().Be("reservationId");
-            
+        action.Should().ThrowAsync<ArgumentException>().WithParameterName("reservationId");
+        
         _repository.Verify(r => r.Update(
                 It.IsAny<Guid>(), 
                 It.IsAny<ReservationStatus>(),

@@ -2,8 +2,6 @@
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;

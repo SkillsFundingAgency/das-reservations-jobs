@@ -7,7 +7,6 @@ using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
-using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.TestConsole

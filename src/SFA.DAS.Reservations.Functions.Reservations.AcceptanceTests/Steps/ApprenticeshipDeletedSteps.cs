@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using NUnit.Framework;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Reservations;
 using TechTalk.SpecFlow;
@@ -50,6 +49,7 @@ public class ApprenticeshipDeletedSteps : StepsBase
             
         var reservationService = Services.GetService<IReservationService>();
             
-        Assert.DoesNotThrow(() => reservationService.UpdateReservationStatus(TestData.ReservationId, It.IsAny<ReservationStatus>()));
+        var action = () => reservationService.UpdateReservationStatus(TestData.ReservationId, It.IsAny<ReservationStatus>());
+        action.Should().NotThrowAsync();
     }
 }

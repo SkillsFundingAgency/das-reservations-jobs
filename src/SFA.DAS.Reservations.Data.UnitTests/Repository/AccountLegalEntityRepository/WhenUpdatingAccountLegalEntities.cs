@@ -64,7 +64,7 @@ public class WhenUpdatingAccountLegalEntities
         //Act
         await _accountLegalEntityRepository.UpdateAgreementStatus(
             _updatedAccountLegalEntity);
-            
+
         //Assert
         _dataContext.Verify(x => x.SaveChanges(), Times.Once);
     }
@@ -75,7 +75,7 @@ public class WhenUpdatingAccountLegalEntities
         //Act
         await _accountLegalEntityRepository.UpdateAgreementStatus(
             _updatedAccountLegalEntity);
-            
+
         //Assert
         _dbAccountLegalEntity.AgreementSigned.Should().BeTrue();
     }
@@ -83,7 +83,8 @@ public class WhenUpdatingAccountLegalEntities
     [Test]
     public void Then_If_The_Entity_Does_Not_Exist_An_Exception_Is_Thrown()
     {
-        Assert.ThrowsAsync<DbUpdateException>(() => _accountLegalEntityRepository.UpdateAgreementStatus(new AccountLegalEntity{AccountId = 54, LegalEntityId = 2}));
+        var action = () => _accountLegalEntityRepository.UpdateAgreementStatus(new AccountLegalEntity { AccountId = 54, LegalEntityId = 2 });
+        action.Should().ThrowAsync<DbUpdateException>();
 
         //Assert
         _dataContext.Verify(x => x.SaveChanges(), Times.Never);
