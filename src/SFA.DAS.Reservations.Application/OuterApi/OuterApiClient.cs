@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.Reservations.Application.OuterApi.Requests;
@@ -18,6 +19,7 @@ public class OuterApiClient : IOuterApiClient
 
     public OuterApiClient(HttpClient httpClient, ReservationsJobs configuration)
     {
+        httpClient.BaseAddress = new Uri(configuration.ReservationsApimUrl);
         _httpClient = httpClient;
         _configuration = configuration;
     }
@@ -30,7 +32,9 @@ public class OuterApiClient : IOuterApiClient
         using var response = await _httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
+        
         var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        
         return JsonConvert.DeserializeObject<TResponse>(json);
     }
     

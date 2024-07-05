@@ -45,7 +45,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations
     {
         public void Configure(IWebJobsBuilder builder)
         {
-
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
             builder.AddExtension<NServiceBusExtensionConfig>();
@@ -59,6 +58,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations
 
         private readonly ILoggerFactory _loggerFactory;
         public IConfiguration Configuration { get; }
+
         public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _loggerFactory = loggerFactory;
@@ -132,15 +132,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations
             services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
 
             services.AddTransient<IReservationService, ReservationService>();
-            
+
             services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
             services.AddTransient<IProviderService, ProviderService>();
 
-            services.AddHttpClient<IOuterApiClient, OuterApiClient>((sp, client) =>
-            {
-                var config = sp.GetService<ReservationsJobs>();
-                client.BaseAddress = new Uri(config.ReservationsApimUrl);
-            });
+            services.AddHttpClient<IOuterApiClient, OuterApiClient>();
 
             services.AddTransient<IReservationRepository, ReservationRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
