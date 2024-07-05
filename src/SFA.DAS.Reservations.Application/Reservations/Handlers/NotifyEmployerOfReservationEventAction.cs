@@ -20,37 +20,47 @@ public class NotifyEmployerOfReservationEventAction(
 
     public async Task Execute<T>(T notificationEvent) where T : INotificationEvent
     {
-        logger.LogInformation($"Notify employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}].");
+        logger.LogInformation("Notify employer of action [{EventTypeName}], Reservation Id [{NotificationEventId}].", notificationEvent.GetType().Name, notificationEvent.Id);
 
+        if (EventIsNotForProcessing(notificationEvent))
+        {
+            return;
+        }
+
+        var teamMembers = (await accountsService.GetAccountUsers(notificationEvent.AccountId)).ToList();
+
+        logger.LogInformation("Reservation [{NotificationEventId}], Account [{AccountId}] has [{TeamMembersCount}] users in total.", notificationEvent.Id, notificationEvent.AccountId, teamMembers.Count);
+
+        var filteredUsers = teamMembers.Where(user => user.CanReceiveNotifications && _permittedRoles.Contains(user.Role)).ToList();
+
+        logger.LogInformation("Reservation [{NotificationEventId}], Account [{AccountId}] has [{FilteredUsersCount}] users with correct role and subscription.", notificationEvent.Id, notificationEvent.AccountId, filteredUsers.Count);
+        
+        var sendCount = await SendNotifications(notificationEvent, filteredUsers);
+
+        logger.LogInformation("Finished notifying employer of action [{EventTypeName}], Reservation Id [{NotificationEventId}], [{SendCount}] email(s) sent.", notificationEvent.GetType().Name, notificationEvent.Id, sendCount);
+    }
+
+    private bool EventIsNotForProcessing<T>(T notificationEvent) where T : INotificationEvent
+    {
         if (EventIsNotFromProvider(notificationEvent))
         {
-            logger.LogInformation($"Reservation [{notificationEvent.Id}] is not created by provider, no further processing.");
-            return;
+            logger.LogInformation("Reservation [{NotificationEventId}] is not created by provider, no further processing.", notificationEvent.Id);
+            return true;
         }
 
         if (EventIsFromEmployerDelete(notificationEvent))
         {
-            logger.LogInformation($"Reservation [{notificationEvent.Id}] is created by provider but deleted by employer, no further processing.");
-            return;
+            logger.LogInformation("Reservation [{NotificationEventId}] is created by provider but deleted by employer, no further processing.", notificationEvent.Id);
+            return true;
         }
 
         if (EventIsFromLevyAccount(notificationEvent))
         {
-            logger.LogInformation($"Reservation [{notificationEvent.Id}] is from levy account, no further processing.");
-            return;
+            logger.LogInformation("Reservation [{NotificationEventId}] is from levy account, no further processing.", notificationEvent.Id);
+            return true;
         }
 
-        var users = await accountsService.GetAccountUsers(notificationEvent.AccountId);
-
-        logger.LogInformation($"Reservation [{notificationEvent.Id}], Account [{notificationEvent.AccountId}] has [{users.Count()}] users in total.");
-
-        var filteredUsers = users.Where(user => user.CanReceiveNotifications && _permittedRoles.Contains(user.Role)).ToList();
-
-        logger.LogInformation($"Reservation [{notificationEvent.Id}], Account [{notificationEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
-        
-        var sendCount = await SendNotifications(notificationEvent, filteredUsers);
-
-        logger.LogInformation($"Finished notifying employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}], [{sendCount}] email(s) sent.");
+        return false;
     }
 
     private async Task<int> SendNotifications<T>(T notificationEvent, IEnumerable<TeamMember> filteredUsers) where T : INotificationEvent
