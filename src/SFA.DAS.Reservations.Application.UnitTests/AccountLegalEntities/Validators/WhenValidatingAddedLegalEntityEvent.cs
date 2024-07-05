@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Validators;
@@ -24,7 +25,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Valida
             var result = await validator.ValidateAsync(@event);
 
             //Assert
-            Assert.IsTrue(result.IsValid());
+            result.IsValid().Should().BeTrue();
         }
 
         [Test]
@@ -43,8 +44,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Valida
             var result = await validator.ValidateAsync(@event);
 
             //Assert
-            Assert.IsFalse(result.IsValid());
-            Assert.IsTrue(result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.AccountId)));
+            result.IsValid().Should().BeFalse();
+            result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.AccountId)).Should().BeTrue();
         }
 
         [Test]
@@ -63,8 +64,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Valida
             var result = await validator.ValidateAsync(@event);
 
             //Assert
-            Assert.IsFalse(result.IsValid());
-            Assert.IsTrue(result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.AccountLegalEntityId)));
+            result.IsValid().Should().BeFalse();
+            result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.AccountLegalEntityId)).Should().BeTrue();
         }
 
         [Test]
@@ -83,8 +84,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Valida
             var result = await validator.ValidateAsync(@event);
 
             //Assert
-            Assert.IsFalse(result.IsValid());
-            Assert.IsTrue(result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.LegalEntityId)));
+            result.IsValid().Should().BeFalse();
+            result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.LegalEntityId)).Should().BeTrue();
         }
 
         [Test]
@@ -103,8 +104,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.AccountLegalEntities.Valida
             var result = await validator.ValidateAsync(@event);
 
             //Assert
-            Assert.IsFalse(result.IsValid());
-            Assert.IsTrue(result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.OrganisationName)));
+            result.IsValid().Should().BeFalse();
+            result.ValidationDictionary.ContainsKey(nameof(AddedLegalEntityEvent.OrganisationName)).Should().BeTrue();
         }
     }
 }

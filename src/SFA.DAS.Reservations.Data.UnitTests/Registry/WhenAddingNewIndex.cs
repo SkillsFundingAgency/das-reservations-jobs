@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Elasticsearch.Net;
+using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -53,18 +54,17 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry
         public async Task Then_The_New_Index_Is_Created_With_The_Passed_In_Data()
         {
             //Arrange
-            var indexName = "new-index";
+            const string indexName = "new-index";
             Guid test;
             _elasticLowLevelClient.Setup(c => c.Create
                 (ExpectedReservationIndexLookupName, It.Is<string>(s=>Guid.TryParse(s, out test)), It.IsAny<string>()))
                 .ReturnsAsync(JsonConvert.DeserializeObject<ElasticSearchResponse>(_createdResponse));
             
-            
             //Act
             await _registry.Add(indexName);
             
             //Assert
-            Assert.AreEqual(indexName, _registry.CurrentIndexName);
+            _registry.CurrentIndexName.Should().Be(indexName);
         }
     }
 }

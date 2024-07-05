@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
-using SFA.DAS.Reservations.Messages;
 using TechTalk.SpecFlow;
-using Reservation = SFA.DAS.Reservations.Domain.Reservations.Reservation;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 {

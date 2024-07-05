@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -50,8 +51,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountRepository
             
             //Assert
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
-            Assert.IsTrue(expectedAccount.IsLevy);
-            
+            expectedAccount.IsLevy.Should().BeTrue();
         }
         
         [Test]

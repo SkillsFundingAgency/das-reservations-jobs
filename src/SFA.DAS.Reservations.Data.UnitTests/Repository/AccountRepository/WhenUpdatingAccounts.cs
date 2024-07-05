@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -7,68 +8,65 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountRepository;
+
+public class WhenUpdatingAccounts
 {
-    public class WhenUpdatingAccounts
+    private Data.Repository.AccountRepository _accountRepository;
+    private Mock<IReservationsDataContext> _dataContext;
+    private Mock<DatabaseFacade> _dataFacade;
+    private Mock<DbContext> _dbContext;
+    private Mock<IDbContextTransaction> _dbContextTransaction;
+
+    [SetUp]
+    public void Arrange()
     {
-        
-        private Data.Repository.AccountRepository _accountRepository;
-        private Mock<IReservationsDataContext> _dataContext;
-        private Mock<DatabaseFacade> _dataFacade;
-        private Mock<DbContext> _dbContext;
-        private Mock<IDbContextTransaction> _dbContextTransaction;
+        _dbContextTransaction = new Mock<IDbContextTransaction>();
+        _dbContext = new Mock<DbContext>();
+        _dataContext = new Mock<IReservationsDataContext>();
+        _dataFacade = new Mock<DatabaseFacade>(_dbContext.Object);
 
-        [SetUp]
-        public void Arrange()
+        _dataFacade.Setup(x => x.BeginTransaction()).Returns(_dbContextTransaction.Object);
+    }
+
+    [Test]
+    public async Task Then_The_Name_Of_The_Account_Is_Updated()
+    {
+        //Arrange
+        const string expectedAccountName = "New Test Name";
+        var expectedAccount = new Account
         {
-            _dbContextTransaction = new Mock<IDbContextTransaction>();
-            _dbContext = new Mock<DbContext>();
-            _dataContext = new Mock<IReservationsDataContext>();
-            _dataFacade = new Mock<DatabaseFacade>(_dbContext.Object);
-            
-            _dataFacade.Setup(x => x.BeginTransaction()).Returns(_dbContextTransaction.Object);
-            
-        }
+            Id = 123,
+            Name = "Test"
+        };
 
-        [Test]
-        public async Task Then_The_Name_Of_The_Account_Is_Updated()
-        {
-            //Arrange
-            var expectedAccountName = "New Test Name";
-            var expectedAccount = new Account
-            {
-                Id = 123,
-                Name = "Test"
-            };
+        _dataContext.Setup(x => x.Accounts.FindAsync(expectedAccount.Id))
+            .ReturnsAsync(expectedAccount);
+        _dataContext.Setup(x => x.Database)
+            .Returns(_dataFacade.Object);
+        _accountRepository = new Data.Repository.AccountRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountRepository>>());
 
-            _dataContext.Setup(x => x.Accounts.FindAsync(expectedAccount.Id))
-                .ReturnsAsync(expectedAccount);
-            _dataContext.Setup(x => x.Database)
-                .Returns(_dataFacade.Object);
-            _accountRepository = new Data.Repository.AccountRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountRepository>>());
+        //Act
+        await _accountRepository.UpdateName(new Account { Id = 123, Name = expectedAccountName });
 
-            //Act
-            await _accountRepository.UpdateName(new Account {Id = 123, Name = expectedAccountName});
-            
-            //Assert
-            _dataContext.Verify(x => x.SaveChanges(), Times.Once);
-            Assert.AreEqual(expectedAccountName, expectedAccount.Name);
-            
-        }
-        
-        [Test]
-        public void Then_If_The_Entity_Does_Not_Exist_An_Exception_Is_Thrown()
-        {
-            _dataContext.Setup(x => x.Accounts.FindAsync(It.IsAny<long>()))
-                .ReturnsAsync((Account) null);
-            _dataContext.Setup(x => x.Database)
-                .Returns(_dataFacade.Object);
-            _accountRepository = new Data.Repository.AccountRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountRepository>>());
-            
-            Assert.ThrowsAsync<DbUpdateException>(() => _accountRepository.UpdateName(new Account{Id = 54, Name = "Test"}));
+        //Assert
+        _dataContext.Verify(x => x.SaveChanges(), Times.Once);
+        expectedAccount.Name.Should().Be(expectedAccountName);
+    }
 
-            //Assert
-            _dataContext.Verify(x => x.SaveChanges(), Times.Never);
-        }
+    [Test]
+    public void Then_If_The_Entity_Does_Not_Exist_An_Exception_Is_Thrown()
+    {
+        _dataContext.Setup(x => x.Accounts.FindAsync(It.IsAny<long>()))
+            .ReturnsAsync((Account)null);
+        _dataContext.Setup(x => x.Database)
+            .Returns(_dataFacade.Object);
+        _accountRepository = new Data.Repository.AccountRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountRepository>>());
+
+        var action = () => _accountRepository.UpdateName(new Account { Id = 54, Name = "Test" });
+        action.Should().ThrowAsync<DbUpdateException>();
+
+        //Assert
+        _dataContext.Verify(x => x.SaveChanges(), Times.Never);
     }
 }

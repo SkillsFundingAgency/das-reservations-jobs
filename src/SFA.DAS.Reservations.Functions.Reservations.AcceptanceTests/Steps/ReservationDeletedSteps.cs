@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.Reservations.Data;

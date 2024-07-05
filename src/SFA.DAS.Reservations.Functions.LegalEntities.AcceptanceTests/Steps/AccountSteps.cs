@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using SFA.DAS.EmployerAccounts.Messages.Events;
@@ -9,128 +10,127 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Accounts;
 using TechTalk.SpecFlow;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
+namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
+
+[Binding]
+public class AccountSteps :StepsBase
 {
-    [Binding]
-    public class AccountSteps :StepsBase
+    public AccountSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
     {
-        public AccountSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-        {
-        }
+    }
         
-        [Given(@"I have a non levy account")]
-        public void WhenIHaveANonLevyAccount()
-        {
-            var dbContext = Services.GetService<ReservationsDataContext>();
+    [Given(@"I have a non levy account")]
+    public void WhenIHaveANonLevyAccount()
+    {
+        var dbContext = Services.GetService<ReservationsDataContext>();
             
-            var account = dbContext.Accounts.SingleOrDefault(e => e.Id.Equals(TestData.NonLevyAccount.Id));
+        var account = dbContext.Accounts.SingleOrDefault(e => e.Id.Equals(TestData.NonLevyAccount.Id));
 
-            if (account == null)
-            {
-                dbContext.Accounts.Add(TestData.NonLevyAccount);
-                dbContext.SaveChanges();
-            }
-        }
-        
-        [Given(@"I receive an Account created event")]
-        [When(@"I receive an Account created event")]
-        public void GivenIReceiveAnAccountCreatedEvent()
+        if (account == null)
         {
-            var handler = Services.GetService<IAddAccountHandler>();
+            dbContext.Accounts.Add(TestData.NonLevyAccount);
+            dbContext.SaveChanges();
+        }
+    }
+        
+    [Given(@"I receive an Account created event")]
+    [When(@"I receive an Account created event")]
+    public void GivenIReceiveAnAccountCreatedEvent()
+    {
+        var handler = Services.GetService<IAddAccountHandler>();
             
-            try
+        try
+        {
+            handler.Handle(new CreatedAccountEvent
             {
-                handler.Handle(new CreatedAccountEvent
-                {
-                    AccountId = TestData.NonLevyAccount.Id,
-                    Name = TestData.NonLevyAccount.Name
-                }).Wait();
-            }
-            catch (Exception e)
-            {
-                TestData.Exception = e;
-            }
+                AccountId = TestData.NonLevyAccount.Id,
+                Name = TestData.NonLevyAccount.Name
+            }).Wait();
+        }
+        catch (Exception e)
+        {
+            TestData.Exception = e;
+        }
             
-        }
+    }
         
-        [When(@"levy added event is triggered")]
-        public void WhenLevyAddedEventIsTriggered()
-        {
-            var handler = Services.GetService<ILevyAddedToAccountHandler>();
+    [When(@"levy added event is triggered")]
+    public void WhenLevyAddedEventIsTriggered()
+    {
+        var handler = Services.GetService<ILevyAddedToAccountHandler>();
 
-            try
+        try
+        {
+            handler.Handle(new LevyAddedToAccount
             {
-                handler.Handle(new LevyAddedToAccount
-                {
-                    AccountId = TestData.NonLevyAccount.Id
-                }).Wait();
-            }
-            catch (Exception e)
-            {
-                TestData.Exception = e;
-            }
+                AccountId = TestData.NonLevyAccount.Id
+            }).Wait();
         }
-        
-        [When(@"I receive an Account name updated event")]
-        public void WhenIReceiveAnAccountNameUpdatedEvent()
+        catch (Exception e)
         {
-            var handler = Services.GetService<IAccountNameUpdatedHandler>();
+            TestData.Exception = e;
+        }
+    }
+        
+    [When(@"I receive an Account name updated event")]
+    public void WhenIReceiveAnAccountNameUpdatedEvent()
+    {
+        var handler = Services.GetService<IAccountNameUpdatedHandler>();
 
-            TestData.NewAccountName = "My New Account Name";
+        TestData.NewAccountName = "My New Account Name";
             
-            try
-            {
-                handler.Handle(new ChangedAccountNameEvent
-                {
-                    AccountId = TestData.NonLevyAccount.Id,
-                    CurrentName = TestData.NewAccountName
-                }).Wait();
-            }
-            catch (Exception e)
-            {
-                TestData.Exception = e;
-            }
-        }
-
-        [Then(@"the account should be marked as a levy")]
-        public void ThenTheAccountShouldBeMarkedAsLevy()
+        try
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-            var account = dbContext.Accounts.SingleOrDefault(acc =>
-                acc.Id.Equals(TestData.NonLevyAccount.Id));
-
-            Assert.IsNotNull(account);
-            Assert.IsTrue(account.IsLevy);
-
+            handler.Handle(new ChangedAccountNameEvent
+            {
+                AccountId = TestData.NonLevyAccount.Id,
+                CurrentName = TestData.NewAccountName
+            }).Wait();
         }
-
-        [Then(@"the account is created")]
-        public void ThenTheAccountIsCreated()
+        catch (Exception e)
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-            var account = dbContext.Accounts.SingleOrDefault(acc =>
-                acc.Id.Equals(TestData.NonLevyAccount.Id));
-
-            Assert.IsNotNull(account);
+            TestData.Exception = e;
         }
+    }
+
+    [Then(@"the account should be marked as a levy")]
+    public void ThenTheAccountShouldBeMarkedAsLevy()
+    {
+        var dbContext = Services.GetService<ReservationsDataContext>();
+        var account = dbContext.Accounts.SingleOrDefault(acc =>
+            acc.Id.Equals(TestData.NonLevyAccount.Id));
+
+        account.Should().NotBeNull();
+        account.IsLevy.Should().BeTrue();
+    }
+
+    [Then(@"the account is created")]
+    public void ThenTheAccountIsCreated()
+    {
+        var dbContext = Services.GetService<ReservationsDataContext>();
+        var account = dbContext.Accounts.SingleOrDefault(acc =>
+            acc.Id.Equals(TestData.NonLevyAccount.Id));
+
+        account.Should().NotBeNull();
+    }
         
-        [Then(@"the account name is updated")]
-        public void ThenTheAccountNameIsUpdated()
-        {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-            var account = dbContext.Accounts.SingleOrDefault(acc =>
-                acc.Id.Equals(TestData.NonLevyAccount.Id));
-            Assert.IsNotNull(account);
-            Assert.AreEqual(TestData.NewAccountName, account.Name);
-        }
+    [Then(@"the account name is updated")]
+    public void ThenTheAccountNameIsUpdated()
+    {
+        var dbContext = Services.GetService<ReservationsDataContext>();
+        var account = dbContext.Accounts.SingleOrDefault(acc =>
+            acc.Id.Equals(TestData.NonLevyAccount.Id));
+            
+        account.Should().NotBeNull();
+        account.Name.Should().Be(TestData.NewAccountName);
+    }
 
-        [Then(@"the account is not duplicated")]
-        public void ThenTheAccountIsNotDuplicated()
-        {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-            var numberOfAccounts = dbContext.Accounts.Count(c => c.Id.Equals(TestData.NonLevyAccount.Id));
+    [Then(@"the account is not duplicated")]
+    public void ThenTheAccountIsNotDuplicated()
+    {
+        var dbContext = Services.GetService<ReservationsDataContext>();
+        var numberOfAccounts = dbContext.Accounts.Count(c => c.Id.Equals(TestData.NonLevyAccount.Id));
 
-            Assert.AreEqual(1, numberOfAccounts);
-        }
+        numberOfAccounts.Should().Be(1);
     }
 }
