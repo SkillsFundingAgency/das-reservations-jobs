@@ -19,9 +19,16 @@ public class OuterApiClient : IOuterApiClient
 
     public OuterApiClient(HttpClient httpClient, ReservationsJobs configuration)
     {
-        httpClient.BaseAddress = new Uri(configuration.ReservationsApimUrl);
+        var apimUrl = EnsureUrlEndWithForwardSlash(configuration.ReservationsApimUrl);
+        httpClient.BaseAddress = new Uri(apimUrl);
+        
         _httpClient = httpClient;
         _configuration = configuration;
+    }
+
+    private static string EnsureUrlEndWithForwardSlash(string url)
+    {
+        return url.EndsWith('/') ? url : $"{url}/";
     }
     
     public async Task<TResponse> Get<TResponse>(IGetApiRequest request)
