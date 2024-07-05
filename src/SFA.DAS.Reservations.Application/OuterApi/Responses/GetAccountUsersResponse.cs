@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace SFA.DAS.Reservations.Application.OuterApi.Responses;
 
