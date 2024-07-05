@@ -25,7 +25,11 @@ public class WhenHandlingAGetRequest
         const string key = "123-abc-567";
         var getTestRequest = new GetTestRequest();
         var testObject = new List<string>();
-        var config = new ReservationsJobs { ReservationsBaseUrl = "http://valid-url/", ReservationsApimSubscriptionKey = key };
+        var config = new ReservationsJobs
+        {
+            ReservationsApimSubscriptionKey = key,
+            ReservationsApimUrl = "https://testing.local/"
+        };
 
         var response = new HttpResponseMessage
         {
@@ -33,8 +37,8 @@ public class WhenHandlingAGetRequest
             StatusCode = HttpStatusCode.Accepted
         };
 
-        var httpMessageHandler = SetupMessageHandlerMock(response, $"{config.ReservationsBaseUrl}{getTestRequest.GetUrl}", config.ReservationsApimSubscriptionKey);
-        var httClient = new HttpClient(httpMessageHandler.Object) { BaseAddress = new Uri(config.ReservationsBaseUrl) };
+        var httpMessageHandler = SetupMessageHandlerMock(response, $"{config.ReservationsApimUrl}{getTestRequest.GetUrl}", config.ReservationsApimSubscriptionKey);
+        var httClient = new HttpClient(httpMessageHandler.Object);
         httClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config.ReservationsApimSubscriptionKey);
         httClient.DefaultRequestHeaders.Add("X-Version", "1");
 
@@ -53,7 +57,13 @@ public class WhenHandlingAGetRequest
         //Arrange
         const string key = "123-abc-567";
         var getTestRequest = new GetTestRequest();
-        var config = new ReservationsJobs { ReservationsBaseUrl = "http://valid-url/", ReservationsApimSubscriptionKey = key };
+        var config = new ReservationsJobs
+        {
+            ReservationsBaseUrl = "http://valid-url/",
+            ReservationsApimSubscriptionKey = key, 
+            ReservationsApimUrl = "https://testing.local/"
+        };
+        
         var response = new HttpResponseMessage
         {
             Content = new StringContent(""),
