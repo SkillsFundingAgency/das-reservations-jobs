@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Data;
-using System.Data.Common;
 using System.IO;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
@@ -79,14 +74,17 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             var nLogConfiguration = new NLogConfiguration();
 
-            services.AddLogging((options) =>
+            services.AddLogging(builder =>
             {
-                options.SetMinimumLevel(LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
                 
-                options.AddConsole();
-                options.AddDebug();
+                builder.SetMinimumLevel(LogLevel.Information);
+                
+                builder.AddConsole();
+                builder.AddDebug();
                 nLogConfiguration.ConfigureNLog(Configuration);
-                options.AddNLog(new NLogProviderOptions
+                builder.AddNLog(new NLogProviderOptions
                 {
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true

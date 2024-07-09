@@ -3,25 +3,21 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
-using SFA.DAS.Http.TokenGenerators;
-using SFA.DAS.Notifications.Api.Client.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -34,6 +30,7 @@ using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
@@ -41,147 +38,138 @@ using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
+namespace SFA.DAS.Reservations.Functions.Reservations;
 
-namespace SFA.DAS.Reservations.Functions.Reservations
+public class Startup : IWebJobsStartup
 {
-    public class Startup : IWebJobsStartup
+    public void Configure(IWebJobsBuilder builder)
     {
-        public void Configure(IWebJobsBuilder builder)
-        {
+        builder.AddExecutionContextBinding();
+        builder.AddDependencyInjection<ServiceProviderBuilder>();
+        builder.AddExtension<NServiceBusExtensionConfig>();
+    }
+}
 
-            builder.AddExecutionContextBinding();
-            builder.AddDependencyInjection<ServiceProviderBuilder>();
-            builder.AddExtension<NServiceBusExtensionConfig>();
+public class ServiceProviderBuilder : IServiceProviderBuilder
+{
+    private const string EncodingConfigKey = "SFA.DAS.Encoding";
+    private readonly IConfiguration _configuration;
+    
+    public ServiceCollection ServiceCollection { get; set; }
+
+    public ServiceProviderBuilder(IConfiguration configuration)
+    {
+        var config = new ConfigurationBuilder()
+            .AddConfiguration(configuration)
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("local.settings.json", true)
+            .AddEnvironmentVariables();
+        
+        if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                    options.ConfigurationKeysRawJsonResult = new[] { EncodingConfigKey };
+                }
+            );
         }
+
+        _configuration = config.Build();
     }
 
-    public class ServiceProviderBuilder : IServiceProviderBuilder
+    public IServiceProvider Build()
     {
-        private const string EncodingConfigKey = "SFA.DAS.Encoding";
-        public ServiceCollection ServiceCollection { get; set; }
+        var services = ServiceCollection ?? new ServiceCollection();
+        services.AddHttpClient();
 
-        private readonly ILoggerFactory _loggerFactory;
-        public IConfiguration Configuration { get; }
-        public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
+        services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+
+        services.Configure<AccountApiConfiguration>(_configuration.GetSection("AccountApiConfiguration"));
+        services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
+
+        var environmentName = _configuration["EnvironmentName"];
+        
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
-            _loggerFactory = loggerFactory;
-
-            var config = new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("local.settings.json", true)
-                .AddEnvironmentVariables();
-            if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-            {
-                config.AddAzureTableStorage(options =>
-                    {
-                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                        options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                        options.EnvironmentName = configuration["EnvironmentName"];
-                        options.PreFixConfigurationKeys = false;
-                        options.ConfigurationKeysRawJsonResult = new[] { EncodingConfigKey };
-                    }
-                );
-            }
-
-            Configuration = config.Build();
+            var encodingConfigJson = _configuration.GetSection(EncodingConfigKey).Value;
+            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+            services.AddSingleton(encodingConfig);
         }
 
-        public IServiceProvider Build()
+        var nLogConfiguration = new NLogConfiguration();
+
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
-
-            var services = ServiceCollection ?? new ServiceCollection();
-            services.AddHttpClient();
-
-            services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-
-            services.Configure<AccountApiConfiguration>(Configuration.GetSection("AccountApiConfiguration"));
-            services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
-
-            services.Configure<NotificationsApiClientConfiguration>(Configuration.GetSection("NotificationsApi"));
-            services.AddSingleton<INotificationsApiClientConfiguration>(cfg => cfg.GetService<IOptions<NotificationsApiClientConfiguration>>().Value);
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
-
-            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            services.AddLogging(builder =>
             {
-                var encodingConfigJson = Configuration.GetSection(EncodingConfigKey).Value;
-                var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
-                services.AddSingleton(encodingConfig);
-            }
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                
+                builder.SetMinimumLevel(LogLevel.Information);
 
-            var nLogConfiguration = new NLogConfiguration();
-
-            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-            {
-                services.AddLogging((options) =>
+                builder.AddConsole();
+                builder.AddDebug();
+                nLogConfiguration.ConfigureNLog(_configuration);
+                builder.AddNLog(new NLogProviderOptions
                 {
-                    options.SetMinimumLevel(LogLevel.Information);
-
-                    options.AddConsole();
-                    options.AddDebug();
-                    nLogConfiguration.ConfigureNLog(Configuration);
-                    options.AddNLog(new NLogProviderOptions
-                    {
-                        CaptureMessageTemplates = true,
-                        CaptureMessageProperties = true
-                    });
+                    CaptureMessageTemplates = true,
+                    CaptureMessageProperties = true
                 });
-            }
-
-            services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
-            services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
-            services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
-            services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
-            services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
-
-            services.AddTransient<IReservationService, ReservationService>();
-            
-            services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
-            services.AddTransient<IProviderService, ProviderService>();
-
-            services.AddTransient<IReservationRepository, ReservationRepository>();
-            services.AddTransient<IAccountRepository, AccountRepository>();
-
-            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-            {
-                services.AddTransient<INotificationsService, NotificationsService>();
-                services.AddTransient<IEncodingService, EncodingService>();
-                services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
-                services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
-                services.AddTransient<IAccountsService, AccountsService>();
-                services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
-            }
-
-            services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
-
-            services.AddTransient<IIndexRegistry, IndexRegistry>();
-
-            services.AddElasticSearch(jobsConfig, Configuration["EnvironmentName"]);
-            services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
-
-            if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-            {
-                var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
-                var newClient = clientFactory.CreateClient();
-                services.AddSingleton(provider => newClient);
-                services.AddTransient<IAccountApiClient, AccountApiClient>();
-                services.AddHttpClient<INotificationsService, NotificationsService>(
-                    client =>
-                    {
-                        var notificationsConfig = serviceProvider.GetService<INotificationsApiClientConfiguration>();
-                        var bearerToken = (IGenerateBearerToken)new JwtBearerTokenGenerator(notificationsConfig);
-                        client.BaseAddress = new Uri(notificationsConfig.ApiBaseUrl);
-                        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken.Generate().Result);
-                        client.DefaultRequestHeaders.Add("accept", "application/json");
-                    });
-            }
-
-            services.AddDatabaseRegistration(jobsConfig, Configuration["EnvironmentName"]);
-            return services.BuildServiceProvider();
+            });
         }
+
+        services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
+        services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
+        services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
+        services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
+        services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
+
+        services.AddTransient<IReservationService, ReservationService>();
+
+        services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+        services.AddTransient<IProviderService, ProviderService>();
+
+        services.AddTransient<IReservationRepository, ReservationRepository>();
+        services.AddTransient<IAccountRepository, AccountRepository>();
+
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            services.AddTransient<INotificationsService, NotificationsService>();
+            services.AddTransient<IEncodingService, EncodingService>();
+            services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+            services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
+            services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
+        }
+
+        services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
+
+        services.AddTransient<IIndexRegistry, IndexRegistry>();
+
+        services.AddElasticSearch(jobsConfig);
+        services.AddSingleton(new ReservationJobsEnvironment(environmentName));
+
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
+            var newClient = clientFactory.CreateClient();
+            services.AddSingleton(provider => newClient);
+            services.AddTransient<IAccountApiClient, AccountApiClient>();
+            services.AddTransient<INotificationsService, NotificationsService>();
+        }
+            
+        services.AddNServiceBus(environmentName);
+        services.AddDatabaseRegistration(jobsConfig, environmentName);
+        
+        return services.BuildServiceProvider();
     }
 }

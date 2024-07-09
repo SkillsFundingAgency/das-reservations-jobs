@@ -12,8 +12,7 @@ namespace SFA.DAS.Reservations.Infrastructure.ElasticSearch
     {
         public static void AddElasticSearch(
             this ServiceCollection collection,
-            ReservationsJobs configuration, 
-            string environmentName)
+            ReservationsJobs configuration)
         {
             var connectionPool = new SingleNodeConnectionPool(new Uri(configuration.ElasticSearchServerUrl));
 
