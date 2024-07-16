@@ -126,6 +126,9 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
         services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
+        services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
+        services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
+
         services.AddTransient<IReservationService, ReservationService>();
 
         services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
@@ -135,10 +138,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
-
-        services.AddTransient<IReservationRepository, ReservationRepository>();
-        services.AddTransient<IAccountRepository, AccountRepository>();
-
+        
         if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             services.AddTransient<INotificationsService, NotificationsService>();
@@ -147,11 +147,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
             services.AddTransient<IAccountsService, AccountsService>();
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
-        }
 
-
-        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-        {
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
             var newClient = clientFactory.CreateClient();
             services.AddSingleton(provider => newClient);
