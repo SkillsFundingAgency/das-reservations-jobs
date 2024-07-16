@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -73,14 +74,17 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             var nLogConfiguration = new NLogConfiguration();
 
-            services.AddLogging((options) =>
+            services.AddLogging(builder =>
             {
-                options.SetMinimumLevel(LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
                 
-                options.AddConsole();
-                options.AddDebug();
+                builder.SetMinimumLevel(LogLevel.Information);
+                
+                builder.AddConsole();
+                builder.AddDebug();
                 nLogConfiguration.ConfigureNLog(Configuration);
-                options.AddNLog(new NLogProviderOptions
+                builder.AddNLog(new NLogProviderOptions
                 {
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true

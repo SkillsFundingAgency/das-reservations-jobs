@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -32,7 +33,6 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
         {
             builder.AddExecutionContextBinding();
             builder.AddDependencyInjection<ServiceProviderBuilder>();
-            
         }
      }
 
@@ -76,16 +76,19 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             var nLogConfiguration = new NLogConfiguration();
 
-            services.AddLogging((options) =>
+            services.AddLogging(builder =>
             {
-                options.SetMinimumLevel(LogLevel.Trace);
-                options.AddNLog(new NLogProviderOptions
+                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                
+                builder.SetMinimumLevel(LogLevel.Trace);
+                builder.AddNLog(new NLogProviderOptions
                 {
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true
                 });
-                options.AddConsole();
-                options.AddDebug();
+                builder.AddConsole();
+                builder.AddDebug();
 
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
@@ -97,7 +100,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
             services.AddTransient<IProviderPermissionRepository,ProviderPermissionRepository>();
             services.AddTransient<IIndexRegistry,IndexRegistry>();
             
-            services.AddElasticSearch(config, Configuration["EnvironmentName"]);
+            services.AddElasticSearch(config);
             services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
