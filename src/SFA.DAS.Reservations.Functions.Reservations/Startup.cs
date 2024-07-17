@@ -137,7 +137,8 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
         {
-            client.BaseAddress = new Uri(jobsConfig.ReservationsApimUrl);
+            var apimUrl = EnsureUrlEndWithForwardSlash(jobsConfig.ReservationsApimUrl);
+            client.BaseAddress = new Uri(apimUrl);
         });
 
         services.AddTransient<IReservationRepository, ReservationRepository>();
@@ -167,5 +168,10 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.AddDatabaseRegistration(jobsConfig, environmentName);
 
         return services.BuildServiceProvider();
+    }
+    
+    private static string EnsureUrlEndWithForwardSlash(string url)
+    {
+        return url.EndsWith('/') ? url : $"{url}/";
     }
 }

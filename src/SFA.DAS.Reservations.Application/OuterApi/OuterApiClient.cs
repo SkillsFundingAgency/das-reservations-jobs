@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.Reservations.Application.OuterApi.Requests;
@@ -12,31 +11,14 @@ public interface IOuterApiClient
     Task<TResponse> Get<TResponse>(IGetApiRequest request);
 }
 
-public class OuterApiClient : IOuterApiClient
+public class OuterApiClient(HttpClient httpClient, ReservationsJobs configuration) : IOuterApiClient
 {
-    private readonly HttpClient _httpClient;
-    private readonly ReservationsJobs _configuration;
-
-    public OuterApiClient(HttpClient httpClient, ReservationsJobs configuration)
-    {
-        var apimUrl = EnsureUrlEndWithForwardSlash(configuration.ReservationsApimUrl);
-        httpClient.BaseAddress = new Uri(apimUrl);
-        
-        _httpClient = httpClient;
-        _configuration = configuration;
-    }
-
-    private static string EnsureUrlEndWithForwardSlash(string url)
-    {
-        return url.EndsWith('/') ? url : $"{url}/";
-    }
-    
     public async Task<TResponse> Get<TResponse>(IGetApiRequest request)
     {
         using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, request.GetUrl);
         AddAuthenticationHeader(httpRequestMessage);
 
-        using var response = await _httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
+        using var response = await httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
         
@@ -47,7 +29,7 @@ public class OuterApiClient : IOuterApiClient
     
     private void AddAuthenticationHeader(HttpRequestMessage httpRequestMessage)
     {
-        httpRequestMessage.Headers.Add("Ocp-Apim-Subscription-Key", _configuration.ReservationsApimSubscriptionKey);
+        httpRequestMessage.Headers.Add("Ocp-Apim-Subscription-Key", configuration.ReservationsApimSubscriptionKey);
         httpRequestMessage.Headers.Add("X-Version", "1");
     }
 }
