@@ -135,7 +135,10 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
         services.AddTransient<IProviderService, ProviderService>();
 
-        services.AddHttpClient<IOuterApiClient, OuterApiClient>();
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
+        {
+            client.BaseAddress = new Uri(jobsConfig.ReservationsApimUrl);
+        });
 
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
