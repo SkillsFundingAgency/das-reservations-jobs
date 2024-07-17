@@ -34,6 +34,7 @@ using SFA.DAS.Reservations.Functions.Reservations.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
+using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
@@ -123,6 +124,8 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             });
         }
 
+        services.AddElasticSearch(jobsConfig);
+        
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
         services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
