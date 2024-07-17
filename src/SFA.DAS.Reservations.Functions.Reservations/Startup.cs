@@ -123,8 +123,6 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
                 });
             });
         }
-
-        services.AddElasticSearch(jobsConfig);
         
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
@@ -158,6 +156,9 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
         services.AddTransient<IIndexRegistry, IndexRegistry>();
+        
+        services.AddElasticSearch(jobsConfig);
+        services.AddSingleton(new ReservationJobsEnvironment(environmentName));
 
         services.AddNServiceBus(environmentName);
         services.AddDatabaseRegistration(jobsConfig, environmentName);
