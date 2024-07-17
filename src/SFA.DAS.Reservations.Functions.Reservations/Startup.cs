@@ -132,7 +132,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IReservationService, ReservationService>();
 
-        services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+        services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
         services.AddTransient<IProviderService, ProviderService>();
 
         services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
