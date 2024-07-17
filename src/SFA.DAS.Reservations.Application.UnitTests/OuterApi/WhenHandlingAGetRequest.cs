@@ -38,7 +38,10 @@ public class WhenHandlingAGetRequest
         };
 
         var httpMessageHandler = SetupMessageHandlerMock(response, $"{config.ReservationsApimUrl}{getTestRequest.GetUrl}", config.ReservationsApimSubscriptionKey);
-        var httClient = new HttpClient(httpMessageHandler.Object);
+        var httClient = new HttpClient(httpMessageHandler.Object)
+        {
+            BaseAddress = new Uri(config.ReservationsApimUrl)
+        };
         httClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config.ReservationsApimSubscriptionKey);
         httClient.DefaultRequestHeaders.Add("X-Version", "1");
 
