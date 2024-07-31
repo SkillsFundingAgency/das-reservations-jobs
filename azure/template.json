@@ -95,7 +95,11 @@
     "utcValue": {
       "type": "string",
       "defaultValue": "[utcNow()]"
-    }
+    },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "TLS1_2"
+  }
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
@@ -322,6 +326,9 @@
           },
           "allowSharedKeyAccess": {
             "value": true
+          },
+          "minimumTlsVersion": {
+            "value": "[parameters('minimumTlsVersion')]"
           }
         }
       }
