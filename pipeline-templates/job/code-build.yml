@@ -10,8 +10,6 @@ jobs:
       clean: all
   variables:
   - group: BUILD Management Resources
-  - name: BuildConfiguration
-    value: release
   steps:
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
@@ -35,8 +33,8 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'src/SFA.DAS.Reservations.Functions.Reservations/SFA.DAS.Reservations.Functions.Reservations.csproj'
-      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      projects: src/${{ parameters.SolutionBaseName }}.Functions.Reservations/${{ parameters.SolutionBaseName }}.Functions.Reservations.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
 
@@ -45,8 +43,8 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'src/SFA.DAS.Reservations.Functions.LegalEntities/SFA.DAS.Reservations.Functions.LegalEntities.csproj'
-      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      projects: src/${{ parameters.SolutionBaseName }}.Functions.LegalEntities/${{ parameters.SolutionBaseName }}.Functions.LegalEntities.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
     
@@ -55,8 +53,8 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'src/SFA.DAS.Reservations.Functions.ReservationIndex/SFA.DAS.Reservations.Functions.ReservationIndex.csproj'
-      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      projects: src/${{ parameters.SolutionBaseName }}.Functions.ReservationIndex/${{ parameters.SolutionBaseName }}.Functions.ReservationIndex.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
 
@@ -65,8 +63,8 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: 'src/SFA.DAS.Reservations.Functions.ProviderPermission/SFA.DAS.Reservations.Functions.ProviderPermission.csproj'
-      arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      projects: src/${{ parameters.SolutionBaseName }}.Functions.ProviderPermission/${{ parameters.SolutionBaseName }}.Functions.ProviderPermission.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
 
