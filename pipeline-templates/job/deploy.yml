@@ -1,9 +1,3 @@
-parameters:
-  ServiceConnection:
-  SolutionBaseName:
-  Environment:
-
-jobs:
 - deployment: DeployFunctionApp
   pool:
     name: DAS - Continuous Deployment Agents
@@ -13,11 +7,12 @@ jobs:
       deploy:
         steps:
         - script: |
-            echo "Displaying template.json content"
-            cat $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/template.json
-            echo "Displaying template.parameters.json content"
-            cat $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/template.parameters.json
+            Write-Host "Displaying template.json content"
+            Get-Content $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/template.json | Write-Host
+            Write-Host "Displaying template.parameters.json content"
+            Get-Content $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/azure/template.parameters.json | Write-Host
           displayName: 'Debug JSON Files Content'
+          shell: pwsh
         - template: azure-pipelines-templates/deploy/step/wait-azure-devops-deployment.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
@@ -60,4 +55,4 @@ jobs:
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             FunctionAppName: $(FunctionAppName)
-            DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.zip
+            DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}.Jobs/${{ parameters.SolutionBaseName }}.Jobs.zip
