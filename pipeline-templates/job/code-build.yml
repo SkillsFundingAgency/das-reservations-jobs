@@ -27,6 +27,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.Reservations.Functions.RefreshCourse/SFA.DAS.Reservations.Functions.RefreshCourse.csproj'
       arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish Function App Reservation'
@@ -35,6 +37,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.Reservations.Functions.Reservations/SFA.DAS.Reservations.Functions.Reservations.csproj'
       arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish Function App LegalEntities'
@@ -43,6 +47,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.Reservations.Functions.LegalEntities/SFA.DAS.Reservations.Functions.LegalEntities.csproj'
       arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
     
   - task: DotNetCoreCLI@2
     displayName: 'Publish Function App ReservationIndex'
@@ -51,6 +57,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.Reservations.Functions.ReservationIndex/SFA.DAS.Reservations.Functions.ReservationIndex.csproj'
       arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish Function App ProviderPermissions'
@@ -59,6 +67,8 @@ jobs:
       publishWebProjects: false
       projects: 'src/SFA.DAS.Reservations.Functions.ProviderPermission/SFA.DAS.Reservations.Functions.ProviderPermission.csproj'
       arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: CopyFiles@2
     displayName: Copy Files to $(build.artifactstagingdirectory)/publish
