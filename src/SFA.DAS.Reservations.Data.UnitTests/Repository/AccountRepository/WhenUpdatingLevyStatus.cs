@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -50,8 +51,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountRepository
             
             //Assert
             _dataContext.Verify(x => x.SaveChanges(), Times.Once);
-            Assert.IsTrue(expectedAccount.IsLevy);
-            
+            expectedAccount.IsLevy.Should().BeTrue();
         }
         
         [Test]
@@ -63,7 +63,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AccountRepository
                 .Returns(_dataFacade.Object);
             _accountRepository = new Data.Repository.AccountRepository(_dataContext.Object, Mock.Of<ILogger<Data.Repository.AccountRepository>>());
             
-            Assert.ThrowsAsync<DbUpdateException>(() => _accountRepository.UpdateLevyStatus(new Account{Id = 54, IsLevy = false}));
+            var action = () => _accountRepository.UpdateLevyStatus(new Account { Id = 54, IsLevy = false });
+            action.Should().ThrowAsync<DbUpdateException>();
 
             //Assert
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);

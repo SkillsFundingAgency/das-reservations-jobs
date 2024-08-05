@@ -10,91 +10,89 @@ using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Testing.AutoFixture;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
-namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
+namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services;
+
+public class WhenGettingAReservation
 {
-    public class WhenGettingAReservation
+    [Test, MoqAutoData]
+    public void ThenWillThrowExceptionIfReservationIdIsInvalid(ReservationService service)
     {
+        //Arrange
+        var reservationId = Guid.Empty;
 
-        [Test, MoqAutoData]
-        public void ThenWillThrowExceptionIfReservationIdIsInvalid(
-            ReservationService service)
-        {
-            //Arrange
-            var reservationId = Guid.Empty;
+        //Act
+        var action = () => service.GetReservation(reservationId);
+        action.Should().ThrowAsync<ArgumentException>();
+    }
 
-            //Act
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => service.GetReservation(reservationId));
-        }
+    [Test, MoqAutoData]
+    public async Task ThenIfNoReservationFoundForAGivenIdReturnNull(
+        Guid reservationId,
+        [Frozen] Mock<IReservationRepository> repository,
+        [Frozen] Mock<ILogger> logger,
+        ReservationService service)
+    {
+        //Arrange
+        Reservation reservation = null;
 
-        [Test, MoqAutoData]
-        public async Task ThenIfNoReservationFoundForAGivenIdReturnNull(
-            Guid reservationId,
-            [Frozen] Mock<IReservationRepository> repository,
-            [Frozen] Mock<ILogger> logger,
-            ReservationService service)
-        {
-            //Arrange
-            Reservation reservation = null;
+        repository
+            .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
+            .ReturnsAsync(reservation);
 
-            repository
-                .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
-                .ReturnsAsync(reservation);
+        //Act
+        var result = await service.GetReservation(reservationId);
 
-            //Act
-            var result = await service.GetReservation(reservationId);
+        //Assert
+        result.Should().BeNull();
+    }
 
-            //Assert
-            Assert.IsNull(result);
-        }
+    [Test, MoqAutoData]
+    public async Task ThenShouldReturnReservation_WithNonLevyPropertiesSet(
+        Guid reservationId,
+        Reservation reservation,
+        [Frozen] Mock<IReservationRepository> repository,
+        ReservationService service
+    )
+    {
+        // Arrange
+        repository
+            .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
+            .ReturnsAsync(reservation);
 
-        [Test, MoqAutoData]
-        public async Task ThenShouldReturnReservation_WithNonLevyPropertiesSet(
-            Guid reservationId,
-            Reservation reservation,
-            [Frozen] Mock<IReservationRepository> repository,
-            ReservationService service
-            )
-        {
-            // Arrange
-            repository
-                .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
-                .ReturnsAsync(reservation);
+        //Act
+        var result = await service.GetReservation(reservationId);
 
-            //Act
-            var result = await service.GetReservation(reservationId);
+        //Assert
+        result.CourseName.Should().Be(reservation.Course.Title);
+        result.CourseLevel.Should().Be(reservation.Course.Level);
+    }
 
-            //Assert
-            result.CourseName.Should().Be(reservation.Course.Title);
-            result.CourseLevel.Should().Be(reservation.Course.Level);
-        }
+    [Test, MoqAutoData]
+    public async Task ThenShouldReturnReservation_WithoutNonLevyPropertiesSet(
+        Guid reservationId,
+        Reservation reservation,
+        [Frozen] Mock<IReservationRepository> repository,
+        ReservationService service
+    )
+    {
+        // Arrange
+        UnsetUnusedLevyReservationProperties(reservation);
 
-        [Test, MoqAutoData]
-        public async Task ThenShouldReturnReservation_WithoutNonLevyPropertiesSet(
-            Guid reservationId,
-            Reservation reservation,
-            [Frozen] Mock<IReservationRepository> repository,
-            ReservationService service
-            )
-        {
-            // Arrange
-            UnsetUnusedLevyReservationProperties(reservation);
+        repository
+            .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
+            .ReturnsAsync(reservation);
 
-            repository
-                .Setup(x => x.GetReservationById(It.IsAny<Guid>()))
-                .ReturnsAsync(reservation);
+        //Act
+        var result = await service.GetReservation(reservationId);
 
-            //Act
-            var result = await service.GetReservation(reservationId);
+        //Assert
+        result.CourseName.Should().Be(null);
+        result.CourseLevel.Should().Be(null);
+    }
 
-            //Assert
-            result.CourseName.Should().Be(null);
-            result.CourseLevel.Should().Be(null);
-        }
-
-        private void UnsetUnusedLevyReservationProperties(Reservation reservation)
-        {
-            reservation.Course = null;
-            reservation.CourseId = null;
-        }
+    private static void UnsetUnusedLevyReservationProperties(Reservation reservation)
+    {
+        reservation.Course = null;
+        reservation.CourseId = null;
     }
 }

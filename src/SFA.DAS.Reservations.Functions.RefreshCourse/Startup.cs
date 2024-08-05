@@ -91,8 +91,7 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
                 });
             });
 
-            services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
-
+            services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
             services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
             services.AddTransient<ICourseService, CourseService>();
 

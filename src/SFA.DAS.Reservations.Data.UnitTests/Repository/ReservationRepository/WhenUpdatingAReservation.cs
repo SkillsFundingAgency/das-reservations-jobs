@@ -71,7 +71,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
         public void Then_If_Reservation_Does_Not_Exists_An_Exception_Is_Thrown()
         {
             //Act + Assert
-            Assert.ThrowsAsync<InvalidOperationException>(() => _reservationRepository.Update(Guid.NewGuid(), ReservationStatus.Confirmed));
+            var action = () => _reservationRepository.Update(Guid.NewGuid(), ReservationStatus.Confirmed);
+            action.Should().ThrowAsync<InvalidOperationException>();
            
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }
@@ -91,7 +92,8 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationRepository
             };
             _dataContext.Setup(x => x.Reservations.FindAsync(_reservationEntity.Id)).ReturnsAsync(_reservationEntity);
 
-            Assert.ThrowsAsync<DbUpdateException>(() => _reservationRepository.Update(reservationId, ReservationStatus.Pending));
+            var action = () => _reservationRepository.Update(reservationId, ReservationStatus.Pending);
+            action.Should().ThrowAsync<DbUpdateException>();
             
             _dataContext.Verify(x => x.SaveChanges(), Times.Never);
         }

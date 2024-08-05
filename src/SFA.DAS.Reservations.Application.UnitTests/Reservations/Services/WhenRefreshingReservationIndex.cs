@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -32,16 +33,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _expectedReservations = new List<Reservation>
             {
-                new Reservation{ Id = Guid.NewGuid(), AccountLegalEntityId = 1},
-                new Reservation{ Id = Guid.NewGuid(), AccountLegalEntityId = 1 }
+                new() { Id = Guid.NewGuid(), AccountLegalEntityId = 1},
+                new() { Id = Guid.NewGuid(), AccountLegalEntityId = 1 }
             };
 
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Returns(_expectedReservations);
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
             });
 
             _service = new ReservationService(_repository.Object, _indexRepository.Object, _permissionsRepository.Object, _logger.Object);
@@ -63,7 +64,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Arrange
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 1, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 1, CanCreateCohort = true}
             });
 
             //Act
@@ -104,12 +105,13 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Arrange
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 1, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 1, CanCreateCohort = true}
             });
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Throws(new Exception("Test"));
 
             //Act
-            Assert.ThrowsAsync<Exception>(() => _service.RefreshReservationIndex());
+            var action  = () => _service.RefreshReservationIndex();
+            action.Should().ThrowAsync<Exception>();
 
             //Assert
             _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Never);
@@ -123,7 +125,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 .ThrowsAsync(new Exception("Test"));
 
             //Act + Assert
-            Assert.ThrowsAsync<Exception>(() => _service.RefreshReservationIndex());
+            var action = () => _service.RefreshReservationIndex();
+            action.Should().ThrowAsync<Exception>();
         }
 
         [Test]
@@ -135,15 +138,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _expectedReservations = new List<Reservation>
             {
-                new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
-                new Reservation {Id = secondReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
+                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
+                new() {Id = secondReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
             };
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
             });
 
             //Act
@@ -173,15 +176,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _expectedReservations = new List<Reservation>
             {
-                new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
+                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
             };
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
             });
 
             //Act
@@ -216,8 +219,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
             });
 
             //Act
@@ -235,15 +238,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             
             _expectedReservations = new List<Reservation>
             {
-                new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
+                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
             };
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
             {
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
-                new Domain.Entities.ProviderPermission {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 2, CanCreateCohort = true}
+                new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 1, CanCreateCohort = true},
+                new() {AccountId = 1, AccountLegalEntityId = 2, ProviderId = 2, CanCreateCohort = true}
             });
 
             //Act
@@ -286,7 +289,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             
             _expectedReservations = new List<Reservation>
             {
-                new Reservation {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
+                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
             };
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -36,7 +35,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var accountsService = Services.GetService<IAccountsService>();
             var mockAccountsService = Mock.Get(accountsService);
 
-            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<UserDetails> { TestData.UserDetails });
+            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<TeamMember> { TestData.TeamMember });
 
             var notificationTokenBuilder = Services.GetService<INotificationTokenBuilder>();
             var mockNotificationTokenBuilder = Mock.Get(notificationTokenBuilder);

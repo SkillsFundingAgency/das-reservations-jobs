@@ -1,61 +1,55 @@
 ﻿using System;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.EmployerAccounts.Messages.Events;
-using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using TechTalk.SpecFlow;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
+namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
+
+[Binding]
+public class LegalEntityUpdatedSteps : StepsBase
 {
-    [Binding]
-    public class LegalEntityUpdatedSteps : StepsBase
+    public LegalEntityUpdatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
     {
-        public LegalEntityUpdatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider,
-            testData)
+    }
+
+    [When(@"signed agreement event is triggered")]
+    public void WhenSignedAgreementEventIsTriggered()
+    {
+        var handler = Services.GetService<ISignedLegalAgreementHandler>();
+
+        try
         {
-
-        }
-
-        [When(@"signed agreement event is triggered")]
-        public void WhenSignedAgreementEventIsTriggered()
-        {
-            var handler = Services.GetService<ISignedLegalAgreementHandler>();
-
-            try
+            handler.Handle(new SignedAgreementEvent
             {
-                handler.Handle(new SignedAgreementEvent
-                {
-                    AccountId = TestData.AccountLegalEntity.AccountId,
-                    AgreementId = 123
-                }).Wait();
-            }
-            catch (Exception e)
-            {
-                TestData.Exception = e;
-            }
+                AccountId = TestData.AccountLegalEntity.AccountId,
+                AgreementId = 123
+            }).Wait();
         }
-
-
-        [Then(@"the legal entity should be signed")]
-        public void ThenTheLegalEntityStateShouldBeSigned()
+        catch (Exception e)
         {
-            var dbContext = Services.GetService<ReservationsDataContext>();
-            var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
-                ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
-
-            Assert.IsNotNull(legalEntity);
-            Assert.IsTrue(legalEntity.AgreementSigned);
+            TestData.Exception = e;
         }
+    }
 
-        [Then(@"an exception should be thrown")]
-        public void ThenAnExceptionShouldBeThrown()
-        {
-            Assert.IsNotNull(TestData.Exception);
-        }
 
+    [Then(@"the legal entity should be signed")]
+    public void ThenTheLegalEntityStateShouldBeSigned()
+    {
+        var dbContext = Services.GetService<ReservationsDataContext>();
+        var legalEntity = dbContext.AccountLegalEntities.SingleOrDefault(ale =>
+            ale.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
+
+        legalEntity.Should().NotBeNull();
+        legalEntity.AgreementSigned.Should().BeTrue();
+    }
+
+    [Then(@"an exception should be thrown")]
+    public void ThenAnExceptionShouldBeThrown()
+    {
+        TestData.Exception.Should().NotBeNull();
     }
 }

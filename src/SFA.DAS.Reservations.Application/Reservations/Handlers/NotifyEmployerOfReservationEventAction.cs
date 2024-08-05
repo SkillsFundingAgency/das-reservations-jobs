@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -7,102 +8,106 @@ using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 
-namespace SFA.DAS.Reservations.Application.Reservations.Handlers
-{
-    public class NotifyEmployerOfReservationEventAction : INotifyEmployerOfReservationEventAction
-    {
-        private readonly IAccountsService _accountsService;
-        private readonly INotificationsService _notificationsService;
-        private readonly ILogger<NotifyEmployerOfReservationEventAction> _logger;
-        private readonly INotificationTokenBuilder _notificationTokenBuilder;
-        private readonly string[] _permittedRoles = {"Owner", "Transactor"};
-        
+namespace SFA.DAS.Reservations.Application.Reservations.Handlers;
 
-        public NotifyEmployerOfReservationEventAction(
-            IAccountsService accountsService,
-            INotificationsService notificationsService,
-            ILogger<NotifyEmployerOfReservationEventAction> logger, 
-            INotificationTokenBuilder notificationTokenBuilder)
+public class NotifyEmployerOfReservationEventAction(
+    IAccountsService accountsService,
+    INotificationsService notificationsService,
+    ILogger<NotifyEmployerOfReservationEventAction> logger,
+    INotificationTokenBuilder notificationTokenBuilder)
+    : INotifyEmployerOfReservationEventAction
+{
+    private readonly string[] _permittedRoles = ["Owner", "Transactor"];
+
+    public async Task Execute<T>(T notificationEvent) where T : INotificationEvent
+    {
+        logger.LogInformation("Notify employer of action [{EventTypeName}], Reservation Id [{NotificationEventId}].", notificationEvent.GetType().Name, notificationEvent.Id);
+
+        if (EventIsNotForProcessing(notificationEvent))
         {
-            _accountsService = accountsService;
-            _notificationsService = notificationsService;
-            _logger = logger;
-            _notificationTokenBuilder = notificationTokenBuilder;
+            return;
         }
 
-        public async Task Execute<T>(T notificationEvent) where T : INotificationEvent
+        var teamMembers = (await accountsService.GetAccountUsers(notificationEvent.AccountId)).ToList();
+
+        logger.LogInformation("Reservation [{NotificationEventId}], Account [{AccountId}] has [{TeamMembersCount}] users in total.", notificationEvent.Id, notificationEvent.AccountId, teamMembers.Count);
+
+        var filteredUsers = teamMembers.Where(user => user.CanReceiveNotifications && _permittedRoles.Contains(user.Role)).ToList();
+
+        logger.LogInformation("Reservation [{NotificationEventId}], Account [{AccountId}] has [{FilteredUsersCount}] users with correct role and subscription.", notificationEvent.Id, notificationEvent.AccountId, filteredUsers.Count);
+        
+        var sendCount = await SendNotifications(notificationEvent, filteredUsers);
+
+        logger.LogInformation("Finished notifying employer of action [{EventTypeName}], Reservation Id [{NotificationEventId}], [{SendCount}] email(s) sent.", notificationEvent.GetType().Name, notificationEvent.Id, sendCount);
+    }
+
+    private bool EventIsNotForProcessing<T>(T notificationEvent) where T : INotificationEvent
+    {
+        if (EventIsNotFromProvider(notificationEvent))
         {
-            _logger.LogInformation($"Notify employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}].");
+            logger.LogInformation("Reservation [{NotificationEventId}] is not created by provider, no further processing.", notificationEvent.Id);
+            return true;
+        }
 
-            if (EventIsNotFromProvider(notificationEvent))
+        if (EventIsFromEmployerDelete(notificationEvent))
+        {
+            logger.LogInformation("Reservation [{NotificationEventId}] is created by provider but deleted by employer, no further processing.", notificationEvent.Id);
+            return true;
+        }
+
+        if (EventIsFromLevyAccount(notificationEvent))
+        {
+            logger.LogInformation("Reservation [{NotificationEventId}] is from levy account, no further processing.", notificationEvent.Id);
+            return true;
+        }
+
+        return false;
+    }
+
+    private async Task<int> SendNotifications<T>(T notificationEvent, IEnumerable<TeamMember> filteredUsers) where T : INotificationEvent
+    {
+        var tokens = await notificationTokenBuilder.BuildTokens(notificationEvent);
+        
+        var sendCount = 0;
+        
+        foreach (var user in filteredUsers)
+        {
+            var message = new NotificationMessage
             {
-                _logger.LogInformation($"Reservation [{notificationEvent.Id}] is not created by provider, no further processing.");
-                return;
-            }
+                RecipientsAddress = user.Email,
+                TemplateId = GetTemplateName(notificationEvent),
+                Tokens = tokens
+            };
 
-            if (EventIsFromEmployerDelete(notificationEvent))
-            {
-                _logger.LogInformation($"Reservation [{notificationEvent.Id}] is created by provider but deleted by employer, no further processing.");
-                return;
-            }
-
-            if (EventIsFromLevyAccount(notificationEvent))
-            {
-                _logger.LogInformation($"Reservation [{notificationEvent.Id}] is from levy account, no further processing.");
-                return;
-            }
-
-            var users = await _accountsService.GetAccountUsers(notificationEvent.AccountId);
-
-            _logger.LogInformation($"Reservation [{notificationEvent.Id}], Account [{notificationEvent.AccountId}] has [{users.Count()}] users in total.");
-
-            var filteredUsers = users.Where(user => 
-                user.CanReceiveNotifications && 
-                _permittedRoles.Contains(user.Role)).ToList();
-
-            _logger.LogInformation($"Reservation [{notificationEvent.Id}], Account [{notificationEvent.AccountId}] has [{filteredUsers.Count}] users with correct role and subscription.");
-
-            var sendCount = 0;
-            var tokens = await _notificationTokenBuilder.BuildTokens(notificationEvent);
-            foreach (var user in filteredUsers)
-            {
-                var message = new NotificationMessage
-                {
-                    RecipientsAddress = user.Email,
-                    TemplateId = GetTemplateName(notificationEvent),
-                    Tokens = tokens
-                };
-
-                await _notificationsService.SendEmail(message);
+                await notificationsService.SendEmail(message);
                 sendCount++;
             }
 
-            _logger.LogInformation($"Finished notifying employer of action [{notificationEvent.GetType().Name}], Reservation Id [{notificationEvent.Id}], [{sendCount}] email(s) sent.");
-        }
+        return sendCount;
+    }
 
-        private static bool EventIsNotFromProvider(INotificationEvent notificationEvent)
-        {
-            return !notificationEvent.ProviderId.HasValue;
-        }
+    private static bool EventIsNotFromProvider(INotificationEvent notificationEvent)
+    {
+        return !notificationEvent.ProviderId.HasValue;
+    }
 
-        private static bool EventIsFromLevyAccount(INotificationEvent notificationEvent)
-        {
-            return notificationEvent.CourseId == null && notificationEvent.StartDate == DateTime.MinValue;
-        }
+    private static bool EventIsFromLevyAccount(INotificationEvent notificationEvent)
+    {
+        return notificationEvent.CourseId == null && notificationEvent.StartDate == DateTime.MinValue;
+    }
 
-        private static bool EventIsFromEmployerDelete(INotificationEvent notificationEvent)
-        {
-            return notificationEvent.ProviderId.HasValue && notificationEvent.EmployerDeleted;
-        }
+    private static bool EventIsFromEmployerDelete(INotificationEvent notificationEvent)
+    {
+        return notificationEvent.ProviderId.HasValue && notificationEvent.EmployerDeleted;
+    }
 
-        private string GetTemplateName(INotificationEvent notificationEvent)
+    private static string GetTemplateName(INotificationEvent notificationEvent)
+    {
+        return notificationEvent.GetType().Name switch
         {
-            switch (notificationEvent.GetType().Name)
-            {
-                case nameof(ReservationCreatedNotificationEvent): return TemplateIds.ReservationCreated;
-                case nameof(ReservationDeletedNotificationEvent): return TemplateIds.ReservationDeleted;
-                default: throw new NotImplementedException("No template found for this event.");
-            }
-        }
+            nameof(ReservationCreatedNotificationEvent) => TemplateIds.ReservationCreated,
+            nameof(ReservationDeletedNotificationEvent) => TemplateIds.ReservationDeleted,
+            _ => throw new NotImplementedException("No template found for this event.")
+        };
     }
 }

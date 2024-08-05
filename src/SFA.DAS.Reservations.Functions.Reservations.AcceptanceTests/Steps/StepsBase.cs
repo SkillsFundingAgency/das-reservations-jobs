@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Common.Domain.Types;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
@@ -145,7 +143,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 
         private void InitialiseUserDetails()
         {
-            TestData.UserDetails = new UserDetails
+            TestData.TeamMember = new TeamMember
             { CanReceiveNotifications = true, Email = "", Name = "", Role = "Owner", Status = 1, UserRef = "" };
         }
     }

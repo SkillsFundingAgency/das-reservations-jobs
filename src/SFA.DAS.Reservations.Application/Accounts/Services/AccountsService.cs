@@ -1,56 +1,55 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.EAS.Account.Api.Client;
-using SFA.DAS.EAS.Account.Api.Types;
+using SFA.DAS.Reservations.Application.OuterApi;
+using SFA.DAS.Reservations.Application.OuterApi.Requests;
+using SFA.DAS.Reservations.Application.OuterApi.Responses;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 
-namespace SFA.DAS.Reservations.Application.Accounts.Services
+namespace SFA.DAS.Reservations.Application.Accounts.Services;
+
+public class AccountsService(
+    IAccountRepository accountRepository,
+    IOuterApiClient outerApiClient) : IAccountsService
 {
-    public class AccountsService : IAccountsService
+    public async Task<IEnumerable<TeamMember>> GetAccountUsers(long accountId)
     {
-        private readonly IAccountApiClient _accountApiClient;
-        private readonly IAccountRepository _accountRepository;
-
-        public AccountsService(IAccountApiClient accountApiClient, IAccountRepository accountRepository)
+        var response = await outerApiClient.Get<GetAccountUsersResponse>(new GetAccountUsersRequest(accountId));
+        
+        return response.AccountUsers.Select(source => new TeamMember
         {
-            _accountApiClient = accountApiClient;
-            _accountRepository = accountRepository;
-        }
+            UserRef = source.UserRef,
+            Email = source.Email,
+            Role = source.Role,
+            CanReceiveNotifications = source.CanReceiveNotifications,
+        });
+    }
 
-        public async Task<IEnumerable<UserDetails>> GetAccountUsers(long accountId)
+    public async Task CreateAccount(long accountId, string name)
+    {
+        await accountRepository.Add(new Account
         {
-            var teamMembers = await _accountApiClient.GetAccountUsers(accountId);
-            var users = teamMembers.Select<TeamMemberViewModel, UserDetails>(model => model);
-            return users;
-        }
+            Id = accountId,
+            Name = name
+        });
+    }
 
-        public async Task CreateAccount(long accountId, string name)
+    public async Task UpdateAccountName(long accountId, string name)
+    {
+        await accountRepository.UpdateName(new Account
         {
-            await _accountRepository.Add(new Account
-            {
-                Id = accountId,
-                Name = name
-            });
-        }
+            Id = accountId,
+            Name = name
+        });
+    }
 
-        public async Task UpdateAccountName(long accountId, string name)
+    public async Task UpdateLevyStatus(long accountId, bool isLevy)
+    {
+        await accountRepository.UpdateLevyStatus(new Account
         {
-            await _accountRepository.UpdateName(new Account
-            {
-                Id = accountId,
-                Name = name
-            });
-        }
-
-        public async Task UpdateLevyStatus(long accountId, bool isLevy)
-        {
-            await _accountRepository.UpdateLevyStatus(new Account
-            {
-                Id = accountId,
-                IsLevy = isLevy
-            });
-        }
+            Id = accountId,
+            IsLevy = isLevy
+        });
     }
 }

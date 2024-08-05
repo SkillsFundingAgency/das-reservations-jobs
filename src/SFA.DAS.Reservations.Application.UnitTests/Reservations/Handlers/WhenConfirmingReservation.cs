@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.CommitmentsV2.Messages.Events;
@@ -45,10 +46,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 DateTime.UtcNow);
 
             //Act
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => handler.Handle(createdEvent));
+            var action = () => handler.Handle(createdEvent);
+            action.Should()
+                .ThrowAsync<ArgumentException>()
+                .WithParameterName(nameof(DraftApprenticeshipCreatedEvent.ReservationId));
 
             //Assert
-            Assert.AreEqual(nameof(DraftApprenticeshipCreatedEvent.ReservationId), exception.ParamName);
             mockService.Verify(s => s.UpdateReservationStatus(
                 It.IsAny<Guid>(), 
                 It.IsAny<ReservationStatus>(),

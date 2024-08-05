@@ -11,10 +11,10 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.EAS.Account.Api.Client;
 using SFA.DAS.Encoding;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.Accounts.Services;
+using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -54,7 +54,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 {
     private const string EncodingConfigKey = "SFA.DAS.Encoding";
     private readonly IConfiguration _configuration;
-    
+
     public ServiceCollection ServiceCollection { get; set; }
 
     public ServiceProviderBuilder(IConfiguration configuration)
@@ -64,7 +64,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("local.settings.json", true)
             .AddEnvironmentVariables();
-        
+
         if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             config.AddAzureTableStorage(options =>
@@ -89,15 +89,12 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
-        services.Configure<AccountApiConfiguration>(_configuration.GetSection("AccountApiConfiguration"));
-        services.AddSingleton<IAccountApiConfiguration>(cfg => cfg.GetService<IOptions<AccountApiConfiguration>>().Value);
-
         var serviceProvider = services.BuildServiceProvider();
 
         var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
         var environmentName = _configuration["EnvironmentName"];
-        
+
         if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             var encodingConfigJson = _configuration.GetSection(EncodingConfigKey).Value;
@@ -113,7 +110,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             {
                 builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
                 builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
-                
+
                 builder.SetMinimumLevel(LogLevel.Information);
 
                 builder.AddConsole();
@@ -126,7 +123,7 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
                 });
             });
         }
-
+        
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
         services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
@@ -135,12 +132,18 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddTransient<IReservationService, ReservationService>();
 
-        services.AddHttpClient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+        services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
         services.AddTransient<IProviderService, ProviderService>();
+
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
+        {
+            var apimUrl = EnsureUrlEndWithForwardSlash(jobsConfig.ReservationsApimUrl);
+            client.BaseAddress = new Uri(apimUrl);
+        });
 
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
-
+        
         if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
         {
             services.AddTransient<INotificationsService, NotificationsService>();
@@ -149,27 +152,26 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
             services.AddTransient<IAccountsService, AccountsService>();
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
-        }
 
-        services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
-
-        services.AddTransient<IIndexRegistry, IndexRegistry>();
-
-        services.AddElasticSearch(jobsConfig);
-        services.AddSingleton(new ReservationJobsEnvironment(environmentName));
-
-        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-        {
             var clientFactory = serviceProvider.GetService<IHttpClientFactory>();
             var newClient = clientFactory.CreateClient();
             services.AddSingleton(provider => newClient);
-            services.AddTransient<IAccountApiClient, AccountApiClient>();
-            services.AddTransient<INotificationsService, NotificationsService>();
         }
-            
+
+        services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
+        services.AddTransient<IIndexRegistry, IndexRegistry>();
+        
+        services.AddElasticSearch(jobsConfig);
+        services.AddSingleton(new ReservationJobsEnvironment(environmentName));
+
         services.AddNServiceBus(environmentName);
         services.AddDatabaseRegistration(jobsConfig, environmentName);
-        
+
         return services.BuildServiceProvider();
+    }
+    
+    private static string EnsureUrlEndWithForwardSlash(string url)
+    {
+        return url.EndsWith('/') ? url : $"{url}/";
     }
 }

@@ -19,7 +19,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Customisations
                 throw new ArgumentNullException(nameof(parameter));
             }
 
-            if (parameter.ParameterType != typeof(List<UserDetails>))
+            if (parameter.ParameterType != typeof(List<TeamMember>))
             {
                 throw new ArgumentException(nameof(parameter));
             }

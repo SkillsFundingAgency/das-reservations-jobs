@@ -4,39 +4,38 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 
-namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
+namespace SFA.DAS.Reservations.Application.RefreshCourses.Services;
+
+public class ApprenticeshipCoursesService : IApprenticeshipCourseService
 {
-    public class ApprenticeshipCoursesService : IApprenticeshipCourseService
+    private readonly IFindApprenticeshipTrainingService _standardApiClient;
+
+    public ApprenticeshipCoursesService(IFindApprenticeshipTrainingService standardApiClient)
     {
-        private readonly IFindApprenticeshipTrainingService _standardApiClient;
+        _standardApiClient = standardApiClient;
+    }
 
-        public ApprenticeshipCoursesService(IFindApprenticeshipTrainingService standardApiClient)
+    public List<Course> GetCourseInformation()
+    {
+        var list = new ConcurrentBag<Course>();
+
+        var tasks = new List<Task>
         {
-            _standardApiClient = standardApiClient;
-        }
+            GetStandards(list)
+        };
 
-        public List<Course> GetCourseInformation()
+        Task.WaitAll(tasks.ToArray());
+
+        return list.ToList();
+    }
+
+    private async Task GetStandards(ConcurrentBag<Course> courses)
+    {
+        var standardApiResponse = await _standardApiClient.GetStandards();
+
+        foreach (var standard in standardApiResponse.Standards)
         {
-            var list = new ConcurrentBag<Course>();
-
-            var tasks = new List<Task>
-            {
-                GetStandards(list)
-            };
-
-            Task.WaitAll(tasks.ToArray());
-
-            return list.ToList();
-        }
-
-        private async Task GetStandards(ConcurrentBag<Course> courses)
-        {
-            var standardApiResponse = await _standardApiClient.GetStandards();
-
-            foreach (var standard in standardApiResponse.Standards)
-            {
-                courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo));
-            }
+            courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo));
         }
     }
 }
