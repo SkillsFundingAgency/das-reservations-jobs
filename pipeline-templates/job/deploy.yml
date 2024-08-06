@@ -31,6 +31,8 @@ jobs:
               LoggingRedisConnectionString: $(LoggingRedisConnectionString)
               ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
               SharedStorageAccountConnectionString: $(SharedStorageAccountConnectionString)
+              NServiceBusConnectionString: $(nServiceBusConnectionString)
+              nServiceBusLicense: $(nServiceBusLicense)
         - template: azure-pipelines-templates/deploy/step/get-apim-subscription-key.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
@@ -50,7 +52,6 @@ jobs:
             TableName: Configuration
             ConfigurationSecrets:
               ReferenceDataApimSubscriptionKey: $(ReferenceDataApimSubscriptionKey)
-              NSERVICEBUSCONNECTIONSTRING: $(NSERVICEBUSCONNECTIONSTRING)
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
