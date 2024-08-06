@@ -50,6 +50,7 @@ jobs:
             TableName: Configuration
             ConfigurationSecrets:
               ReferenceDataApimSubscriptionKey: $(ReferenceDataApimSubscriptionKey)
+              NSERVICEBUSCONNECTIONSTRING: $(NSERVICEBUSCONNECTIONSTRING)
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
