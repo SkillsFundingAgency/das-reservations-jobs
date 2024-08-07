@@ -54,7 +54,7 @@ jobs:
               ReservationsApimSubscriptionKey: $(ReservationsApimSubscriptionKey)
               AzureWebJobsStorage: $(AzureWebJobsStorage)
               NServiceBusLicense: $(NServiceBusLicense)
-              NServiceBusConnectionString: $(NServiceBusConnectionString)
+              ServiceBusConnectionString: $(ServiceBusConnectionString)
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
