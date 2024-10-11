@@ -109,8 +109,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
             services.AddTransient<IAccountsService, AccountsService>();
 
-            services.AddHttpClient<IOuterApiClient, OuterApiClient>();
-
             services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
 
