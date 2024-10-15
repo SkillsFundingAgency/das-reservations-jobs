@@ -5,11 +5,10 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Encoding;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
@@ -35,7 +34,6 @@ using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
-using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace SFA.DAS.Reservations.Functions.Reservations;
@@ -93,6 +91,13 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         var jobsConfig = serviceProvider.GetService<ReservationsJobs>();
 
+        services.AddLogging(builder =>
+        {
+            builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+            builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+            builder.SetMinimumLevel(LogLevel.Trace);
+        });
+
         var environmentName = _configuration["EnvironmentName"];
 
         if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
@@ -102,28 +107,6 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             services.AddSingleton(encodingConfig);
         }
 
-        var nLogConfiguration = new NLogConfiguration();
-
-        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-        {
-            services.AddLogging(builder =>
-            {
-                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
-
-                builder.SetMinimumLevel(LogLevel.Information);
-
-                builder.AddConsole();
-                builder.AddDebug();
-                nLogConfiguration.ConfigureNLog(_configuration);
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-            });
-        }
-        
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
         services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();

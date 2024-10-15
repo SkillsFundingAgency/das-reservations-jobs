@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
@@ -25,7 +24,6 @@ using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
-using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace SFA.DAS.Reservations.Functions.ProviderPermission
@@ -77,23 +75,11 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
 
             var config = serviceProvider.GetService<ReservationsJobs>();
 
-            var nLogConfiguration = new NLogConfiguration();
-
             services.AddLogging(builder =>
             {
                 builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
                 builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
-                
                 builder.SetMinimumLevel(LogLevel.Trace);
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-                builder.AddConsole();
-                builder.AddDebug();
-
-                nLogConfiguration.ConfigureNLog(Configuration);
             });
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
@@ -112,7 +98,6 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
             services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
             services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
             services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
-            services.AddLogging();
             return services.BuildServiceProvider();
         }
     }

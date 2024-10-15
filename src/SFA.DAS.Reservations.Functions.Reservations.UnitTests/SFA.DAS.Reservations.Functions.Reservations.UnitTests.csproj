@@ -15,9 +15,7 @@
     <PackageReference Include="nunit" Version="4.2.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="8.29.1" />
-    <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Reservations.Messages" Version="0.2.1" />
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="3.0.161" />
   </ItemGroup>
