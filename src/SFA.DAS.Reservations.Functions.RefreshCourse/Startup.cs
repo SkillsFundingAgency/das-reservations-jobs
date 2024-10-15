@@ -92,7 +92,12 @@ internal class ServiceProviderBuilder : IServiceProviderBuilder
             });
         });
 
-        services.AddHttpClient<IOuterApiClient, OuterApiClient>();
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
+        {
+            var apimUrl = EnsureUrlEndWithForwardSlash(config.ReservationsApimUrl);
+            client.BaseAddress = new Uri(apimUrl);
+        });
+        
         services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
         services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
         services.AddTransient<ICourseService, CourseService>();
