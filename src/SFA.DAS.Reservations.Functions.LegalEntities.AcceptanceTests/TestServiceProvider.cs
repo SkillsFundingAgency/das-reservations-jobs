@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Encoding;
+using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
@@ -46,6 +47,9 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
             
             var mockNotificationService = new Mock<INotificationsService>();
             serviceCollection.AddSingleton(mockNotificationService.Object);
+            
+            var outerApiClient = new Mock<IOuterApiClient>();
+            serviceCollection.AddSingleton(outerApiClient.Object);
              
             _serviceProvider = serviceProviderBuilder.Build();
         }

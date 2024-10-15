@@ -15,7 +15,6 @@ using SFA.DAS.Reservations.Application.AccountLegalEntities.Services;
 using SFA.DAS.Reservations.Application.AccountLegalEntities.Validators;
 using SFA.DAS.Reservations.Application.Accounts.Handlers;
 using SFA.DAS.Reservations.Application.Accounts.Services;
-using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -108,8 +107,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
             services.AddTransient<IAzureQueueService, AzureQueueService>();
             services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
             services.AddTransient<IAccountsService, AccountsService>();
-
-            services.AddHttpClient<IOuterApiClient, OuterApiClient>();
 
             services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
