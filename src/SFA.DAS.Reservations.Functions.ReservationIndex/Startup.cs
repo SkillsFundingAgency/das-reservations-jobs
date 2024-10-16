@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -22,7 +21,6 @@ using SFA.DAS.Reservations.Functions.ReservationIndex;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
-using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 namespace SFA.DAS.Reservations.Functions.ReservationIndex
@@ -74,23 +72,11 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             var config = serviceProvider.GetService<ReservationsJobs>();
 
-            var nLogConfiguration = new NLogConfiguration();
-
             services.AddLogging(builder =>
             {
                 builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
                 builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
-                
                 builder.SetMinimumLevel(LogLevel.Trace);
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
-                builder.AddConsole();
-                builder.AddDebug();
-
-                nLogConfiguration.ConfigureNLog(Configuration);
             });
 
             services.AddTransient<IReservationIndexRefreshHandler,ReservationIndexRefreshHandler>();
@@ -105,8 +91,6 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
                 
-            //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
-
             return services.BuildServiceProvider();
         }
     }

@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
@@ -19,7 +18,6 @@ using SFA.DAS.Reservations.Functions.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
-using SFA.DAS.Reservations.Infrastructure.Logging;
 
 [assembly: WebJobsStartup(typeof(Startup))]
 
@@ -72,23 +70,11 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
 
             var config = serviceProvider.GetService<ReservationsJobs>();
 
-            var nLogConfiguration = new NLogConfiguration();
-
             services.AddLogging(builder =>
             {
                 builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
                 builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
-                
-                builder.SetMinimumLevel(LogLevel.Information);
-                
-                builder.AddConsole();
-                builder.AddDebug();
-                nLogConfiguration.ConfigureNLog(Configuration);
-                builder.AddNLog(new NLogProviderOptions
-                {
-                    CaptureMessageTemplates = true,
-                    CaptureMessageProperties = true
-                });
+                builder.SetMinimumLevel(LogLevel.Trace);
             });
 
             services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();

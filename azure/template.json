@@ -52,9 +52,6 @@
       "type": "int",
       "defaultValue": 2
     },
-    "loggingRedisConnectionString": {
-      "type": "securestring"
-    },
     "functionsExtensionVersion": {
       "type": "string",
       "defaultValue": "~4"
@@ -420,10 +417,6 @@
                   "value": "das-reservations-jobs-refresh-course"
                 },
                 {
-                  "name": "LoggingRedisConnectionString",
-                  "value": "[parameters('loggingRedisConnectionString')]"
-                },
-                {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
                 },
@@ -509,10 +502,6 @@
                 {
                   "name": "AppName",
                   "value": "das-reservations-jobs-reservation-status"
-                },
-                {
-                  "name": "LoggingRedisConnectionString",
-                  "value": "[parameters('loggingRedisConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -602,10 +591,6 @@
                   "value": "das-reservations-jobs-legal-entities"
                 },
                 {
-                  "name": "LoggingRedisConnectionString",
-                  "value": "[parameters('loggingRedisConnectionString')]"
-                },
-                {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
                 },
@@ -683,10 +668,6 @@
                 {
                   "name": "AppName",
                   "value": "das-reservations-jobs-reservation-index"
-                },
-                {
-                  "name": "LoggingRedisConnectionString",
-                  "value": "[parameters('loggingRedisConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
@@ -775,10 +756,6 @@
                 {
                   "name": "AppName",
                   "value": "das-reservations-jobs-reservation-provider"
-                },
-                {
-                  "name": "LoggingRedisConnectionString",
-                  "value": "[parameters('loggingRedisConnectionString')]"
                 },
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",

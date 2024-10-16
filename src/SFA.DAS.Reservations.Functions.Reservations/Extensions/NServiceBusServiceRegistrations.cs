@@ -3,10 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NServiceBus;
 using SFA.DAS.Notifications.Messages.Commands;
-using SFA.DAS.NServiceBus;
-using SFA.DAS.NServiceBus.AzureServiceBus;
-using SFA.DAS.NServiceBus.NewtonsoftJsonSerializer;
-using SFA.DAS.NServiceBus.NLog;
+using SFA.DAS.NServiceBus.Configuration;
+using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
+using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
+using SFA.DAS.NServiceBus.Configuration.NLog;
+using SFA.DAS.NServiceBus.Hosting;
 using SFA.DAS.Reservations.Domain.Configuration;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.Extensions;
