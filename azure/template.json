@@ -418,7 +418,7 @@
                 },
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet"
+                  "value": "dotnet-isolated"
                 },
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -505,7 +505,7 @@
                 },
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet"
+                  "value": "dotnet-isolated"
                 },
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -592,7 +592,7 @@
                 },
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet"
+                  "value": "dotnet-isolated"
                 },
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -671,7 +671,7 @@
                 },
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet"
+                  "value": "dotnet-isolated"
                 },
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
