@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.Accounts;
+using SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests;
 
