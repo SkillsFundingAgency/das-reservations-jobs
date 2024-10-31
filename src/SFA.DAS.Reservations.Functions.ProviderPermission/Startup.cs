@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -113,6 +114,11 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission
             services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
             services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
             services.AddLogging();
+            
+            services
+                .AddApplicationInsightsTelemetryWorkerService()
+                .ConfigureFunctionsApplicationInsights();
+            
             return services.BuildServiceProvider();
         }
     }

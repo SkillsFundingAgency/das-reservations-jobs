@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -88,8 +90,11 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             if (!Configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
-                services.AddLogging((options) =>
+                services.AddLogging(options =>
                 {
+                    options.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+                    options.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+                    
                     options.SetMinimumLevel(LogLevel.Trace);
                     options.AddNLog(new NLogProviderOptions
                     {
@@ -123,7 +128,10 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities
 
             services.AddSingleton<IValidator<AddedLegalEntityEvent>, AddAccountLegalEntityValidator>();
             services.AddLogging();
-            //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            
+            services
+                .AddApplicationInsightsTelemetryWorkerService()
+                .ConfigureFunctionsApplicationInsights();
 
             return services.BuildServiceProvider();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -101,6 +102,10 @@ namespace SFA.DAS.Reservations.Functions.RefreshCourse
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
 
             services.AddTransient<ICourseRepository, CourseRepository>();
+            
+            services
+                .AddApplicationInsightsTelemetryWorkerService()
+                .ConfigureFunctionsApplicationInsights();
 
             return services.BuildServiceProvider();
         }

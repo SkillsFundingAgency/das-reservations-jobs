@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -105,7 +106,9 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
 
             services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
                 
-            //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            services
+                .AddApplicationInsightsTelemetryWorkerService()
+                .ConfigureFunctionsApplicationInsights();
 
             return services.BuildServiceProvider();
         }
