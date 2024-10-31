@@ -69,7 +69,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             return _serviceProvider.GetService(serviceType);
         }
        
-        private static IConfigurationRoot GenerateConfiguration()
+        private static IConfiguration GenerateConfiguration()
         {
             var configSource = new MemoryConfigurationSource
             {

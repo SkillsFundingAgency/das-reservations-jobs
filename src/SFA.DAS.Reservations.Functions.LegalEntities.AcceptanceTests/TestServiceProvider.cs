@@ -7,71 +7,70 @@ using Moq;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
+namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests;
+
+public class TestServiceProvider : IServiceProvider
 {
-    public class TestServiceProvider : IServiceProvider
+    private readonly IServiceProvider _serviceProvider;
+
+    public TestServiceProvider()
     {
-        private readonly IServiceProvider _serviceProvider;
+        var serviceCollection = new ServiceCollection();
+        var configuration = GenerateConfiguration();
 
-        public TestServiceProvider()
+        var serviceProviderBuilder = new ServiceProviderBuilder(configuration)
         {
-            var serviceCollection = new ServiceCollection();
-            var configuration = GenerateConfiguration();
-
-            var serviceProviderBuilder = new ServiceProviderBuilder(configuration)
-            {
-                ServiceCollection = serviceCollection
-            };
+            ServiceCollection = serviceCollection
+        };
             
-            var encodingService = new Mock<IEncodingService>();
+        var encodingService = new Mock<IEncodingService>();
 
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),
+        encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),
                 It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
-                .Returns(TestDataValues.NonLevyAccountId);
+            .Returns(TestDataValues.NonLevyAccountId);
 
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),
+        encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),
                 It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
-                .Returns(TestDataValues.NonLevyHashedAccountId);
+            .Returns(TestDataValues.NonLevyHashedAccountId);
 
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),
+        encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),
                 It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
-                .Returns(TestDataValues.LevyAccountId);
+            .Returns(TestDataValues.LevyAccountId);
 
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),
+        encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),
                 It.Is<EncodingType>(t => t == EncodingType.PublicAccountId)))
-                .Returns(TestDataValues.LevyHashedAccountId);
+            .Returns(TestDataValues.LevyHashedAccountId);
 
-            serviceCollection.AddSingleton(encodingService.Object);
+        serviceCollection.AddSingleton(encodingService.Object);
             
-            var mockNotificationService = new Mock<INotificationsService>();
-            serviceCollection.AddSingleton(mockNotificationService.Object);
+        var mockNotificationService = new Mock<INotificationsService>();
+        serviceCollection.AddSingleton(mockNotificationService.Object);
              
-            _serviceProvider = serviceProviderBuilder.Build();
-        }
+        _serviceProvider = serviceProviderBuilder.Build();
+    }
 
-        public object GetService(Type serviceType)
-        {
-            return _serviceProvider.GetService(serviceType);
-        }
+    public object GetService(Type serviceType)
+    {
+        return _serviceProvider.GetService(serviceType);
+    }
        
-        private static IConfigurationRoot GenerateConfiguration()
+    private static IConfiguration GenerateConfiguration()
+    {
+        var configSource = new MemoryConfigurationSource
         {
-            var configSource = new MemoryConfigurationSource
+            InitialData = new[]
             {
-                InitialData = new[]
-                {
-                    new KeyValuePair<string, string>("ConfigurationStorageConnectionString", "UseDevelopmentStorage=true;"),
-                    new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
-                    new KeyValuePair<string, string>("EnvironmentName", "DEV"),
-                    new KeyValuePair<string, string>("Version", "1.0"),
-                    new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
-                    new KeyValuePair<string, string>("ReservationsJobs:ReservationsApimUrl", "http://localhost:9201"),
-                }
-            };
+                new KeyValuePair<string, string>("ConfigurationStorageConnectionString", "UseDevelopmentStorage=true;"),
+                new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
+                new KeyValuePair<string, string>("EnvironmentName", "DEV"),
+                new KeyValuePair<string, string>("Version", "1.0"),
+                new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
+                new KeyValuePair<string, string>("ReservationsJobs:ReservationsApimUrl", "http://localhost:9201"),
+            }
+        };
             
-            var provider = new MemoryConfigurationProvider(configSource);
+        var provider = new MemoryConfigurationProvider(configSource);
 
-            return new ConfigurationRoot(new List<IConfigurationProvider> { provider });
-        }
+        return new ConfigurationRoot(new List<IConfigurationProvider> { provider });
     }
 }

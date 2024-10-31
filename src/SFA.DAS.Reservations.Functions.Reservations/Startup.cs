@@ -167,10 +167,13 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddNServiceBus(environmentName);
         services.AddDatabaseRegistration(jobsConfig, environmentName);
-        
-        services
-            .AddApplicationInsightsTelemetryWorkerService()
-            .ConfigureFunctionsApplicationInsights();
+
+        if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            services
+                .AddApplicationInsightsTelemetryWorkerService()
+                .ConfigureFunctionsApplicationInsights();
+        }
 
         return services.BuildServiceProvider();
     }
