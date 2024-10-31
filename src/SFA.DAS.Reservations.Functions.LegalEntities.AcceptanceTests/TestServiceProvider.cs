@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Reservations.Services;
@@ -19,7 +18,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
             var serviceCollection = new ServiceCollection();
             var configuration = GenerateConfiguration();
 
-            var serviceProviderBuilder = new ServiceProviderBuilder(new LoggerFactory(), configuration)
+            var serviceProviderBuilder = new ServiceProviderBuilder(configuration)
             {
                 ServiceCollection = serviceCollection
             };
