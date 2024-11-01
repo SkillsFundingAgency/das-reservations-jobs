@@ -11,6 +11,7 @@ using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -21,6 +22,10 @@ var host = new HostBuilder()
         services.ConfigureFunctionsApplicationInsights();
 
         var configuration = context.Configuration;
+        services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), configuration));
+
+        services.AddOptions();
+
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
