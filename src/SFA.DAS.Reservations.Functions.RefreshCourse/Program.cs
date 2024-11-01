@@ -12,14 +12,15 @@ using SFA.DAS.Reservations.Infrastructure.Database;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SFA.DAS.Reservations.Application.OuterApi;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
     .ConfigureServices((context, services) =>
     {
-        services.AddApplicationInsightsTelemetryWorkerService();
-        services.ConfigureFunctionsApplicationInsights();
+        //services.AddApplicationInsightsTelemetryWorkerService();
+        //services.ConfigureFunctionsApplicationInsights();
 
         var configuration = context.Configuration;
         services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), configuration));
@@ -42,6 +43,8 @@ var host = new HostBuilder()
         services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);
 
         services.AddTransient<ICourseRepository, CourseRepository>();
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>();
+
 
     })
     .Build();

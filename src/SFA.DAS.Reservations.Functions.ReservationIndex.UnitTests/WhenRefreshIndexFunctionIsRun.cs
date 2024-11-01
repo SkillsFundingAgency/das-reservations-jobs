@@ -16,10 +16,10 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests
             //Arrange
             var handler = new Mock<IReservationIndexRefreshHandler>();
 
+            var refreshIndex = new RefreshIndex(Mock.Of<ILogger<ReservationIndexRefreshHandler>>(), handler.Object);
+
             //Act
-            await RefreshIndex.Run(null,
-                Mock.Of<ILogger<ReservationIndexRefreshHandler>>(),
-                handler.Object);
+            await refreshIndex.Run(null);
 
             //Assert
             handler.Verify(s => s.Handle(), Times.Once);
