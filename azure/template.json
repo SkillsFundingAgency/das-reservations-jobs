@@ -410,7 +410,7 @@
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
+                  "value": "~4"
                 },
                 {
                   "name": "AppName",
@@ -497,7 +497,7 @@
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
+                  "value": "~4"
                 },
                 {
                   "name": "AppName",
@@ -584,7 +584,7 @@
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
+                  "value": "~4"
                 },
                 {
                   "name": "AppName",
@@ -663,7 +663,7 @@
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
+                  "value": "~4"
                 },
                 {
                   "name": "AppName",
@@ -751,7 +751,7 @@
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
+                  "value": "~4"
                 },
                 {
                   "name": "AppName",
