@@ -1,26 +1,30 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure;
-using SFA.DAS.Reservations.Infrastructure.Attributes;
+using System.Collections.Generic;
 
-namespace SFA.DAS.Reservations.Functions.RefreshCourse
+namespace SFA.DAS.Reservations.Functions.RefreshCourse;
+
+public class GetCourseInformation
 {
-    public static class GetCourseInformation
+    private readonly ILogger<GetCourseInformation> _logger;
+    private readonly IGetCoursesHandler _handler;
+
+    public GetCourseInformation(ILogger<GetCourseInformation> logger, IGetCoursesHandler handler)
     {
-        [FunctionName("GetCourseInformation")]
-        
-        public static void Run([QueueTrigger(QueueNames.GetCourses)]string message, [Inject]ILogger<string> log, [Inject]IGetCoursesHandler handler, [Queue(QueueNames.StoreCourse)]ICollector<Course> outputQueue)
-        {
-            var courses = handler.Handle();
-
-            log.LogTrace($"C# Queue trigger function processed message: {message} - adding {courses.Count} courses");
-
-            foreach (var course in courses)
-            {
-                outputQueue.Add(course);
-            }
-        }
+        _logger = logger;
+        _handler = handler;
     }
-    
+
+    [Function("GetCourseInformation")]
+    [QueueOutput(QueueNames.StoreCourse)]
+    public IEnumerable<Course> Run(
+        [QueueTrigger(QueueNames.GetCourses, Connection = "AzureWebJobsStorage")] string message)
+    {
+        var courses = _handler.Handle();
+        _logger.LogTrace(
+            $"C# Queue trigger function processed message: {message} - adding {courses.Count} courses");
+        return courses;
+    }
 }
