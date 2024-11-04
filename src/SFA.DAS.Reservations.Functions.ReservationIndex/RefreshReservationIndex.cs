@@ -15,8 +15,7 @@ namespace SFA.DAS.Reservations.Functions.ReservationIndex
         }
         [Function("RefreshReservationIndex")]
         [QueueOutput(QueueNames.RefreshReservationIndex)]
-        //public string Run([TimerTrigger("0 0 0 */1 * *")]TimerInfo myTimer)
-        public string Run([TimerTrigger("*/10 * * * *")]TimerInfo myTimer)
+        public string Run([TimerTrigger("0 0 0 */1 * *")]TimerInfo myTimer)
         {
             _logger.LogInformation($"C# Timer trigger function for reservation index refresh executed at: {DateTime.Now}");
             
