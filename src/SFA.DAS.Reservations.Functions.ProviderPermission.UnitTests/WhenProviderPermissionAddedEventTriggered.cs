@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
@@ -23,11 +24,11 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests
                 "test@example.com", "Test", 
                 "Tester", new HashSet<Operation>(), null, DateTime.Now);
 
+            var sut = new HandleProviderPermissionUpdatedEvent(handler.Object,
+                Mock.Of<ILogger<UpdatedPermissionsEvent>>());
+
             //Act
-            await HandleProviderPermissionUpdatedEvent.Run(
-                message,
-                Mock.Of<ILogger<UpdatedPermissionsEvent>>(),
-                handler.Object);
+            await sut.Handle(message, Mock.Of<IMessageHandlerContext>());
 
             //Assert
             handler.Verify(s => s.Handle(message), Times.Once);
