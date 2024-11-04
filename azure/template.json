@@ -96,7 +96,10 @@
     "minimumTlsVersion": {
       "type": "string",
       "defaultValue": "TLS1_2"
-  }
+    },
+    "SharedServiceBusFqdn": {
+      "type": "string"
+    }
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
@@ -423,6 +426,10 @@
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
                   "value": "1"
+                },
+                {
+                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                  "value": "[parameters('SharedServiceBusFqdn')]"
                 }
               ]
             }
@@ -510,6 +517,10 @@
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
                   "value": "1"
+                },
+                {
+                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                  "value": "[parameters('SharedServiceBusFqdn')]"
                 }
               ]
             }
@@ -597,6 +608,10 @@
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
                   "value": "1"
+                },
+                {
+                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                  "value": "[parameters('SharedServiceBusFqdn')]"
                 }
               ]
             }
@@ -676,6 +691,10 @@
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
                   "value": "1"
+                },
+                {
+                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                  "value": "[parameters('SharedServiceBusFqdn')]"
                 }
               ]
             }
@@ -760,6 +779,10 @@
                 {
                   "name": "WEBSITE_RUN_FROM_PACKAGE",
                   "value": "1"
+                },
+                {
+                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                  "value": "[parameters('SharedServiceBusFqdn')]"
                 }
               ]
             }
