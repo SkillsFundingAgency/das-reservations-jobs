@@ -14,15 +14,13 @@ using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
     .ConfigureServices((context, services) =>
     {
-        //services.AddApplicationInsightsTelemetryWorkerService();
-        //services.ConfigureFunctionsApplicationInsights();
-
         var configuration = context.Configuration;
         services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), configuration));
 
@@ -41,23 +39,12 @@ var host = new HostBuilder()
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
         services.AddTransient<IIndexRegistry, IndexRegistry>();
 
-        //services.AddElasticSearch(config);
+        services.AddElasticSearch(config);
         services.AddSingleton(new ReservationJobsEnvironment(configuration["EnvironmentName"]));
 
         services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);
 
-        //services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
-        //services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
-        //services.AddTransient<ICourseService, CourseService>();
-
-        //services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();
-        //services.AddTransient<IStoreCourseHandler, StoreCourseHandler>();
-
-        //services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);
-
-        //services.AddTransient<ICourseRepository, CourseRepository>();
         services.AddHttpClient<IOuterApiClient, OuterApiClient>();
-
 
     })
     .Build();
