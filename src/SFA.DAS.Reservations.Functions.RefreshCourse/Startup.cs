@@ -44,11 +44,15 @@ internal class ServiceProviderBuilder : IServiceProviderBuilder
         services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
         
-        services.AddHttpClient<IOuterApiClient, OuterApiClient>();
-
         var serviceProvider = services.BuildServiceProvider();
 
         var config = serviceProvider.GetService<ReservationsJobs>();
+        
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
+        {
+            var apimUrl = EnsureUrlEndWithForwardSlash(config.ReservationsApimUrl);
+            client.BaseAddress = new Uri(apimUrl);
+        });
 
         services.AddDasLogging(_configuration);
 
@@ -61,5 +65,10 @@ internal class ServiceProviderBuilder : IServiceProviderBuilder
             .ConfigureFunctionsApplicationInsights();
 
         return services.BuildServiceProvider();
+    }
+    
+    private static string EnsureUrlEndWithForwardSlash(string url)
+    {
+        return url.EndsWith('/') ? url : $"{url}/";
     }
 }
