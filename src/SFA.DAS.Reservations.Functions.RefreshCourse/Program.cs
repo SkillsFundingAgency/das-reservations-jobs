@@ -19,12 +19,8 @@ var host = new HostBuilder()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
     .ConfigureServices((context, services) =>
     {
-        //services.AddApplicationInsightsTelemetryWorkerService();
-        //services.ConfigureFunctionsApplicationInsights();
-
         var configuration = context.Configuration;
         services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), configuration));
-
         services.AddOptions();
 
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));

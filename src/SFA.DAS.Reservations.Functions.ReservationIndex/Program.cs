@@ -23,7 +23,6 @@ var host = new HostBuilder()
     {
         var configuration = context.Configuration;
         services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), configuration));
-
         services.AddOptions();
 
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));

@@ -13,7 +13,6 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="NServiceBus" Version="7.1.7" />
     <PackageReference Include="NServiceBus.Raw" Version="3.0.1" />
     <PackageReference Include="NServiceBus.Transport.AzureServiceBus" Version="1.1.1" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
