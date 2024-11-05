@@ -87,6 +87,8 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         var services = ServiceCollection ?? new ServiceCollection();
         services.AddHttpClient();
 
+        services.AddSingleton<IConfiguration>(_configuration);
+
         services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
