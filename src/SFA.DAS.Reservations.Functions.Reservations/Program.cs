@@ -95,7 +95,7 @@ var host = new HostBuilder()
         services.AddElasticSearch(config);
         services.AddSingleton(new ReservationJobsEnvironment(environmentName));
 
-        services.AddNServiceBus(environmentName);
+        //services.AddNServiceBus(environmentName);
         services.AddDatabaseRegistration(config, environmentName);
 
 
