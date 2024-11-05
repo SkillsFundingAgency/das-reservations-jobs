@@ -37,6 +37,8 @@ internal class ServiceProviderBuilder : IServiceProviderBuilder
     public IServiceProvider Build()
     {
         var services = new ServiceCollection();
+        
+        services.AddSingleton<IConfiguration>(_configuration);
             
         services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
