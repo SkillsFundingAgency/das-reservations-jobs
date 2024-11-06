@@ -13,43 +13,45 @@ namespace SFA.DAS.Reservations.TestConsole
 {
     public class NServiceBusConsole
     {
-        public async Task Run()
+        public Task Run()
         {
-            var connectionString = NServiceBus.AzureFunction.Infrastructure.EnvironmentVariables.NServiceBusConnectionString;
-            var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Reservations.TestConsole")
-                .UseAzureServiceBusTransport(connectionString, r =>
-                {
-                    r.RouteToEndpoint(typeof(UpdatedPermissionsEvent), QueueNames.UpdatedProviderPermissions);
-                })
-                .UseErrorQueue()
-                .UseInstallers()
-                .UseMessageConventions()
-                .UseNewtonsoftJsonSerializer();
+            //var connectionString = NServiceBus.AzureFunction.Infrastructure.EnvironmentVariables.NServiceBusConnectionString;
+            //var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Reservations.TestConsole")
+            //    .UseAzureServiceBusTransport(connectionString, r =>
+            //    {
+            //        r.RouteToEndpoint(typeof(UpdatedPermissionsEvent), QueueNames.UpdatedProviderPermissions);
+            //    })
+            //    .UseErrorQueue()
+            //    .UseInstallers()
+            //    .UseMessageConventions()
+            //    .UseNewtonsoftJsonSerializer();
 
-            var endpointInstance = await Endpoint.Start(endpointConfiguration)
-                .ConfigureAwait(false);
+            //var endpointInstance = await Endpoint.Start(endpointConfiguration)
+            //    .ConfigureAwait(false);
 
-            var command = string.Empty;
+            //var command = string.Empty;
 
-            do
-            {
-                var message = new UpdatedPermissionsEvent(
-                    10, 11, 12,
-                    13, 14, Guid.NewGuid(),
-                    "test@example.com", "Test",
-                    "Tester", new HashSet<Operation>(),null, DateTime.Now);
+            //do
+            //{
+            //    var message = new UpdatedPermissionsEvent(
+            //        10, 11, 12,
+            //        13, 14, Guid.NewGuid(),
+            //        "test@example.com", "Test",
+            //        "Tester", new HashSet<Operation>(),null, DateTime.Now);
 
-                await endpointInstance.Publish(message);
+            //    await endpointInstance.Publish(message);
 
-                Console.WriteLine("Message sent...");
+            //    Console.WriteLine("Message sent...");
 
-                Console.WriteLine("Enter 'q' to exit..." + Environment.NewLine);
-                command = Console.ReadLine();
-            } while (!command.Equals("q"));
+            //    Console.WriteLine("Enter 'q' to exit..." + Environment.NewLine);
+            //    command = Console.ReadLine();
+            //} while (!command.Equals("q"));
 
 
-            await endpointInstance.Stop()
-                .ConfigureAwait(false);
+            //await endpointInstance.Stop()
+            //    .ConfigureAwait(false);
+
+            return Task.CompletedTask;
         }
     }
 }
