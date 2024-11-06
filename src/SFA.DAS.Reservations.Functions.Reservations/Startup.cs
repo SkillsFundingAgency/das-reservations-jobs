@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -86,6 +87,8 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
         var services = ServiceCollection ?? new ServiceCollection();
         services.AddHttpClient();
 
+        services.AddSingleton<IConfiguration>(_configuration);
+
         services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
@@ -166,6 +169,13 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
 
         services.AddNServiceBus(environmentName);
         services.AddDatabaseRegistration(jobsConfig, environmentName);
+
+        if (!_configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            services
+                .AddApplicationInsightsTelemetryWorkerService()
+                .ConfigureFunctionsApplicationInsights();
+        }
 
         return services.BuildServiceProvider();
     }
