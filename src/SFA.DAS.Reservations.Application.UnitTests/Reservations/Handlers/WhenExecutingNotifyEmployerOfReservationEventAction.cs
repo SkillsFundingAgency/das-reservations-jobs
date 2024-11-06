@@ -10,7 +10,6 @@ using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
-using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 using SFA.DAS.Testing.AutoFixture;
 

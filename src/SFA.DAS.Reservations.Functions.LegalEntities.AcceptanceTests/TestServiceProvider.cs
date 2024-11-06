@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.Encoding;
+using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.Reservations.Services;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests;
