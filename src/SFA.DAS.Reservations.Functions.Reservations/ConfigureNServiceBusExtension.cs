@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using NServiceBus;
 
@@ -22,7 +23,22 @@ public static class ConfigureNServiceBusExtension
             endpointConfiguration.AdvancedConfiguration.Conventions()
                 .DefiningCommandsAs(IsCommand)
                 .DefiningMessagesAs(IsMessage)
-                .DefiningEventsAs(IsEvent);
+            .DefiningEventsAs(IsEvent);
+
+
+            endpointConfiguration.Routing.RouteToEndpoint();
+            transport.AddRouting(routeSettings =>
+            {
+                routeSettings.RouteToEndpoint(typeof(UpdateEmailAddressCommand), queueName);
+            });
+            //if (environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            //{
+            //    endpointConfiguration.UseLearningTransport(s => s.AddRouting());
+            //}
+            //else
+            //{
+            //    endpointConfiguration.UseAzureServiceBusTransport(configuration.NServiceBusConnectionString, s => s.AddRouting());
+            //}
 
             var decodedLicence = WebUtility.HtmlDecode(config["LevyTransferMatchingFunctions:NServiceBusLicense"]);
             if(!string.IsNullOrWhiteSpace(decodedLicence)) endpointConfiguration.AdvancedConfiguration.License(decodedLicence);

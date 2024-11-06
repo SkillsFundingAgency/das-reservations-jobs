@@ -8,6 +8,6 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "AppName": "sfa-reservations-jobs-legal-entities",
-    "AzureWebJobsServiceBus": "Endpoint=sb://das-test2-shared-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=hLcimcI5QTOZG0AVCMLGmDoCMJNqrZ59t/GjpWL44uk="
+    "AzureWebJobsServiceBus": "Endpoint=sb://das-test3-shared-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=hLcimcI5QTOZG0AVCMLGmDoCMJNqrZ59t/GjpWL44uk="
   }
 }

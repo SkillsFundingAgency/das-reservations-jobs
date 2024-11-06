@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Reservations.Data.Repository;
@@ -15,6 +16,9 @@ using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ProviderPermission;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
+using NServiceBus;
+
+[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.ProviderPermission")]
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -50,4 +54,5 @@ var host = new HostBuilder()
     })
     .Build();
 
+//host.AddServiceBus()
 host.Run();

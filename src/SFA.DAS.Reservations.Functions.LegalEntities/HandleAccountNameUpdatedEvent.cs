@@ -7,8 +7,8 @@ using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities
 {
-    public class HandleAccountNameUpdatedEvent(
-        IAccountNameUpdatedHandler handler, ILogger<ChangedAccountNameEvent> log) : IHandleMessages<ChangedAccountNameEvent>
+    public class HandleAccountNameUpdatedEvent(IAccountNameUpdatedHandler handler, 
+        ILogger<ChangedAccountNameEvent> log) : IHandleMessages<ChangedAccountNameEvent>
     {
         public async Task Handle(ChangedAccountNameEvent message, IMessageHandlerContext context)
         {

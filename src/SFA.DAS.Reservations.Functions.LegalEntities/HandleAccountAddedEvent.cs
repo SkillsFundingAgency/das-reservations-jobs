@@ -7,8 +7,8 @@ using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities
 {
-    public class HandleAccountAddedEvent(
-        IAddAccountHandler handler, ILogger<CreatedAccountEvent> log) : IHandleMessages<CreatedAccountEvent>
+    public class HandleAccountAddedEvent(IAddAccountHandler handler, 
+        ILogger<CreatedAccountEvent> log) : IHandleMessages<CreatedAccountEvent>
     {
         public async Task Handle(CreatedAccountEvent message, IMessageHandlerContext context)
         {

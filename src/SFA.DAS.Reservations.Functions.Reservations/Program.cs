@@ -26,6 +26,9 @@ using SFA.DAS.Reservations.Functions.Reservations;
 using SFA.DAS.Reservations.Functions.Reservations.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
+using NServiceBus;
+
+[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.Reservations")]
 
 const string EncodingConfigKey = "SFA.DAS.Encoding";
 
