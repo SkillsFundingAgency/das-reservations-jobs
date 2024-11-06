@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -26,14 +25,15 @@ namespace SFA.DAS.Reservations.Infrastructure.Database
                 const string AzureResource = "https://database.windows.net/";
                 services.AddTransient<IDbConnection>(c =>
                 {
-                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    // needs to be replaced
+                    //var azureServiceTokenProvider = new AzureServiceTokenProvider();
 
                     return environmentName.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                         ? new SqlConnection(config.ConnectionString)
                         : new SqlConnection
                         {
                             ConnectionString = config.ConnectionString,
-                            AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
+                            //AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
                         };
 
                 });
