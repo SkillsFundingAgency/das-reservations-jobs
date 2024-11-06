@@ -1,34 +1,47 @@
-﻿//using System;
-//using System.Threading.Tasks;
-//using Microsoft.Azure.WebJobs;
-//using Microsoft.Extensions.Logging;
-//using SFA.DAS.CommitmentsV2.Messages.Events;
-//using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
-//using SFA.DAS.Reservations.Domain.Reservations;
-//using SFA.DAS.Reservations.Infrastructure;
-//using SFA.DAS.Reservations.Infrastructure.Attributes;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using NServiceBus;
+using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.Reservations.Domain.Reservations;
 
-//namespace SFA.DAS.Reservations.Functions.Reservations
-//{
-//    public class HandleApprenticeshipDeletedEvent
-//    {
-//        [FunctionName("HandleApprenticeshipDeletedEvent")]
-//        public static async Task Run(
-//            [NServiceBusTrigger(EndPoint = QueueNames.DraftApprenticeshipDeleted)] DraftApprenticeshipDeletedEvent message, 
-//            [Inject]ILogger<DraftApprenticeshipDeletedEvent> log, 
-//            [Inject] IApprenticeshipDeletedHandler handler)
-//        {
-//            log.LogInformation($"NServiceBus Apprenticeship Deleted trigger function executed at: {DateTime.Now}");
+namespace SFA.DAS.Reservations.Functions.Reservations
+{
+    public class HandleApprenticeshipDeletedEvent(
+        IApprenticeshipDeletedHandler handler, ILogger<DraftApprenticeshipDeletedEvent> log) : IHandleMessages<DraftApprenticeshipDeletedEvent>
+    {
+        public async Task Handle(DraftApprenticeshipDeletedEvent message, IMessageHandlerContext context)
+        {
+            log.LogInformation($"NServiceBus Apprenticeship Deleted trigger function executed at: {DateTime.Now}");
 
-//            if (message.ReservationId.HasValue)
-//            {
-//                await handler.Handle(message.ReservationId.Value);
-//                log.LogInformation($"Set Reservation with ID: {message.ReservationId} to pending");
-//            }
-//            else
-//            {
-//                log.LogInformation($"No reservation set to pending, no reservation ReservationId provided");
-//            }
-//        }
-//    }
-//}
+            if (message.ReservationId.HasValue)
+            {
+                await handler.Handle(message.ReservationId.Value);
+                log.LogInformation($"Set Reservation with ID: {message.ReservationId} to pending");
+            }
+            else
+            {
+                log.LogInformation($"No reservation set to pending, no reservation ReservationId provided");
+            }
+        }
+
+        //[FunctionName("HandleApprenticeshipDeletedEvent")]
+        //public static async Task Run(
+        //    [NServiceBusTrigger(EndPoint = QueueNames.DraftApprenticeshipDeleted)] DraftApprenticeshipDeletedEvent message,
+        //    [Inject] ILogger<DraftApprenticeshipDeletedEvent> log,
+        //    [Inject] IApprenticeshipDeletedHandler handler)
+        //{
+        //    log.LogInformation($"NServiceBus Apprenticeship Deleted trigger function executed at: {DateTime.Now}");
+
+        //    if (message.ReservationId.HasValue)
+        //    {
+        //        await handler.Handle(message.ReservationId.Value);
+        //        log.LogInformation($"Set Reservation with ID: {message.ReservationId} to pending");
+        //    }
+        //    else
+        //    {
+        //        log.LogInformation($"No reservation set to pending, no reservation ReservationId provided");
+        //    }
+        //}
+    }
+}

@@ -24,7 +24,7 @@ public static class ConfigureNServiceBusExtension
                 .DefiningMessagesAs(IsMessage)
                 .DefiningEventsAs(IsEvent);
 
-            var decodedLicence = WebUtility.HtmlDecode(config["LevyTransferMatchingFunctions:NServiceBusLicense"]);
+            var decodedLicence = WebUtility.HtmlDecode(config["ReservationsJobs:NServiceBusLicense"]);
             if(!string.IsNullOrWhiteSpace(decodedLicence)) endpointConfiguration.AdvancedConfiguration.License(decodedLicence);
         });
 
