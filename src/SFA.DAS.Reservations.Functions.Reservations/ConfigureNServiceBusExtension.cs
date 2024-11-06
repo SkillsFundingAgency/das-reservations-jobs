@@ -26,11 +26,11 @@ public static class ConfigureNServiceBusExtension
             .DefiningEventsAs(IsEvent);
 
 
-            endpointConfiguration.Routing.RouteToEndpoint();
-            transport.AddRouting(routeSettings =>
-            {
-                routeSettings.RouteToEndpoint(typeof(UpdateEmailAddressCommand), queueName);
-            });
+            //endpointConfiguration.Routing.RouteToEndpoint();
+            //transport.AddRouting(routeSettings =>
+            //{
+            //    routeSettings.RouteToEndpoint(typeof(UpdateEmailAddressCommand), queueName);
+            //});
             //if (environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             //{
             //    endpointConfiguration.UseLearningTransport(s => s.AddRouting());

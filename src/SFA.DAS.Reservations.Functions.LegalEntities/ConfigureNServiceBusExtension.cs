@@ -8,7 +8,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities;
 
 public static class ConfigureNServiceBusExtension
 {
-    private const string EndpointName = "SFA.DAS.Reservations.Jobs.PrlUpdated";
+    private const string EndpointName = "SFA.DAS.Reservations.Functions.LegalEntities";
     private const string ErrorEndpointName = $"{EndpointName}-error";
 
     public static IHostBuilder ConfigureNServiceBus(this IHostBuilder hostBuilder)
