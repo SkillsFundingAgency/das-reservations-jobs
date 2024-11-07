@@ -15,7 +15,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
         public Reservation Reservation { get; set; }
         public ReservationCreatedEvent ReservationCreatedEvent { get; set; }
         public ReservationDeletedEvent ReservationDeletedEvent { get; set; }
-        public ProviderPermission ProviderPermission { get; set; }
+        public Domain.Entities.ProviderPermission ProviderPermission { get; set; }
         public TeamMember TeamMember { get; set; }
         public DraftApprenticeshipCreatedEvent DraftApprenticeshipCreatedEvent { get; set; }
     }

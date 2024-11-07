@@ -7,6 +7,7 @@
     "Version": "1.0",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "AppName": "sfa-reservations-jobs-reservation-status"
+    "AppName": "sfa-reservations-jobs-reservation-status",
+    "AzureWebJobsServiceBus": "Endpoint=sb://das-at-shared-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=XXXXX"
   }
 }

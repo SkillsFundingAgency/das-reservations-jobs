@@ -12,6 +12,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SFA.DAS.Reservations.Application.OuterApi;
+using SFA.DAS.Reservations.Functions.LegalEntities;
+using SFA.DAS.Reservations.Infrastructure;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -26,7 +28,7 @@ var host = new HostBuilder()
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
-        services.AddDasLogging();
+        services.AddDasLogging(typeof(Program).Namespace);
 
         services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
         services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();

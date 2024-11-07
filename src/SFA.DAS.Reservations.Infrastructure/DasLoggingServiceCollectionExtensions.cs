@@ -2,18 +2,18 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 
-namespace SFA.DAS.Reservations.Functions.ProviderPermission;
+namespace SFA.DAS.Reservations.Infrastructure;
 
-public static class ServiceCollectionExtensions
+public static class DasLoggingServiceCollectionExtensions
 {
-    public static IServiceCollection AddDasLogging(this IServiceCollection services)
+    public static IServiceCollection AddDasLogging(this IServiceCollection services, string @namespace)
     {
         services.AddLogging(builder =>
         {
             builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
             builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
 
-            builder.AddFilter(typeof(Program).Namespace, LogLevel.Information);
+            builder.AddFilter(@namespace, LogLevel.Information);
             builder.SetMinimumLevel(LogLevel.Trace);
             builder.AddConsole();
         });

@@ -22,20 +22,22 @@ using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Providers;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Domain.Reservations;
-using SFA.DAS.Reservations.Functions.Reservations;
-using SFA.DAS.Reservations.Functions.Reservations.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using NServiceBus;
+using SFA.DAS.Reservations.Functions.LegalEntities;
+using SFA.DAS.Reservations.Functions.ProviderPermission;
+using SFA.DAS.Reservations.Infrastructure;
+using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
-[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.Reservations")]
+[assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ReservationsQueue)]
 
 const string EncodingConfigKey = "SFA.DAS.Encoding";
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
-    .ConfigureNServiceBus()
+    .ConfigureNServiceBus(AzureFunctionsQueueNames.ReservationsQueue)
     .ConfigureServices((context, services) =>
     {
         var configuration = context.Configuration;
@@ -45,10 +47,9 @@ var host = new HostBuilder()
 
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+        services.AddDasLogging(typeof(Program).Namespace);
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
-        services.AddDasLogging();
-
         var environmentName = configuration["EnvironmentName"];
 
         if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))

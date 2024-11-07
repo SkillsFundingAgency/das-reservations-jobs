@@ -16,13 +16,16 @@ using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ProviderPermission;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using NServiceBus;
+using SFA.DAS.Reservations.Functions.LegalEntities;
+using SFA.DAS.Reservations.Infrastructure;
+using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
-[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.ProviderPermission")]
+[assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ProviderPermissionQueue)]
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
-    .ConfigureNServiceBus()
+    .ConfigureNServiceBus(AzureFunctionsQueueNames.ProviderPermissionQueue)
     .ConfigureServices((context, services) =>
     {
         var configuration = context.Configuration;
@@ -34,7 +37,7 @@ var host = new HostBuilder()
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
-        services.AddDasLogging();
+        services.AddDasLogging(typeof(Program).Namespace);
 
         services.AddTransient<IReservationIndexRefreshHandler, ReservationIndexRefreshHandler>();
         services.AddTransient<IReservationService, ReservationService>();

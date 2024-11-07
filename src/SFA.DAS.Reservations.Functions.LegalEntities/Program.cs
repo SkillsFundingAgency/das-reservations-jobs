@@ -1,3 +1,4 @@
+using Google.Protobuf.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Reservations.Data.Repository;
@@ -20,14 +21,16 @@ using SFA.DAS.Reservations.Domain.Validation;
 using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using NServiceBus;
+using SFA.DAS.Reservations.Infrastructure;
+using SFA.DAS.Reservations.Infrastructure.NServiceBus;
+using ServiceDescriptor = Microsoft.Extensions.DependencyInjection.ServiceDescriptor;
 
-
-[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.LegalEntities")]
+[assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.LegalEntitiesQueue)]
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
-    .ConfigureNServiceBus()
+    .ConfigureNServiceBus(AzureFunctionsQueueNames.LegalEntitiesQueue)
     .ConfigureServices((context, services) =>
     {
         var configuration = context.Configuration;
@@ -39,7 +42,7 @@ var host = new HostBuilder()
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
-        services.AddDasLogging();
+        services.AddDasLogging(typeof(Program).Namespace);
 
         services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);
 
