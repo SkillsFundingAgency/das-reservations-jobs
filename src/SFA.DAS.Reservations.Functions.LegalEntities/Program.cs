@@ -22,7 +22,7 @@ using SFA.DAS.Reservations.Infrastructure.AzureServiceBus;
 using NServiceBus;
 
 
-//[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.LegalEntities")]
+[assembly: NServiceBusTriggerFunction("SFA.DAS.Reservations.Functions.LegalEntities")]
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
