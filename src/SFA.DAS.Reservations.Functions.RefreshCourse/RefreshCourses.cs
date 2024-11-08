@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Functions.RefreshCourse;
 

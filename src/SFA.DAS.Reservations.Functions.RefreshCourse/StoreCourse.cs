@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure;
 
-
 namespace SFA.DAS.Reservations.Functions.RefreshCourse;
 
 public static class StoreCourse

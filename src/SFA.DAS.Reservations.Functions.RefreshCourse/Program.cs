@@ -5,7 +5,6 @@ using SFA.DAS.Reservations.Application.RefreshCourses.Services;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
-using SFA.DAS.Reservations.Functions.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using Microsoft.Extensions.Options;
