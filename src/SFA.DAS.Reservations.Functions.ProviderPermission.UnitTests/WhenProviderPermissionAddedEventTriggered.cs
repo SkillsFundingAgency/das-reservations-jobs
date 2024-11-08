@@ -24,8 +24,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests
                 "test@example.com", "Test", 
                 "Tester", new HashSet<Operation>(), null, DateTime.Now);
 
-            var sut = new HandleProviderPermissionUpdatedEvent(handler.Object,
-                Mock.Of<ILogger<UpdatedPermissionsEvent>>());
+            var sut = new HandleProviderPermissionUpdatedEvent(handler.Object, Mock.Of<ILogger<UpdatedPermissionsEvent>>());
 
             //Act
             await sut.Handle(message, Mock.Of<IMessageHandlerContext>());
