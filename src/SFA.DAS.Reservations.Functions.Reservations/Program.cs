@@ -7,7 +7,6 @@ using SFA.DAS.Reservations.Infrastructure.Database;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Newtonsoft.Json;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Application.OuterApi;

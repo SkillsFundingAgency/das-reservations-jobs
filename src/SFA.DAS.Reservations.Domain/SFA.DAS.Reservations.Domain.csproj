@@ -12,6 +12,7 @@
     <PackageReference Include="SFA.DAS.Account.Api.Types" Version="1.6.3195" />
     <PackageReference Include="SFA.DAS.CommitmentsV2.Messages" Version="8.29.1" />
     <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.3195" />
+    <PackageReference Include="SFA.DAS.EmployerFinance.Messages" Version="2.0.0-prerelease-15" />
     <PackageReference Include="SFA.DAS.ProviderRelationships.Messages" Version="4.0.19" />
     <PackageReference Include="SFA.DAS.Reservations.Messages" Version="0.2.1" />
     <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
@@ -22,10 +23,6 @@
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.EmployerFinance.Messages\SFA.DAS.EmployerFinance.Messages.csproj" />
   </ItemGroup>
 
 </Project>
