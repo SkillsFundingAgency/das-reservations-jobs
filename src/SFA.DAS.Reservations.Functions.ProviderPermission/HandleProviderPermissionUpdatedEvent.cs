@@ -18,18 +18,3 @@ public class HandleProviderPermissionUpdatedEvent(
         await _providerPermissionsUpdatedHandler.Handle(message);
     }
 }
-
-
-//public class HandleProviderPermissionUpdatedEvent
-//{
-//    [FunctionName("HandleProviderPermissionUpdatedEvent")]
-//    public static async Task Run(
-//        [NServiceBusTrigger(EndPoint = QueueNames.UpdatedProviderPermissions)] UpdatedPermissionsEvent updateEvent, 
-//        [Inject]ILogger<UpdatedPermissionsEvent> logger, 
-//        [Inject]IProviderPermissionsUpdatedHandler providerPermissionsUpdatedHandler)
-//    {
-//        logger.LogInformation($"NServiceBus AddedAccountProvider trigger function executed at: {DateTime.Now}");
-//        await providerPermissionsUpdatedHandler.Handle(updateEvent);
-//    }
-//}
-
