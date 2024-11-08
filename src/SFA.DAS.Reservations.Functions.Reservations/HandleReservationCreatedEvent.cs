@@ -5,45 +5,23 @@ using NServiceBus;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 
-namespace SFA.DAS.Reservations.Functions.Reservations
+namespace SFA.DAS.Reservations.Functions.Reservations;
+
+public class HandleReservationCreatedEvent(IReservationCreatedHandler handler, 
+    ILogger<ReservationCreatedEvent> log) : IHandleMessages<ReservationCreatedEvent>
 {
-    public class HandleReservationCreatedEvent(IReservationCreatedHandler handler, 
-        ILogger<ReservationCreatedEvent> log) : IHandleMessages<ReservationCreatedEvent>
+    public async Task Handle(ReservationCreatedEvent message, IMessageHandlerContext context)
     {
-        public async Task Handle(ReservationCreatedEvent message, IMessageHandlerContext context)
+        log.LogInformation($"Reservation Created function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
+
+        if (message.Id != null && message.Id != Guid.Empty)
         {
-            log.LogInformation($"Reservation Created function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
-
-            if (message.Id != null && message.Id != Guid.Empty)
-            {
-                await handler.Handle(message);
-                log.LogInformation($"Reservation Created function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
-            }
-            else
-            {
-                log.LogInformation($"No reservation created, no reservation ReservationId provided");
-            }
+            await handler.Handle(message);
+            log.LogInformation($"Reservation Created function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
         }
-
-
-        
-        //    [FunctionName("HandleReservationCreatedEvent")]
-        //public static async Task Run(
-        //    [NServiceBusTrigger(EndPoint = QueueNames.ReservationCreated)] ReservationCreatedEvent message,
-        //    [Inject] ILogger<ReservationCreatedEvent> log,
-        //    [Inject] IReservationCreatedHandler handler)
-        //{
-        //    log.LogInformation($"Reservation Created function executing at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}].");
-
-        //    if (message.Id != null && message.Id != Guid.Empty)
-        //    {
-        //        await handler.Handle(message);
-        //        log.LogInformation($"Reservation Created function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
-        //    }
-        //    else
-        //    {
-        //        log.LogInformation($"No reservation created, no reservation ReservationId provided");
-        //    }
-        //}
+        else
+        {
+            log.LogInformation($"No reservation created, no reservation ReservationId provided");
+        }
     }
 }
