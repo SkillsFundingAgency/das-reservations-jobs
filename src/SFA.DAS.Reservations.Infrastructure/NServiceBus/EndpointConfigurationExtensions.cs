@@ -35,9 +35,9 @@ public static class EndpointConfigurationExtensions
 
     public static bool IsMessage(Type t) => IsSfaMessage(t, "Messages");
 
-    public static bool IsEvent(Type t) => IsSfaMessage(t, "Messages.Events");
+    public static bool IsEvent(Type t) => (t.FullName != null && t.FullName.EndsWith("Event")) || IsSfaMessage(t, "Messages.Events");
 
-    public static bool IsCommand(Type t) => IsSfaMessage(t, "Messages.Commands");
+    public static bool IsCommand(Type t) => (t.FullName != null && t.FullName.EndsWith("Command")) || IsSfaMessage(t, "Messages.Commands");
 
     public static bool IsSfaMessage(Type t, string namespaceSuffix)
         => t.Namespace != null &&

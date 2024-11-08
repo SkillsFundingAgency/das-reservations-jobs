@@ -33,8 +33,6 @@ using SFA.DAS.Reservations.Functions.Reservations;
 
 [assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ReservationsQueue)]
 
-const string EncodingConfigKey = "SFA.DAS.Encoding";
-
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration(builder => builder.BuildDasConfiguration())
@@ -48,17 +46,12 @@ var host = new HostBuilder()
 
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+        services.Configure<ReservationsJobs>(configuration.GetSection("Encodings"));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
         services.AddDasLogging(typeof(Program).Namespace);
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
         var environmentName = configuration["EnvironmentName"];
-
-        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-        {
-            var encodingConfigJson = configuration.GetSection(EncodingConfigKey).Value;
-            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
-            services.AddSingleton(encodingConfig);
-        }
 
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
@@ -80,17 +73,14 @@ var host = new HostBuilder()
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
 
-        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-        {
-            services.AddTransient<INotificationsService, NotificationsService>();
-            services.AddTransient<IEncodingService, EncodingService>();
-            services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
-            services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
-            services.AddTransient<IAccountsService, AccountsService>();
-            services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
+        services.AddTransient<INotificationsService, NotificationsService>();
+        services.AddTransient<IEncodingService, EncodingService>();
+        services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+        services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
+        services.AddTransient<IAccountsService, AccountsService>();
+        services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
 
-            services.AddSingleton<HttpClient>(x => x.GetService<IHttpClientFactory>().CreateClient());
-        }
+        services.AddSingleton<HttpClient>(x => x.GetService<IHttpClientFactory>().CreateClient());
 
         services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
         services.AddTransient<IIndexRegistry, IndexRegistry>();
