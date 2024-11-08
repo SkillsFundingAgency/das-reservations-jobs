@@ -4,28 +4,26 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
-using SFA.DAS.Reservations.Infrastructure.Attributes;
 
-namespace SFA.DAS.Reservations.Functions.ReservationIndex
+namespace SFA.DAS.Reservations.Functions.ReservationIndex;
+
+public class RefreshReservationIndexHttp
 {
-    public class RefreshReservationIndexHttp
+    private readonly ILogger<ReservationIndexRefreshHandler> _logger;
+    private readonly IReservationIndexRefreshHandler _handler;
+
+    public RefreshReservationIndexHttp(ILogger<ReservationIndexRefreshHandler> logger, IReservationIndexRefreshHandler handler)
     {
-        private readonly ILogger<ReservationIndexRefreshHandler> _logger;
-        private readonly IReservationIndexRefreshHandler _handler;
+        _logger = logger;
+        _handler = handler;
+    }
 
-        public RefreshReservationIndexHttp(ILogger<ReservationIndexRefreshHandler> logger, IReservationIndexRefreshHandler handler)
-        {
-            _logger = logger;
-            _handler = handler;
-        }
+    [Function("IndexRefresh")]
+    [QueueOutput(QueueNames.RefreshReservationIndex)]
+    public string Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+    {
+        _logger.LogInformation("C# RefreshIndexHttp trigger function processed a request.");
 
-        [Function("IndexRefresh")]
-        [QueueOutput(QueueNames.RefreshReservationIndex)]
-        public string Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
-        {
-            _logger.LogInformation("C# RefreshIndexHttp trigger function processed a request.");
-
-            return "refresh";
-        }
+        return "refresh";
     }
 }
