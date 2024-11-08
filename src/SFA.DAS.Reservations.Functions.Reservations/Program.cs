@@ -26,9 +26,10 @@ using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using NServiceBus;
 using SFA.DAS.Reservations.Functions.LegalEntities;
-using SFA.DAS.Reservations.Functions.ProviderPermission;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
+using System.Net.Http;
+using SFA.DAS.Reservations.Functions.Reservations;
 
 [assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ReservationsQueue)]
 
@@ -88,9 +89,7 @@ var host = new HostBuilder()
             services.AddTransient<IAccountsService, AccountsService>();
             services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
 
-            //var clientFactory = services.GetService<IHttpClientFactory>();
-            //var newClient = clientFactory.CreateClient();
-            //services.AddSingleton(provider => newClient);
+            services.AddSingleton<HttpClient>(x => x.GetService<IHttpClientFactory>().CreateClient());
         }
 
         services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
@@ -98,35 +97,7 @@ var host = new HostBuilder()
 
         services.AddElasticSearch(config);
         services.AddSingleton(new ReservationJobsEnvironment(environmentName));
-
-        //services.AddNServiceBus(environmentName);
         services.AddDatabaseRegistration(config, environmentName);
-
-
-
-
-
-
-
-        //services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);
-
-        //services.AddTransient<IAzureQueueService, AzureQueueService>();
-        //services.AddTransient<IAccountLegalEntitiesService, AccountLegalEntitiesService>();
-        //services.AddTransient<IAccountsService, AccountsService>();
-
-        //services.AddHttpClient<IOuterApiClient, OuterApiClient>();
-
-        //services.AddTransient<IAccountLegalEntityRepository, AccountLegalEntityRepository>();
-        //services.AddTransient<IAccountRepository, AccountRepository>();
-
-        //services.AddTransient<IAddAccountLegalEntityHandler, AddAccountLegalEntityHandler>();
-        //services.AddTransient<IRemoveLegalEntityHandler, RemoveLegalEntityHandler>();
-        //services.AddTransient<ISignedLegalAgreementHandler, SignedLegalAgreementHandler>();
-        //services.AddTransient<ILevyAddedToAccountHandler, LevyAddedToAccountHandler>();
-        //services.AddTransient<IAddAccountHandler, AddAccountHandler>();
-        //services.AddTransient<IAccountNameUpdatedHandler, AccountNameUpdatedHandler>();
-
-        //services.AddSingleton<IValidator<AddedLegalEntityEvent>, AddAccountLegalEntityValidator>();
     })
     .Build();
 

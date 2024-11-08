@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Security.Cryptography;
+﻿using System.Net;
 using Microsoft.Extensions.Hosting;
 using NServiceBus;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
