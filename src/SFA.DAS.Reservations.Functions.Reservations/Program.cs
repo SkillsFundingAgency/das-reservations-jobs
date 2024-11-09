@@ -38,62 +38,9 @@ var host = new HostBuilder()
     .ConfigureNServiceBus(AzureFunctionsQueueNames.ReservationsQueue)
     .ConfigureServices((context, services) =>
     {
-        var configuration = context.Configuration;
-        services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), configuration));
-
-        services.AddOptions();
-
-        services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-        services.Configure<ReservationsJobs>(configuration.GetSection("Encodings"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
-        services.AddDasLogging(typeof(Program).Namespace);
-
-        var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
-        var environmentName = configuration["EnvironmentName"];
-
-        services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
-        services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
-        services.AddTransient<INotifyEmployerOfReservationEventAction, NotifyEmployerOfReservationEventAction>();
-        services.AddTransient<IReservationCreatedHandler, ReservationCreatedHandler>();
-        services.AddTransient<IReservationDeletedHandler, ReservationDeletedHandler>();
-
-        services.AddTransient<IReservationService, ReservationService>();
-
-        services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
-        services.AddTransient<IProviderService, ProviderService>();
-
-        services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
-        {
-            var apimUrl = EnsureUrlEndWithForwardSlash(config.ReservationsApimUrl);
-            client.BaseAddress = new Uri(apimUrl);
-        });
-
-        services.AddTransient<IReservationRepository, ReservationRepository>();
-        services.AddTransient<IAccountRepository, AccountRepository>();
-
-        services.AddTransient<INotificationsService, NotificationsService>();
-        services.AddTransient<IEncodingService, EncodingService>();
-        services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
-        services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
-        services.AddTransient<IAccountsService, AccountsService>();
-        services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
-
-        services.AddSingleton<HttpClient>(x => x.GetService<IHttpClientFactory>().CreateClient());
-
-        services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
-        services.AddTransient<IIndexRegistry, IndexRegistry>();
-
-        services.AddElasticSearch(config);
-        services.AddSingleton(new ReservationJobsEnvironment(environmentName));
-        services.AddDatabaseRegistration(config, environmentName);
+        var servicesRegistration = new ServicesRegistration(services, context.Configuration);
+        servicesRegistration.Register();
     })
     .Build();
 
 host.Run();
-
-
-string EnsureUrlEndWithForwardSlash(string url)
-{
-    return url.EndsWith('/') ? url : $"{url}/";
-}
