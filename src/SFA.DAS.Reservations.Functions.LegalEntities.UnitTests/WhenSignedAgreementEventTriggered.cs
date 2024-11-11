@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NServiceBus;
@@ -17,8 +16,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
             //Arrange
             var handler = new Mock<ISignedLegalAgreementHandler>();
             var message = new SignedAgreementEvent { AccountId = 432 };
-
-            //Act
             var sut = new HandleSignedAgreementEvent(handler.Object, Mock.Of<ILogger<SignedAgreementEvent>>());
 
             //Act

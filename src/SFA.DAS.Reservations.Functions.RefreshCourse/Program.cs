@@ -40,8 +40,6 @@ var host = new HostBuilder()
 
         services.AddTransient<ICourseRepository, CourseRepository>();
         services.AddHttpClient<IOuterApiClient, OuterApiClient>();
-
-
     })
     .Build();
 
