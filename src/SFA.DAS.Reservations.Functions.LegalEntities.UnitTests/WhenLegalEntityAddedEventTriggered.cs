@@ -4,24 +4,24 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
+using SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
+namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests;
+
+public class WhenLegalEntityAddedEventTriggered
 {
-    public class WhenLegalEntityAddedEventTriggered
+    [Test]
+    public async Task Then_Message_Will_Be_Handled()
     {
-        [Test]
-        public async Task Then_Message_Will_Be_Handled()
-        {
-            //Arrange
-            var handler = new Mock<IAddAccountLegalEntityHandler>();
-            var message = new AddedLegalEntityEvent{AccountId = 123};
+        //Arrange
+        var handler = new Mock<IAddAccountLegalEntityHandler>();
+        var message = new AddedLegalEntityEvent{AccountId = 123};
 
-            //Act
-            await HandleAddedLegalEntityEvent.Run(message, handler.Object, Mock.Of<ILogger<AddedLegalEntityEvent>>());
+        //Act
+        await HandleAddedLegalEntityEvent.Run(message, handler.Object, Mock.Of<ILogger<AddedLegalEntityEvent>>());
 
-            //Assert
-            handler.Verify(s => s.Handle(It.Is<AddedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);
-        }
-        
+        //Assert
+        handler.Verify(s => s.Handle(It.Is<AddedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);
     }
+        
 }

@@ -1,97 +1,63 @@
 ﻿using System;
-using System.IO;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
-using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.Reservations.Application.Reservations.Handlers;
-using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data.Registry;
-using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Configuration;
 using SFA.DAS.Reservations.Domain.Infrastructure;
-using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
-using SFA.DAS.Reservations.Domain.ProviderPermissions;
-using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ReservationIndex;
+using SFA.DAS.Reservations.Functions.ReservationIndex.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.DependencyInjection;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 
 [assembly: WebJobsStartup(typeof(Startup))]
-namespace SFA.DAS.Reservations.Functions.ReservationIndex
+namespace SFA.DAS.Reservations.Functions.ReservationIndex;
+
+internal class Startup : IWebJobsStartup
 {
-     internal class Startup : IWebJobsStartup
-     {
-        public void Configure(IWebJobsBuilder builder)
-        {
-            builder.AddExecutionContextBinding();
-            builder.AddDependencyInjection<ServiceProviderBuilder>();
-        }
-     }
-
-    internal class ServiceProviderBuilder : IServiceProviderBuilder
+    public void Configure(IWebJobsBuilder builder)
     {
-        private readonly ILoggerFactory _loggerFactory;
-        public IConfiguration Configuration { get; }
-        public ServiceProviderBuilder(ILoggerFactory loggerFactory, IConfiguration configuration)
-        {
-            _loggerFactory = loggerFactory;
+        builder.AddExecutionContextBinding();
+        builder.AddDependencyInjection<ServiceProviderBuilder>();
+    }
+}
+
+internal class ServiceProviderBuilder : IServiceProviderBuilder
+{
+    private readonly IConfiguration _configuration;
+    
+    public ServiceProviderBuilder(IConfiguration configuration)
+    {
+        _configuration = configuration.BuildConfiguration();
+    }
+
+    public IServiceProvider Build()
+    {
+        var services = new ServiceCollection();
+        
+        services.AddSingleton<IConfiguration>(_configuration);
             
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory()) 
-                .AddJsonFile("local.settings.json",true)
-                .AddEnvironmentVariables();
-            if (!configuration["EnvironmentName"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-            {
-                config.AddAzureTableStorage(options =>
-                {
-                    options.ConfigurationKeys = configuration["ConfigNames"].Split(',');
-                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                    options.EnvironmentName = configuration["EnvironmentName"];
-                    options.PreFixConfigurationKeys = false;
-                });
-            }
-            
+        services.Configure<ReservationsJobs>(_configuration.GetSection("ReservationsJobs"));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
 
-            Configuration = config.Build();
-        }
+        var serviceProvider = services.BuildServiceProvider();
+        var config = serviceProvider.GetService<ReservationsJobs>();
+        
+        services.AddSingleton(new ReservationJobsEnvironment(_configuration["EnvironmentName"]));
+        
+        services.AddElasticSearch(config);
 
-        public IServiceProvider Build()
-        {
-            var services = new ServiceCollection();
-            
-            services.Configure<ReservationsJobs>(Configuration.GetSection("ReservationsJobs"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
+        services.AddDasLogging(_configuration);
+        services.AddDatabaseRegistration(config, _configuration["EnvironmentName"]);
+        services.AddApplicationServices();
+        
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
 
-            var serviceProvider = services.BuildServiceProvider();
-
-            var config = serviceProvider.GetService<ReservationsJobs>();
-
-            services.AddLogging(builder =>
-            {
-                builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-                builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
-                builder.SetMinimumLevel(LogLevel.Trace);
-            });
-
-            services.AddTransient<IReservationIndexRefreshHandler,ReservationIndexRefreshHandler>();
-            services.AddTransient<IReservationService,ReservationService>();
-            services.AddTransient<IReservationRepository,ReservationRepository>();
-            services.AddTransient<IReservationIndexRepository,ReservationIndexRepository>();
-            services.AddTransient<IProviderPermissionRepository,ProviderPermissionRepository>();
-            services.AddTransient<IIndexRegistry,IndexRegistry>();
-            
-            services.AddElasticSearch(config);
-            services.AddSingleton(new ReservationJobsEnvironment(Configuration["EnvironmentName"]));
-
-            services.AddDatabaseRegistration(config, Configuration["EnvironmentName"]);
-                
-            return services.BuildServiceProvider();
-        }
+        return services.BuildServiceProvider();
     }
 }
