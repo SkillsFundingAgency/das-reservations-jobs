@@ -1,3 +1,4 @@
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Reservations.Data.Repository;
@@ -43,9 +44,11 @@ var host = new HostBuilder()
         services.AddSingleton(new ReservationJobsEnvironment(configuration["EnvironmentName"]));
 
         services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);
-
         services.AddHttpClient<IOuterApiClient, OuterApiClient>();
 
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
     })
     .Build();
 

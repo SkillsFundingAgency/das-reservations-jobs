@@ -408,8 +408,8 @@
                   "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('function-app-insights-crs-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('function-app-insights-crs-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -499,8 +499,8 @@
                   "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('function-app-insights-rsrv-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('function-app-insights-rsrv-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -590,8 +590,8 @@
                   "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('function-app-insights-lgle-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('function-app-insights-lgle-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -673,8 +673,8 @@
                   "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('function-app-insights-idx-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('function-app-insights-idx-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -765,8 +765,8 @@
                   "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                 },
                 {
-                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference(concat('function-app-insights-prv-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                  "value": "[reference(concat('function-app-insights-prv-', parameters('utcValue'))).outputs.ConnectionString.value]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",

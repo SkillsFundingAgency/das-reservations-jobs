@@ -1,3 +1,4 @@
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Reservations.Application.RefreshCourses.Handlers;
@@ -40,6 +41,10 @@ var host = new HostBuilder()
 
         services.AddTransient<ICourseRepository, CourseRepository>();
         services.AddHttpClient<IOuterApiClient, OuterApiClient>();
+
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
     })
     .Build();
 

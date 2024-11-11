@@ -1,3 +1,5 @@
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Reservations.Functions.LegalEntities;
 using NServiceBus;
@@ -13,6 +15,10 @@ var host = new HostBuilder()
     {
         var servicesRegistration = new ServicesRegistration(services, context.Configuration);
         servicesRegistration.Register();
+
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
     })
     .Build();
 
