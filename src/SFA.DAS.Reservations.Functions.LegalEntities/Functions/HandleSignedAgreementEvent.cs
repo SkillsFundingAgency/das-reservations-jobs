@@ -5,7 +5,7 @@ using NServiceBus;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities;
+namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
 public class HandleSignedAgreementEvent(
     ISignedLegalAgreementHandler handler, ILogger<SignedAgreementEvent> log) : IHandleMessages<SignedAgreementEvent>

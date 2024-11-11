@@ -5,9 +5,9 @@ using NServiceBus;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 
-namespace SFA.DAS.Reservations.Functions.Reservations;
+namespace SFA.DAS.Reservations.Functions.Reservations.Functions;
 
-public class HandleReservationCreatedEvent(IReservationCreatedHandler handler, 
+public class HandleReservationCreatedEvent(IReservationCreatedHandler handler,
     ILogger<ReservationCreatedEvent> log) : IHandleMessages<ReservationCreatedEvent>
 {
     public async Task Handle(ReservationCreatedEvent message, IMessageHandlerContext context)

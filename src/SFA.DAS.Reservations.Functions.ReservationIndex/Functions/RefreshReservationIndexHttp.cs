@@ -5,7 +5,7 @@ using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 
-namespace SFA.DAS.Reservations.Functions.ReservationIndex;
+namespace SFA.DAS.Reservations.Functions.ReservationIndex.Functions;
 
 public class RefreshReservationIndexHttp
 {

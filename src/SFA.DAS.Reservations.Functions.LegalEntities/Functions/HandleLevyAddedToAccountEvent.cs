@@ -5,7 +5,7 @@ using NServiceBus;
 using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities;
+namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
 public class HandleLevyAddedToAccountEvent(ILevyAddedToAccountHandler handler,
     ILogger<LevyAddedToAccount> log) : IHandleMessages<LevyAddedToAccount>

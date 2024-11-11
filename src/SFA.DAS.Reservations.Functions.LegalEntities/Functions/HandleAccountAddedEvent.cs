@@ -5,9 +5,9 @@ using NServiceBus;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.Accounts;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities;
+namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
-public class HandleAccountAddedEvent(IAddAccountHandler handler, 
+public class HandleAccountAddedEvent(IAddAccountHandler handler,
     ILogger<CreatedAccountEvent> log) : IHandleMessages<CreatedAccountEvent>
 {
     public async Task Handle(CreatedAccountEvent message, IMessageHandlerContext context)

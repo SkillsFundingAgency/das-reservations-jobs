@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
+using SFA.DAS.Reservations.Functions.ProviderPermission.Functions;
 
 namespace SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests
 {

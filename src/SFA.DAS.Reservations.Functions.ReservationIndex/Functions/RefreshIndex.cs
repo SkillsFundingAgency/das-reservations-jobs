@@ -6,7 +6,7 @@ using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 
-namespace SFA.DAS.Reservations.Functions.ReservationIndex;
+namespace SFA.DAS.Reservations.Functions.ReservationIndex.Functions;
 
 public class RefreshIndex
 {
@@ -19,7 +19,7 @@ public class RefreshIndex
         _handler = handler;
     }
     [Function("RefreshIndex")]
-    public async Task Run([QueueTrigger(QueueNames.RefreshReservationIndex)]string message)
+    public async Task Run([QueueTrigger(QueueNames.RefreshReservationIndex)] string message)
     {
         _logger.LogInformation($"Running reservation index refresh at: {DateTime.Now}");
 

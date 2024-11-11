@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Functions;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
 {

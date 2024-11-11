@@ -4,7 +4,7 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 using SFA.DAS.Reservations.Infrastructure;
 using System.Collections.Generic;
 
-namespace SFA.DAS.Reservations.Functions.RefreshCourse;
+namespace SFA.DAS.Reservations.Functions.RefreshCourse.Functions;
 
 public class GetCourseInformation
 {

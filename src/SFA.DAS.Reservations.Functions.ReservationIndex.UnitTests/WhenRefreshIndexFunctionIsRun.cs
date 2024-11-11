@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.Reservations.Domain.Reservations;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
+using SFA.DAS.Reservations.Functions.ReservationIndex.Functions;
 
 namespace SFA.DAS.Reservations.Functions.ReservationIndex.UnitTests
 {

@@ -5,9 +5,9 @@ using NServiceBus;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.Reservations.Domain.Accounts;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities;
+namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
-public class HandleAccountNameUpdatedEvent(IAccountNameUpdatedHandler handler, 
+public class HandleAccountNameUpdatedEvent(IAccountNameUpdatedHandler handler,
     ILogger<ChangedAccountNameEvent> log) : IHandleMessages<ChangedAccountNameEvent>
 {
     public async Task Handle(ChangedAccountNameEvent message, IMessageHandlerContext context)

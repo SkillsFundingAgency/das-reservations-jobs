@@ -2,7 +2,7 @@ using System;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
-namespace SFA.DAS.Reservations.Functions.RefreshCourse;
+namespace SFA.DAS.Reservations.Functions.RefreshCourse.Functions;
 
 public class RefreshCourses
 {

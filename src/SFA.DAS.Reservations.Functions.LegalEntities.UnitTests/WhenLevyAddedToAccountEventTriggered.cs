@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.EmployerAccounts.Messages.Events;
 using SFA.DAS.EmployerFinance.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
+using SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
 {

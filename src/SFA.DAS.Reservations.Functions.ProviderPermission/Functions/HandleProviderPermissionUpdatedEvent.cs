@@ -5,7 +5,7 @@ using NServiceBus;
 using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 
-namespace SFA.DAS.Reservations.Functions.ProviderPermission;
+namespace SFA.DAS.Reservations.Functions.ProviderPermission.Functions;
 
 public class HandleProviderPermissionUpdatedEvent(
     IProviderPermissionsUpdatedHandler _providerPermissionsUpdatedHandler,

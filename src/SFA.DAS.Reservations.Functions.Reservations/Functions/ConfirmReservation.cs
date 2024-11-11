@@ -5,9 +5,9 @@ using NServiceBus;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Domain.Reservations;
 
-namespace SFA.DAS.Reservations.Functions.Reservations;
+namespace SFA.DAS.Reservations.Functions.Reservations.Functions;
 
-public class ConfirmReservation(IConfirmReservationHandler handler, 
+public class ConfirmReservation(IConfirmReservationHandler handler,
     ILogger<DraftApprenticeshipCreatedEvent> log) : IHandleMessages<DraftApprenticeshipCreatedEvent>
 {
     public async Task Handle(DraftApprenticeshipCreatedEvent message, IMessageHandlerContext context)

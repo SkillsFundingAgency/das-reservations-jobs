@@ -5,9 +5,9 @@ using NServiceBus;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Domain.Reservations;
 
-namespace SFA.DAS.Reservations.Functions.Reservations;
+namespace SFA.DAS.Reservations.Functions.Reservations.Functions;
 
-public class HandleApprenticeshipDeletedEvent(IApprenticeshipDeletedHandler handler, 
+public class HandleApprenticeshipDeletedEvent(IApprenticeshipDeletedHandler handler,
     ILogger<DraftApprenticeshipDeletedEvent> log) : IHandleMessages<DraftApprenticeshipDeletedEvent>
 {
     public async Task Handle(DraftApprenticeshipDeletedEvent message, IMessageHandlerContext context)

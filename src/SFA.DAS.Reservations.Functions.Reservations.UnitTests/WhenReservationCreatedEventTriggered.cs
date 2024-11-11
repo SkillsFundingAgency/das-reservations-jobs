@@ -8,6 +8,7 @@ using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Functions;
 using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests

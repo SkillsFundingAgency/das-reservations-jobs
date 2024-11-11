@@ -5,7 +5,7 @@ using NServiceBus;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
 
-namespace SFA.DAS.Reservations.Functions.Reservations;
+namespace SFA.DAS.Reservations.Functions.Reservations.Functions;
 
 public class HandleReservationDeletedEvent(IReservationDeletedHandler handler,
     ILogger<ReservationDeletedEvent> log) : IHandleMessages<ReservationDeletedEvent>
