@@ -77,6 +77,9 @@
     "sharedEnvVirtualNetworkName": {
       "type": "string"
     },
+    "sharedServiceBusName": {
+      "type": "string"
+    },
     "subnetObject": {
       "type": "object"
     },
@@ -792,6 +795,126 @@
       "dependsOn": [
         "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
+    },
+    {
+      "apiVersion": "2021-04-01",
+      "name": "[concat('role-assignment-', variables('functionAppNameCourse'), '-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "principalId": {
+            "value": "[reference(concat(variables('functionAppNameCourse'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+          },
+          "assignmentType": {
+            "value": "ServiceBusOwner"
+          },
+          "resourceName": {
+            "value": "[parameters('sharedServiceBusName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2021-04-01",
+      "name": "[concat('role-assignment-', variables('functionAppNameReservation'), '-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "principalId": {
+            "value": "[reference(concat(variables('functionAppNameReservation'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+          },
+          "assignmentType": {
+            "value": "ServiceBusOwner"
+          },
+          "resourceName": {
+            "value": "[parameters('sharedServiceBusName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2021-04-01",
+      "name": "[concat('role-assignment-', variables('functionAppNameLegalEntities'), '-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "principalId": {
+            "value": "[reference(concat(variables('functionAppNameLegalEntities'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+          },
+          "assignmentType": {
+            "value": "ServiceBusOwner"
+          },
+          "resourceName": {
+            "value": "[parameters('sharedServiceBusName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2021-04-01",
+      "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "principalId": {
+            "value": "[reference(concat(variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+          },
+          "assignmentType": {
+            "value": "ServiceBusOwner"
+          },
+          "resourceName": {
+            "value": "[parameters('sharedServiceBusName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2021-04-01",
+      "name": "[concat('role-assignment-', variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "principalId": {
+            "value": "[reference(concat(variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+          },
+          "assignmentType": {
+            "value": "ServiceBusOwner"
+          },
+          "resourceName": {
+            "value": "[parameters('sharedServiceBusName')]"
+          }
+        }
+      }
     }
   ],
   "outputs": {
