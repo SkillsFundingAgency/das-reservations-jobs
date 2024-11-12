@@ -809,7 +809,7 @@
         },
         "parameters": {
           "principalId": {
-            "value": "[reference(concat(variables('functionAppNameCourse'))).outputs.managedServiceIdentityId.value]"
+            "value": "[reference(concat(variables('functionAppNameCourse'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
           },
           "assignmentType": {
             "value": "ServiceBusOwner"
