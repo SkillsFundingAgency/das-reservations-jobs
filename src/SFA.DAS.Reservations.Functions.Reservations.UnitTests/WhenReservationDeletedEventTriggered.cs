@@ -2,10 +2,13 @@
 using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
+using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Functions;
 using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
@@ -20,18 +23,16 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
             var notifyAction = new Mock<INotifyEmployerOfReservationEventAction>();
 
             var handler = new ReservationDeletedHandler(reservationService.Object, notifyAction.Object);
+            var sut = new HandleReservationDeletedEvent(handler, Mock.Of<ILogger<ReservationDeletedEvent>>());
 
             //Act
-            await HandleReservationDeletedEvent.Run(
-                deletedEvent, 
-                Mock.Of<ILogger<ReservationDeletedEvent>>(),
-                handler);
+            await sut.Handle(deletedEvent, Mock.Of<IMessageHandlerContext>());
 
             //Assert
-            notifyAction.Verify(s => s.Execute(It.Is<ReservationDeletedNotificationEvent>(ev => 
+            notifyAction.Verify(s => s.Execute(It.Is<ReservationDeletedNotificationEvent>(ev =>
                 ev.Id == deletedEvent.Id)), Times.Once);
-            reservationService.Verify(x=>x.UpdateReservationStatus(
-                deletedEvent.Id, 
+            reservationService.Verify(x => x.UpdateReservationStatus(
+                deletedEvent.Id,
                 ReservationStatus.Deleted,
                 null,
                 null,

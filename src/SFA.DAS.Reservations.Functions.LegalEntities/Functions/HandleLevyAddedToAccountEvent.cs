@@ -1,23 +1,19 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.EmployerFinance.Messages.Events;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
-using SFA.DAS.Reservations.Infrastructure;
-using SFA.DAS.Reservations.Infrastructure.Attributes;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
-public class HandleLevyAddedToAccountEvent
+public class HandleLevyAddedToAccountEvent(ILevyAddedToAccountHandler handler,
+    ILogger<LevyAddedToAccount> log) : IHandleMessages<LevyAddedToAccount>
 {
-    [FunctionName("LevyAddedToAccount")]
-    public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.LevyAddedToAccount)]LevyAddedToAccount message, [Inject] ILevyAddedToAccountHandler handler,[Inject] ILogger<LevyAddedToAccount> log)
+    public async Task Handle(LevyAddedToAccount message, IMessageHandlerContext context)
     {
-        log.LogInformation("NServiceBus LevyAddedToAccount trigger function started execution for {AccountIdName}:{AccountId}", nameof(message.AccountId), message.AccountId);
-        
+        log.LogInformation($"NServiceBus LevyAddedToAccount trigger function started execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
         await handler.Handle(message);
-        
-        log.LogInformation("NServiceBus LevyAddedToAccount trigger function finished execution for {AccountIdName}:{AccountId}", nameof(message.AccountId), message.AccountId);
+        log.LogInformation($"NServiceBus LevyAddedToAccount trigger function finished execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
     }
 }

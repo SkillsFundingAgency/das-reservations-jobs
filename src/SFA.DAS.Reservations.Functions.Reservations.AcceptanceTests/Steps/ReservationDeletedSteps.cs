@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         public ReservationDeletedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
         {
         }
-        
+
         [Given(@"I have a reservation ready for deletion")]
         public void GivenIHaveAReservationReadyForDeletion()
         {
@@ -28,7 +28,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             dbContext.Reservations.Add(TestData.Reservation);
             dbContext.SaveChanges();
         }
-        
+
         [When(@"a delete reservation event is triggered by provider")]
         public void WhenADeleteReservationEventIsTriggeredByProvider()
         {
@@ -62,7 +62,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var handler = Services.GetService<IReservationDeletedHandler>();
             handler.Handle(TestData.ReservationDeletedEvent).Wait();
         }
-        
+
         [Then(@"the reservation search index should be updated with the deleted reservation removed")]
         public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheDeletedReservationRemoved()
         {

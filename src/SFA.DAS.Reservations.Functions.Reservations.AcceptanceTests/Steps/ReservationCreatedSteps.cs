@@ -18,13 +18,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         public ReservationCreatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
         {
         }
-        
+
         [Given(@"I have a reservation ready for creation")]
         public void GivenIHaveAReservationReadyForCreation()
         {
             TestData.Reservation.Status = (short)ReservationStatus.Pending;
         }
-        
+
         [When(@"a create reservation event is triggered by provider")]
         public void WhenACreateReservationEventIsTriggeredByProvider()
         {
@@ -37,7 +37,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var accountsService = Services.GetService<IAccountsService>();
             var mockAccountsService = Mock.Get(accountsService);
 
-            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<TeamMember> {TestData.TeamMember});
+            mockAccountsService.Setup(x => x.GetAccountUsers(It.IsAny<long>())).ReturnsAsync(new List<TeamMember> { TestData.TeamMember });
 
             var notificationTokenBuilder = Services.GetService<INotificationTokenBuilder>();
             var mockNotificationTokenBuilder = Mock.Get(notificationTokenBuilder);
@@ -83,7 +83,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             var notificationsService = Services.GetService<INotificationsService>();
             var mock = Mock.Get(notificationsService);
 
-            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()),Times.Once);
+            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()), Times.Once);
         }
 
         [Then(@"the employer should not be notified of the (.*) reservation")]

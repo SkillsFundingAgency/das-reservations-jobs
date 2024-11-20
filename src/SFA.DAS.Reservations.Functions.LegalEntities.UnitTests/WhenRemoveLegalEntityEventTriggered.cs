@@ -1,26 +1,33 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using SFA.DAS.EmployerAccounts.Messages.Events;
+using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 using SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests;
-
-public class WhenRemoveLegalEntityEventTriggered
+namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
 {
-    [Test]
-    public async Task Then_Queue_Message_Will_Be_Handled()
+    public class WhenRemoveLegalEntityEventTriggered
     {
-        //Arrange
-        var handle = new Mock<IRemoveLegalEntityHandler>();
-        var message = new RemovedLegalEntityEvent{AccountId = 5432};
+        [Test]
+        public async Task Then_Queue_Message_Will_Be_Handled()
+        {
+            //Arrange
+            var handle = new Mock<IRemoveLegalEntityHandler>();
+            var message = new RemovedLegalEntityEvent { AccountId = 5432 };
 
-        //Act
-        await HandleRemovedLegalEntityEvent.Run(message, handle.Object, Mock.Of<ILogger<RemovedLegalEntityEvent>>());
+            var sut = new HandleRemovedLegalEntityEvent(handle.Object, Mock.Of<ILogger<RemovedLegalEntityEvent>>());
 
-        //Assert
-        handle.Verify(s => s.Handle(It.Is<RemovedLegalEntityEvent>(c=>c.AccountId.Equals(message.AccountId))), Times.Once);
+            //Act
+            await sut.Handle(message, Mock.Of<IMessageHandlerContext>());
+
+            //Assert
+            handle.Verify(s => s.Handle(It.Is<RemovedLegalEntityEvent>(c => c.AccountId.Equals(message.AccountId))), Times.Once);
+        }
+
     }
 }
