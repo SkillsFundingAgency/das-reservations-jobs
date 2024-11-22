@@ -1,4 +1,6 @@
 ﻿using System;
+using Moq;
+using NServiceBus;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
@@ -18,5 +20,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
         public Domain.Entities.ProviderPermission ProviderPermission { get; set; }
         public TeamMember TeamMember { get; set; }
         public DraftApprenticeshipCreatedEvent DraftApprenticeshipCreatedEvent { get; set; }
+        public Mock<IMessageHandlerContext> MessageHandlerContext { get; set; }
     }
 }

@@ -42,9 +42,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
 
             serviceCollection.AddSingleton(encodingService.Object);
 
-            var mockNotificationService = new Mock<INotificationsService>();
-            serviceCollection.AddSingleton(mockNotificationService.Object);
-
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }
 

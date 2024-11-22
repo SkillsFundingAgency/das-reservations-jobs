@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
 
             //Assert
             notifyAction.Verify(s => s.Execute(It.Is<ReservationCreatedNotificationEvent>(ev =>
-                ev.Id == createdEvent.Id)), Times.Once);
+                ev.Id == createdEvent.Id), It.IsAny<IMessageHandlerContext>()), Times.Once);
         }
 
         [Test, AutoData]

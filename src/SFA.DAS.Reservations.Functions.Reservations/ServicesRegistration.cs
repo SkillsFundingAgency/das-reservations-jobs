@@ -65,7 +65,6 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
 
-        services.AddTransient<INotificationsService, NotificationsService>();
         services.AddTransient<IEncodingService, EncodingService>();
         services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
