@@ -17,6 +17,8 @@ using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ProviderPermission;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using NServiceBus;
+using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
+using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
 using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
@@ -46,6 +48,10 @@ var host = new HostBuilder()
         services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
         services.AddTransient<IIndexRegistry, IndexRegistry>();
+
+        services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
+        services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
+        services.AddTransient<IProviderPermissionService, ProviderPermissionService>();
 
         services.AddElasticSearch(config);
         services.AddSingleton(new ReservationJobsEnvironment(configuration["EnvironmentName"]));
