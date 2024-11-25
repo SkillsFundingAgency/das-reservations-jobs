@@ -38,7 +38,7 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
 
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-        services.Configure<ReservationsJobs>(configuration.GetSection("Encodings"));
+        services.Configure<EncodingConfig>(configuration.GetSection("Encodings"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
         services.AddDasLogging(typeof(Program).Namespace);
 
