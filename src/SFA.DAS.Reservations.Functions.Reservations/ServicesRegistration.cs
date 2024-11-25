@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Accounts.Services;
 using SFA.DAS.Reservations.Application.OuterApi;
@@ -38,12 +39,21 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
 
         services.Configure<ReservationsJobs>(configuration.GetSection("ReservationsJobs"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<ReservationsJobs>>().Value);
-        services.Configure<EncodingConfig>(configuration.GetSection("Encodings"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
+        //services.Configure<EncodingConfig>(configuration.GetSection("Encodings"));
+        //var test = configuration.GetSection("Encodings").Get<EncodingConfig>();
+        //services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
+
         services.AddDasLogging(typeof(Program).Namespace);
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
         var environmentName = configuration["EnvironmentName"];
+
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            var encodingConfigJson = configuration.GetSection("SFA.DAS.Encoding").Value;
+            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+            services.AddSingleton(encodingConfig);
+        }
 
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();
