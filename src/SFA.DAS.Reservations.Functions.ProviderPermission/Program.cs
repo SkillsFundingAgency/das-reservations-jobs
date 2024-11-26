@@ -19,7 +19,6 @@ using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using NServiceBus;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
-using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 

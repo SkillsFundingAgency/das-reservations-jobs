@@ -44,12 +44,12 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
         var environmentName = configuration["EnvironmentName"];
 
-        ////if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-        ////{
-        ////    var encodingConfigJson = configuration.GetSection("SFA.DAS.Encoding").Value;
-        ////    var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
-        ////    services.AddSingleton(encodingConfig);
-        ////}
+        if (!environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+        {
+            var encodingConfigJson = configuration.GetSection("SFA.DAS.Encoding").Value;
+            var encodingConfig = JsonConvert.DeserializeObject<EncodingConfig>(encodingConfigJson);
+            services.AddSingleton(encodingConfig);
+        }
 
         services.AddTransient<IConfirmReservationHandler, ConfirmReservationHandler>();
         services.AddTransient<IApprenticeshipDeletedHandler, ApprenticeshipDeletedHandler>();

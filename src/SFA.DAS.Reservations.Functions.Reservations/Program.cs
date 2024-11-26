@@ -2,9 +2,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NServiceBus;
-using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 using SFA.DAS.Reservations.Functions.Reservations;
+using SFA.DAS.Reservations.Infrastructure;
 
 [assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ReservationsQueue)]
 
