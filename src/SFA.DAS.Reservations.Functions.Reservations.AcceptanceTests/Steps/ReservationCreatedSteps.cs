@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SFA.DAS.Reservations.Application.Reservations.Services;
+using NServiceBus;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
 using SFA.DAS.Reservations.Domain.Notifications;
@@ -46,7 +46,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 .ReturnsAsync(new Dictionary<string, string>());
 
             var handler = Services.GetService<IReservationCreatedHandler>();
-            handler.Handle(TestData.ReservationCreatedEvent).Wait();
+            TestData.MessageHandlerContext = new Mock<IMessageHandlerContext>();
+            handler.Handle(TestData.ReservationCreatedEvent, TestData.MessageHandlerContext.Object).Wait();
         }
 
         [When(@"a create reservation event is triggered by employer")]
@@ -55,7 +56,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             TestData.ReservationCreatedEvent.ProviderId = null;
 
             var handler = Services.GetService<IReservationCreatedHandler>();
-            handler.Handle(TestData.ReservationCreatedEvent).Wait();
+            TestData.MessageHandlerContext = new Mock<IMessageHandlerContext>();
+            handler.Handle(TestData.ReservationCreatedEvent, TestData.MessageHandlerContext.Object).Wait();
         }
 
         [When(@"a create reservation event is triggered for a levy employer")]
@@ -65,7 +67,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             TestData.ReservationCreatedEvent.StartDate = DateTime.MinValue;
 
             var handler = Services.GetService<IReservationCreatedHandler>();
-            handler.Handle(TestData.ReservationCreatedEvent).Wait();
+            TestData.MessageHandlerContext = new Mock<IMessageHandlerContext>();
+            handler.Handle(TestData.ReservationCreatedEvent, TestData.MessageHandlerContext.Object).Wait();
         }
 
         [Then(@"the reservation search index should be updated with the new reservation")]
@@ -80,19 +83,13 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the employer should be notified of the created reservation")]
         public void ThenTheEmployerShouldBeNotifiedOfTheCreatedReservation()
         {
-            var notificationsService = Services.GetService<INotificationsService>();
-            var mock = Mock.Get(notificationsService);
-
-            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()), Times.Once);
+            TestData.MessageHandlerContext.Verify(x => x.Send(It.IsAny<NotificationMessage>(), It.IsAny<SendOptions>()), Times.Once);
         }
 
         [Then(@"the employer should not be notified of the (.*) reservation")]
         public void ThenTheEmployerShouldNotBeNotifiedOfTheReservation(string reservationStatus)
         {
-            var notificationsService = Services.GetService<INotificationsService>();
-            var mock = Mock.Get(notificationsService);
-
-            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()), Times.Never);
+            TestData.MessageHandlerContext.Verify(x => x.Send(It.IsAny<NotificationMessage>(), It.IsAny<SendOptions>()), Times.Never);
         }
     }
 }

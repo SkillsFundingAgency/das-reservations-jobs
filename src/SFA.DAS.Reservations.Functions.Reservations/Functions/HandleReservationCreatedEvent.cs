@@ -16,7 +16,7 @@ public class HandleReservationCreatedEvent(IReservationCreatedHandler handler,
 
         if (message.Id != null && message.Id != Guid.Empty)
         {
-            await handler.Handle(message);
+            await handler.Handle(message, context);
             log.LogInformation($"Reservation Created function finished at: [{DateTime.UtcNow}] UTC, event with ID: [{message.Id}] has been handled.");
         }
         else

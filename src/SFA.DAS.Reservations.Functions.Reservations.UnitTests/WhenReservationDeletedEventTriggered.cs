@@ -21,7 +21,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
             //Arrange
             var reservationService = new Mock<IReservationService>();
             var notifyAction = new Mock<INotifyEmployerOfReservationEventAction>();
-
             var handler = new ReservationDeletedHandler(reservationService.Object, notifyAction.Object);
             var sut = new HandleReservationDeletedEvent(handler, Mock.Of<ILogger<ReservationDeletedEvent>>());
 
@@ -30,7 +29,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
 
             //Assert
             notifyAction.Verify(s => s.Execute(It.Is<ReservationDeletedNotificationEvent>(ev =>
-                ev.Id == deletedEvent.Id)), Times.Once);
+                ev.Id == deletedEvent.Id), It.IsAny<IMessageHandlerContext>()), Times.Once);
             reservationService.Verify(x => x.UpdateReservationStatus(
                 deletedEvent.Id,
                 ReservationStatus.Deleted,

@@ -14,7 +14,6 @@ using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
-using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 

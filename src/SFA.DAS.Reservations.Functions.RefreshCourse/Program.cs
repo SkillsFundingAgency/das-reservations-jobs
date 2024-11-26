@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SFA.DAS.Reservations.Application.OuterApi;
-using SFA.DAS.Reservations.Functions.LegalEntities;
 using SFA.DAS.Reservations.Infrastructure;
 
 var host = new HostBuilder()

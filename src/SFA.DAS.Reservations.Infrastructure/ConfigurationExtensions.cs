@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
 
-namespace SFA.DAS.Reservations.Functions.LegalEntities;
+namespace SFA.DAS.Reservations.Infrastructure;
 
 public static class ConfigurationExtensions
 {
+    const string EncodingConfigKey = "SFA.DAS.Encoding";
+
     public static IConfiguration BuildDasConfiguration(this IConfigurationBuilder configBuilder)
     {
         configBuilder
@@ -28,6 +30,7 @@ public static class ConfigurationExtensions
             options.EnvironmentName = config["EnvironmentName"];
 #endif
             options.PreFixConfigurationKeys = false;
+            options.ConfigurationKeysRawJsonResult = new[] { EncodingConfigKey };
         });
 
         return configBuilder.Build();

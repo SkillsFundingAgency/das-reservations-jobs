@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Reservations.Functions.LegalEntities;
 using NServiceBus;
+using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 [assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.LegalEntitiesQueue)]

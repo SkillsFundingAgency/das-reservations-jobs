@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SFA.DAS.Reservations.Application.Reservations.Services;
+using NServiceBus;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
@@ -44,7 +44,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
                 .ReturnsAsync(new Dictionary<string, string>());
 
             var handler = Services.GetService<IReservationDeletedHandler>();
-            handler.Handle(TestData.ReservationDeletedEvent).Wait();
+            TestData.MessageHandlerContext = new Mock<IMessageHandlerContext>();
+            handler.Handle(TestData.ReservationDeletedEvent, TestData.MessageHandlerContext.Object).Wait();
         }
 
         [When(@"a delete reservation event for a reservation created by (.*) is triggered by employer")]
@@ -60,7 +61,8 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
             }
 
             var handler = Services.GetService<IReservationDeletedHandler>();
-            handler.Handle(TestData.ReservationDeletedEvent).Wait();
+            TestData.MessageHandlerContext = new Mock<IMessageHandlerContext>();
+            handler.Handle(TestData.ReservationDeletedEvent, TestData.MessageHandlerContext.Object).Wait();
         }
 
         [Then(@"the reservation search index should be updated with the deleted reservation removed")]
@@ -74,10 +76,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the employer should be notified of the deleted reservation")]
         public void ThenTheEmployerShouldBeNotifiedOfTheDeletedReservation()
         {
-            var notificationsService = Services.GetService<INotificationsService>();
-            var mock = Mock.Get(notificationsService);
-
-            mock.Verify(x => x.SendEmail(It.IsAny<NotificationMessage>()), Times.Once);
+           TestData.MessageHandlerContext.Verify(x=>x.Send(It.IsAny<NotificationMessage>(), It.IsAny<SendOptions>()), Times.Once);
         }
     }
 }
