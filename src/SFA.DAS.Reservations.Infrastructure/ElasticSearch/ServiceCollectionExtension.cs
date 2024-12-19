@@ -11,7 +11,7 @@ namespace SFA.DAS.Reservations.Infrastructure.ElasticSearch
     public static class ServiceCollectionExtension
     {
         public static void AddElasticSearch(
-            this ServiceCollection collection,
+            this IServiceCollection collection,
             ReservationsJobs configuration)
         {
             var connectionPool = new SingleNodeConnectionPool(new Uri(configuration.ElasticSearchServerUrl));

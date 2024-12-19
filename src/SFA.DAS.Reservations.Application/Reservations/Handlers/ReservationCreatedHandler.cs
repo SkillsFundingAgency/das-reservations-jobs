@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using NServiceBus;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
@@ -14,9 +15,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _addNonLevyReservationToReservationsIndexAction = addNonLevyReservationToReservationsIndexAction;
             _notifyAction = notifyAction;
         }
-        public async Task Handle(ReservationCreatedEvent createdEvent)
+        public async Task Handle(ReservationCreatedEvent createdEvent, IMessageHandlerContext context)
         {
-            await _notifyAction.Execute<ReservationCreatedNotificationEvent>(createdEvent);
+            await _notifyAction.Execute<ReservationCreatedNotificationEvent>(createdEvent, context);
             await _addNonLevyReservationToReservationsIndexAction.Execute(createdEvent);
         }
     }

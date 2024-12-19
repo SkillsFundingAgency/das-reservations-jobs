@@ -20,35 +20,35 @@ public class ApprenticeshipDeletedSteps : StepsBase
         var handler = Services.GetService<IApprenticeshipDeletedHandler>();
         handler.Handle(TestData.ReservationId).Wait();
     }
-        
+
     [Then(@"the reservation status will be pending")]
     public void ThenTheReservationStatusWillBePending()
     {
         var dbContext = Services.GetService<ReservationsDataContext>();
         var reservation = dbContext.Reservations.Find(TestData.ReservationId);
-            
+
         ((ReservationStatus)reservation.Status).Should().Be(ReservationStatus.Pending);
-            
+
         var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
         var mockReservationIndexRepository = Mock.Get(reservationIndexRepository);
-            
+
         mockReservationIndexRepository.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Once);
     }
-        
+
     [Then(@"the reservation does not cause a re-queue")]
     public void ThenTheReservationDoesNotCauseARe_Queue()
     {
         var dbContext = Services.GetService<ReservationsDataContext>();
         var reservation = dbContext.Reservations.Find(TestData.ReservationId);
         reservation.Should().BeNull();
-            
+
         var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
         var mock = Mock.Get(reservationIndexRepository);
-            
+
         mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Never);
-            
+
         var reservationService = Services.GetService<IReservationService>();
-            
+
         var action = () => reservationService.UpdateReservationStatus(TestData.ReservationId, It.IsAny<ReservationStatus>());
         action.Should().NotThrowAsync();
     }

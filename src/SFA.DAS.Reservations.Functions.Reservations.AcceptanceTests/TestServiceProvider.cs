@@ -23,23 +23,18 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             var serviceCollection = new ServiceCollection();
             var configuration = GenerateConfiguration();
 
-            var serviceProviderBuilder = new ServiceProviderBuilder(configuration)
-            {
-                ServiceCollection = serviceCollection
-            };
-            
+            var servicesRegistration = new ServicesRegistration(serviceCollection, configuration);
+            servicesRegistration.Register();
+
             var encodingService = new Mock<IEncodingService>();
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyAccountId);
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyHashedAccountId);
-            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyAccountId);
-            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)),It.IsAny<EncodingType>())).Returns(TestDataValues.LevyHashedAccountId);
+            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.NonLevyHashedAccountId)), It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyAccountId);
+            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.NonLevyAccountId)), It.IsAny<EncodingType>())).Returns(TestDataValues.NonLevyHashedAccountId);
+            encodingService.Setup(x => x.Decode(It.Is<string>(s => s.Equals(TestDataValues.LevyHashedAccountId)), It.IsAny<EncodingType>())).Returns(TestDataValues.LevyAccountId);
+            encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)), It.IsAny<EncodingType>())).Returns(TestDataValues.LevyHashedAccountId);
             serviceCollection.AddSingleton(encodingService.Object);
-            
+
             var findApprenticeshipTrainingService = new Mock<IFindApprenticeshipTrainingService>();
             serviceCollection.AddSingleton(findApprenticeshipTrainingService.Object);
-            
-            var mockNotificationService = new Mock<INotificationsService>();
-            serviceCollection.AddSingleton(mockNotificationService.Object);
 
             var mockReservationIndex = new Mock<IReservationIndexRepository>();
             serviceCollection.AddSingleton(mockReservationIndex.Object);
@@ -47,29 +42,21 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             var mockProviderPermissions = new Mock<IProviderPermissionRepository>();
             serviceCollection.AddSingleton(mockProviderPermissions.Object);
 
-            var mockReservationCreatedHandler = new Mock<IReservationCreatedHandler>();
-            serviceCollection.AddSingleton(mockReservationCreatedHandler.Object);
-
-            var mockReservationDeletedHandler = new Mock<IReservationDeletedHandler>();
-            serviceCollection.AddSingleton(mockReservationDeletedHandler.Object);
-
             var mockAccountsService = new Mock<IAccountsService>();
             serviceCollection.AddSingleton(mockAccountsService.Object);
 
             var mockNotificationTokenBuilder = new Mock<INotificationTokenBuilder>();
             serviceCollection.AddSingleton(mockNotificationTokenBuilder.Object);
-             
-            _serviceProvider = serviceProviderBuilder.Build();
-            
-            
+
+            _serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
         public object GetService(Type serviceType)
         {
             return _serviceProvider.GetService(serviceType);
         }
-       
-        private static IConfiguration GenerateConfiguration()
+
+        private static IConfigurationRoot GenerateConfiguration()
         {
             var configSource = new MemoryConfigurationSource
             {
@@ -82,7 +69,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
                     new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
                 }
             };
-            
+
             var provider = new MemoryConfigurationProvider(configSource);
 
             return new ConfigurationRoot(new List<IConfigurationProvider> { provider });

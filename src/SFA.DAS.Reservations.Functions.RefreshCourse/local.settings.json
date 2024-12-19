@@ -6,7 +6,7 @@
     "EnvironmentName": "LOCAL",
     "Version": "1.0",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "AppName": "sfa-reservations-jobs-refresh-course"
   }
 }

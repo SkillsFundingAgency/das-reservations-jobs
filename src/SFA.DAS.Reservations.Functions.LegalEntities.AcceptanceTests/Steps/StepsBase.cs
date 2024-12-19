@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 Level = 1,
                 Title = "Tester"
             };
-            
+
             TestData.AccountLegalEntity = new AccountLegalEntity
             {
                 AccountId = AccountId,
@@ -46,15 +46,15 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
                 AccountLegalEntityName = "Test Corp",
                 AgreementSigned = true
             };
-            
+
             TestData.NonLevyAccount = new Account
             {
                 Id = 1,
                 Name = "Test Account",
                 IsLevy = false
             };
-            
-             dbContext = Services.GetService<ReservationsDataContext>();
+
+            dbContext = Services.GetService<ReservationsDataContext>();
 
             if (dbContext.Apprenticeships.Find(TestData.Course.CourseId) == null)
             {
@@ -63,15 +63,13 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps
 
             var legalEntity = dbContext.AccountLegalEntities
                 .SingleOrDefault(e => e.AccountLegalEntityId.Equals(TestData.AccountLegalEntity.AccountLegalEntityId));
-            
+
             if (legalEntity == null)
             {
                 dbContext.AccountLegalEntities.Add(TestData.AccountLegalEntity);
 
             }
 
-            
-            
             dbContext.SaveChanges();
         }
     }

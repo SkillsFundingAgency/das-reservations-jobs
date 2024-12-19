@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
-using SFA.DAS.Reservations.Application.Reservations.Services;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
@@ -21,11 +21,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_No_ProviderId_And_Then_No_Further_Processing(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             deletedEvent.ProviderId = null;
 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
                 Times.Never);
@@ -35,11 +36,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_Has_ProviderId_But_Deleted_By_Employer_Then_No_Further_Processing(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             deletedEvent.EmployerDeleted = true;
 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
                 Times.Never);
@@ -49,12 +51,13 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task And_Not_Levy_Then_No_Further_Processing(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             deletedEvent.CourseId = null;
             deletedEvent.StartDate = DateTime.MinValue;
 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(It.IsAny<long>()),
                 Times.Never);
@@ -64,9 +67,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
         public async Task Then_Gets_All_Users_For_Account(
             ReservationDeletedEvent deletedEvent,
             [Frozen] Mock<IAccountsService> mockAccountsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockAccountsService.Verify(service => service.GetAccountUsers(deletedEvent.AccountId), 
                 Times.Once);
@@ -77,19 +81,19 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             ReservationDeletedEvent deletedEvent,
             [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             mockAccountsService
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
                 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
-            users.ForEach(user => 
-                mockNotificationsService.Verify(service => 
-                    service.SendEmail(It.Is<NotificationMessage>(message => 
-                        message.RecipientsAddress == user.Email)), Times.Once));
+            users.ForEach(user =>
+                mockMessageHandlerContext.Verify(service => 
+                    service.Send(It.Is<NotificationMessage>(message => 
+                        message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
         [Test, MoqAutoData]
@@ -97,7 +101,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             ReservationDeletedEvent deletedEvent,
             [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             users[0].CanReceiveNotifications = false;
@@ -105,15 +109,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
-            mockNotificationsService.Verify(service => 
-                service.SendEmail(It.Is<NotificationMessage>(message => 
-                    message.RecipientsAddress == users[0].Email)), Times.Never);
-            users.Where(user => user.CanReceiveNotifications).ToList().ForEach(user => 
-                mockNotificationsService.Verify(service => 
-                    service.SendEmail(It.Is<NotificationMessage>(message => 
-                        message.RecipientsAddress == user.Email)), Times.Once));
+            mockMessageHandlerContext.Verify(service => 
+                service.Send(It.Is<NotificationMessage>(message => 
+                    message.RecipientsAddress == users[0].Email), It.IsAny<SendOptions>()), Times.Never);
+            users.Where(user => user.CanReceiveNotifications).ToList().ForEach(user =>
+                mockMessageHandlerContext.Verify(service => 
+                    service.Send(It.Is<NotificationMessage>(message => 
+                        message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
         [Test, MoqAutoData]
@@ -122,7 +126,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             string otherRole,
             [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             users[0].Role = otherRole;
@@ -130,15 +134,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
-            mockNotificationsService.Verify(service => 
-                service.SendEmail(It.Is<NotificationMessage>(message => 
-                    message.RecipientsAddress == users[0].Email)), Times.Never);
-            users.Where(user => user.Role == "Owner").ToList().ForEach(user => 
-                mockNotificationsService.Verify(service => 
-                    service.SendEmail(It.Is<NotificationMessage>(message => 
-                        message.RecipientsAddress == user.Email)), Times.Once));
+            mockMessageHandlerContext.Verify(service => 
+                service.Send(It.Is<NotificationMessage>(message => 
+                    message.RecipientsAddress == users[0].Email), It.IsAny<SendOptions>()), Times.Never);
+            users.Where(user => user.Role == "Owner").ToList().ForEach(user =>
+                mockMessageHandlerContext.Verify(service => 
+                    service.Send(It.Is<NotificationMessage>(message => 
+                        message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
         [Test, MoqAutoData]
@@ -147,7 +151,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             string otherRole,
             [ArrangeUsers(Role = "Transactor")] List<TeamMember> users,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             users[0].Role = otherRole;
@@ -155,15 +159,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(service => service.GetAccountUsers(deletedEvent.AccountId))
                 .ReturnsAsync(users);
 
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
-            mockNotificationsService.Verify(service => 
-                service.SendEmail(It.Is<NotificationMessage>(message => 
-                    message.RecipientsAddress == users[0].Email)), Times.Never);
-            users.Where(user => user.Role == "Transactor").ToList().ForEach(user => 
-                mockNotificationsService.Verify(service => 
-                    service.SendEmail(It.Is<NotificationMessage>(message => 
-                        message.RecipientsAddress == user.Email)), Times.Once));
+            mockMessageHandlerContext.Verify(service => 
+                service.Send(It.Is<NotificationMessage>(message => 
+                    message.RecipientsAddress == users[0].Email), It.IsAny<SendOptions>()), Times.Never);
+            users.Where(user => user.Role == "Transactor").ToList().ForEach(user =>
+                mockMessageHandlerContext.Verify(service => 
+                    service.Send(It.Is<NotificationMessage>(message => 
+                        message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
         [Test, MoqAutoData]
@@ -173,7 +177,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             mockAccountsService
@@ -183,13 +187,13 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(builder => builder.BuildTokens(It.IsAny<INotificationEvent>()))
                 .ReturnsAsync(tokens);
             
-            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
-            mockNotificationsService.Verify(service =>
-                service.SendEmail(It.Is<NotificationMessage>(message =>
+            mockMessageHandlerContext.Verify(service =>
+                service.Send(It.Is<NotificationMessage>(message =>
                     message.RecipientsAddress == users[0].Email &&
                     message.TemplateId == TemplateIds.ReservationDeleted &&
-                    message.Tokens == tokens))
+                    message.Tokens == tokens), It.IsAny<SendOptions>())
                 , Times.Once);
         }
 
@@ -200,7 +204,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             [ArrangeUsers] List<TeamMember> users,
             [Frozen] Mock<INotificationTokenBuilder> mockTokenBuilder,
             [Frozen] Mock<IAccountsService> mockAccountsService,
-            [Frozen] Mock<INotificationsService> mockNotificationsService,
+            [Frozen] Mock<IMessageHandlerContext> mockMessageHandlerContext,
             NotifyEmployerOfReservationEventAction action)
         {
             mockAccountsService
@@ -210,11 +214,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
                 .Setup(builder => builder.BuildTokens(It.IsAny<INotificationEvent>()))
                 .ReturnsAsync(tokens);
             
-            await action.Execute<ReservationCreatedNotificationEvent>(createdEvent);
+            await action.Execute<ReservationCreatedNotificationEvent>(createdEvent, mockMessageHandlerContext.Object);
 
-            mockNotificationsService.Verify(service =>
-                    service.SendEmail(It.Is<NotificationMessage>(message =>
-                        message.TemplateId == TemplateIds.ReservationCreated ))
+            mockMessageHandlerContext.Verify(service =>
+                    service.Send(It.Is<NotificationMessage>(message =>
+                        message.TemplateId == TemplateIds.ReservationCreated ), It.IsAny<SendOptions>())
                 , Times.Exactly(users.Count));
         }
     }

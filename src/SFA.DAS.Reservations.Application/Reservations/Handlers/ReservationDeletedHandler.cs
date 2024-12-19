@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using NServiceBus;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;
@@ -16,9 +17,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
             _action = action;
         }
 
-        public async Task Handle(ReservationDeletedEvent deletedEvent)
+        public async Task Handle(ReservationDeletedEvent deletedEvent, IMessageHandlerContext context)
         {
-            await _action.Execute<ReservationDeletedNotificationEvent>(deletedEvent);
+            await _action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, context);
             await _reservationService.UpdateReservationStatus(deletedEvent.Id, ReservationStatus.Deleted);
         }
     }
