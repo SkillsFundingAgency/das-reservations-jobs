@@ -14,8 +14,6 @@ namespace SFA.DAS.Reservations.Data.ElasticSearch
 
         public ElasticSearchQueries()
         {
-            //var binDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            //var rootDirectory = Path.GetFullPath(Path.Combine(binDirectory, ".."));
             var rootDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             LastIndexSearchQuery = File.ReadAllText(Path.Combine(rootDirectory,"ElasticQueries/LatestIndexSearchQuery.json"));
