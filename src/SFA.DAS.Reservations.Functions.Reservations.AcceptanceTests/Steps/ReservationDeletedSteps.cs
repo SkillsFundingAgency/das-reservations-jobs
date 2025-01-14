@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NServiceBus;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
@@ -76,7 +77,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the employer should be notified of the deleted reservation")]
         public void ThenTheEmployerShouldBeNotifiedOfTheDeletedReservation()
         {
-           TestData.MessageHandlerContext.Verify(x=>x.Send(It.IsAny<NotificationMessage>(), It.IsAny<SendOptions>()), Times.Once);
+           TestData.MessageHandlerContext.Verify(x=>x.Send(It.IsAny<SendEmailCommand>(), It.IsAny<SendOptions>()), Times.Once);
         }
     }
 }

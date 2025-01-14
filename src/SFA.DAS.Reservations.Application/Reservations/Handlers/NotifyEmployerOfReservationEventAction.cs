@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
@@ -71,16 +72,10 @@ public class NotifyEmployerOfReservationEventAction(
         
         foreach (var user in filteredUsers)
         {
-            var message = new NotificationMessage
-            {
-                RecipientsAddress = user.Email,
-                TemplateId = GetTemplateName(notificationEvent),
-                Tokens = tokens
-            };
-
-                await context.Send(message);
-                sendCount++;
-            }
+            var message = new SendEmailCommand(GetTemplateName(notificationEvent), user.Email, tokens);
+            await context.Send(message);
+            sendCount++;
+        }
 
         return sendCount;
     }

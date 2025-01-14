@@ -6,6 +6,7 @@ using AutoFixture.NUnit3;
 using Moq;
 using NServiceBus;
 using NUnit.Framework;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
 using SFA.DAS.Reservations.Domain.Accounts;
@@ -92,7 +93,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 
             users.ForEach(user =>
                 mockMessageHandlerContext.Verify(service => 
-                    service.Send(It.Is<NotificationMessage>(message => 
+                    service.Send(It.Is<SendEmailCommand>(message => 
                         message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
@@ -112,11 +113,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockMessageHandlerContext.Verify(service => 
-                service.Send(It.Is<NotificationMessage>(message => 
+                service.Send(It.Is<SendEmailCommand>(message => 
                     message.RecipientsAddress == users[0].Email), It.IsAny<SendOptions>()), Times.Never);
             users.Where(user => user.CanReceiveNotifications).ToList().ForEach(user =>
                 mockMessageHandlerContext.Verify(service => 
-                    service.Send(It.Is<NotificationMessage>(message => 
+                    service.Send(It.Is<SendEmailCommand>(message => 
                         message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
@@ -137,11 +138,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockMessageHandlerContext.Verify(service => 
-                service.Send(It.Is<NotificationMessage>(message => 
+                service.Send(It.Is<SendEmailCommand>(message => 
                     message.RecipientsAddress == users[0].Email), It.IsAny<SendOptions>()), Times.Never);
             users.Where(user => user.Role == "Owner").ToList().ForEach(user =>
                 mockMessageHandlerContext.Verify(service => 
-                    service.Send(It.Is<NotificationMessage>(message => 
+                    service.Send(It.Is<SendEmailCommand>(message => 
                         message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
@@ -162,11 +163,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockMessageHandlerContext.Verify(service => 
-                service.Send(It.Is<NotificationMessage>(message => 
+                service.Send(It.Is<SendEmailCommand>(message => 
                     message.RecipientsAddress == users[0].Email), It.IsAny<SendOptions>()), Times.Never);
             users.Where(user => user.Role == "Transactor").ToList().ForEach(user =>
                 mockMessageHandlerContext.Verify(service => 
-                    service.Send(It.Is<NotificationMessage>(message => 
+                    service.Send(It.Is<SendEmailCommand>(message => 
                         message.RecipientsAddress == user.Email), It.IsAny<SendOptions>()), Times.Once));
         }
 
@@ -190,7 +191,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, mockMessageHandlerContext.Object);
 
             mockMessageHandlerContext.Verify(service =>
-                service.Send(It.Is<NotificationMessage>(message =>
+                service.Send(It.Is<SendEmailCommand>(message =>
                     message.RecipientsAddress == users[0].Email &&
                     message.TemplateId == TemplateIds.ReservationDeleted &&
                     message.Tokens == tokens), It.IsAny<SendOptions>())
@@ -217,7 +218,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
             await action.Execute<ReservationCreatedNotificationEvent>(createdEvent, mockMessageHandlerContext.Object);
 
             mockMessageHandlerContext.Verify(service =>
-                    service.Send(It.Is<NotificationMessage>(message =>
+                    service.Send(It.Is<SendEmailCommand>(message =>
                         message.TemplateId == TemplateIds.ReservationCreated ), It.IsAny<SendOptions>())
                 , Times.Exactly(users.Count));
         }
