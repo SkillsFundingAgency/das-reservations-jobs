@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Reservations.Application.Reservations.Services;
+using NServiceBus;
+using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
@@ -12,14 +13,13 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers;
 
 public class NotifyEmployerOfReservationEventAction(
     IAccountsService accountsService,
-    INotificationsService notificationsService,
     ILogger<NotifyEmployerOfReservationEventAction> logger,
     INotificationTokenBuilder notificationTokenBuilder)
     : INotifyEmployerOfReservationEventAction
 {
     private readonly string[] _permittedRoles = ["Owner", "Transactor"];
 
-    public async Task Execute<T>(T notificationEvent) where T : INotificationEvent
+    public async Task Execute<T>(T notificationEvent, IMessageHandlerContext context) where T : INotificationEvent
     {
         logger.LogInformation("Notify employer of action [{EventTypeName}], Reservation Id [{NotificationEventId}].", notificationEvent.GetType().Name, notificationEvent.Id);
 
@@ -36,7 +36,7 @@ public class NotifyEmployerOfReservationEventAction(
 
         logger.LogInformation("Reservation [{NotificationEventId}], Account [{AccountId}] has [{FilteredUsersCount}] users with correct role and subscription.", notificationEvent.Id, notificationEvent.AccountId, filteredUsers.Count);
         
-        var sendCount = await SendNotifications(notificationEvent, filteredUsers);
+        var sendCount = await SendNotifications(notificationEvent, filteredUsers, context);
 
         logger.LogInformation("Finished notifying employer of action [{EventTypeName}], Reservation Id [{NotificationEventId}], [{SendCount}] email(s) sent.", notificationEvent.GetType().Name, notificationEvent.Id, sendCount);
     }
@@ -64,7 +64,7 @@ public class NotifyEmployerOfReservationEventAction(
         return false;
     }
 
-    private async Task<int> SendNotifications<T>(T notificationEvent, IEnumerable<TeamMember> filteredUsers) where T : INotificationEvent
+    private async Task<int> SendNotifications<T>(T notificationEvent, IEnumerable<TeamMember> filteredUsers, IMessageHandlerContext context) where T : INotificationEvent
     {
         var tokens = await notificationTokenBuilder.BuildTokens(notificationEvent);
         
@@ -72,16 +72,10 @@ public class NotifyEmployerOfReservationEventAction(
         
         foreach (var user in filteredUsers)
         {
-            var message = new NotificationMessage
-            {
-                RecipientsAddress = user.Email,
-                TemplateId = GetTemplateName(notificationEvent),
-                Tokens = tokens
-            };
-
-                await notificationsService.SendEmail(message);
-                sendCount++;
-            }
+            var message = new SendEmailCommand(GetTemplateName(notificationEvent), user.Email, tokens);
+            await context.Send(message);
+            sendCount++;
+        }
 
         return sendCount;
     }

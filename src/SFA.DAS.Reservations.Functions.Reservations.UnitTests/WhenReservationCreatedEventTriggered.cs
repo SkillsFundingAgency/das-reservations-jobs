@@ -2,10 +2,13 @@
 using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
+using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Functions;
 using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
@@ -28,15 +31,14 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
             var handler = new ReservationCreatedHandler(updateIndexAction.Object,
                 notifyAction.Object);
 
+            var sut = new HandleReservationCreatedEvent(handler, Mock.Of<ILogger<ReservationCreatedEvent>>());
+
             //Act
-            await HandleReservationCreatedEvent.Run(
-                createdEvent,
-                Mock.Of<ILogger<ReservationCreatedEvent>>(),
-                handler);
+            await sut.Handle(createdEvent, Mock.Of<IMessageHandlerContext>());
 
             //Assert
             notifyAction.Verify(s => s.Execute(It.Is<ReservationCreatedNotificationEvent>(ev =>
-                ev.Id == createdEvent.Id)), Times.Once);
+                ev.Id == createdEvent.Id), It.IsAny<IMessageHandlerContext>()), Times.Once);
         }
 
         [Test, AutoData]
@@ -54,12 +56,10 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
 
             var handler = new ReservationCreatedHandler(addNonLevyReservationToReservationsIndexAction.Object,
                 notifyEmployerOfReservationEventAction.Object);
+            var sut = new HandleReservationCreatedEvent(handler, Mock.Of<ILogger<ReservationCreatedEvent>>());
 
             //Act
-            await HandleReservationCreatedEvent.Run(
-                createdEvent,
-                Mock.Of<ILogger<ReservationCreatedEvent>>(),
-                handler);
+            await sut.Handle(createdEvent, Mock.Of<IMessageHandlerContext>());
 
             //Assert
             addNonLevyReservationToReservationsIndexAction.Verify(s => s.Execute(It.Is<Reservation>(index =>

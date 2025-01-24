@@ -1,23 +1,19 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.EmployerAccounts.Messages.Events;
-using SFA.DAS.NServiceBus.AzureFunction.Infrastructure;
 using SFA.DAS.Reservations.Domain.AccountLegalEntities;
-using SFA.DAS.Reservations.Infrastructure;
-using SFA.DAS.Reservations.Infrastructure.Attributes;
 
 namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
-public class HandleAddedLegalEntityEvent
+public class HandleAddedLegalEntityEvent(IAddAccountLegalEntityHandler handler,
+    ILogger<AddedLegalEntityEvent> log) : IHandleMessages<AddedLegalEntityEvent>
 {
-    [FunctionName("HandleAddedLegalEntityEvent")]
-    public static async Task Run([NServiceBusTrigger(EndPoint = QueueNames.LegalEntityAdded)] AddedLegalEntityEvent message, [Inject]IAddAccountLegalEntityHandler handler, [Inject]ILogger<AddedLegalEntityEvent> log)
+    public async Task Handle(AddedLegalEntityEvent message, IMessageHandlerContext context)
     {
-        log.LogInformation("NServiceBus LegalEntityAdded trigger function executed for {AccountLegalEntityId}:{OrganisationName}", message.AccountLegalEntityId, message.OrganisationName);
-        
+        log.LogInformation($"NServiceBus LegalEntityAdded trigger function executed at: {DateTime.Now} for ${message.AccountLegalEntityId}:${message.OrganisationName}");
         await handler.Handle(message);
-        
-        log.LogInformation("NServiceBus LegalEntityAdded trigger function finished for {AccountLegalEntityId}:{OrganisationName}", message.AccountLegalEntityId, message.OrganisationName);
+        log.LogInformation($"NServiceBus LegalEntityAdded trigger function finished at: {DateTime.Now} for ${message.AccountLegalEntityId}:${message.OrganisationName}");
     }
 }

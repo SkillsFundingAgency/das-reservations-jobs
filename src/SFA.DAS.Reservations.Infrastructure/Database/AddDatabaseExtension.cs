@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
-using Microsoft.Azure.Services.AppAuthentication;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -11,10 +12,8 @@ namespace SFA.DAS.Reservations.Infrastructure.Database
 {
     public static class AddDatabaseExtension
     {
-
         public static void AddDatabaseRegistration(this IServiceCollection services, Domain.Configuration.ReservationsJobs config, string environmentName)
         {
-
             if (environmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
                 services
@@ -26,14 +25,14 @@ namespace SFA.DAS.Reservations.Infrastructure.Database
                 const string AzureResource = "https://database.windows.net/";
                 services.AddTransient<IDbConnection>(c =>
                 {
-                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    var azureServiceTokenProvider = CreateManagedIdentity();
 
                     return environmentName.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase)
                         ? new SqlConnection(config.ConnectionString)
                         : new SqlConnection
                         {
                             ConnectionString = config.ConnectionString,
-                            AccessToken = azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result
+                            AccessToken = azureServiceTokenProvider.GetTokenAsync(new TokenRequestContext(scopes: new string[] { AzureResource })).Result.Token
                         };
 
                 });
@@ -43,6 +42,15 @@ namespace SFA.DAS.Reservations.Infrastructure.Database
             }
 
             services.AddScoped<IReservationsDataContext, ReservationsDataContext>(provider => provider.GetService<ReservationsDataContext>());
+        }
+
+        private static ChainedTokenCredential CreateManagedIdentity()
+        {
+            return new ChainedTokenCredential(
+                new ManagedIdentityCredential(),
+                new AzureCliCredential(),
+                new VisualStudioCodeCredential(),
+                new VisualStudioCredential());
         }
     }
 }

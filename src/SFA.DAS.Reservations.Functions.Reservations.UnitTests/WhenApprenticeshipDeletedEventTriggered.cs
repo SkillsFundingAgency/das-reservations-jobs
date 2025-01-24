@@ -2,9 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using NUnit.Framework;
 using SFA.DAS.CommitmentsV2.Messages.Events;
+using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Functions.Reservations.Functions;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
 {
@@ -15,13 +18,11 @@ namespace SFA.DAS.Reservations.Functions.Reservations.UnitTests
         {
             //Arrange
             var handler = new Mock<IApprenticeshipDeletedHandler>();
-            var message = new DraftApprenticeshipDeletedEvent{ReservationId = Guid.NewGuid()};
+            var message = new DraftApprenticeshipDeletedEvent { ReservationId = Guid.NewGuid() };
+            var sut = new HandleApprenticeshipDeletedEvent(handler.Object, Mock.Of<ILogger<DraftApprenticeshipDeletedEvent>>());
 
             //Act
-            await HandleApprenticeshipDeletedEvent.Run(
-                message, 
-                Mock.Of<ILogger<DraftApprenticeshipDeletedEvent>>(),
-                handler.Object);
+            await sut.Handle(message, Mock.Of<IMessageHandlerContext>());
 
             //Assert
             handler.Verify(s => s.Handle(message.ReservationId.Value), Times.Once);

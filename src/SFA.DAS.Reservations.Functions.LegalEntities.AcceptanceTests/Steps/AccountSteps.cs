@@ -12,17 +12,17 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
 
 [Binding]
-public class AccountSteps :StepsBase
+public class AccountSteps : StepsBase
 {
     public AccountSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
     {
     }
-        
+
     [Given(@"I have a non levy account")]
     public void WhenIHaveANonLevyAccount()
     {
         var dbContext = Services.GetService<ReservationsDataContext>();
-            
+
         var account = dbContext.Accounts.SingleOrDefault(e => e.Id.Equals(TestData.NonLevyAccount.Id));
 
         if (account == null)
@@ -31,13 +31,13 @@ public class AccountSteps :StepsBase
             dbContext.SaveChanges();
         }
     }
-        
+
     [Given(@"I receive an Account created event")]
     [When(@"I receive an Account created event")]
     public void GivenIReceiveAnAccountCreatedEvent()
     {
         var handler = Services.GetService<IAddAccountHandler>();
-            
+
         try
         {
             handler.Handle(new CreatedAccountEvent
@@ -50,9 +50,9 @@ public class AccountSteps :StepsBase
         {
             TestData.Exception = e;
         }
-            
+
     }
-        
+
     [When(@"levy added event is triggered")]
     public void WhenLevyAddedEventIsTriggered()
     {
@@ -70,14 +70,14 @@ public class AccountSteps :StepsBase
             TestData.Exception = e;
         }
     }
-        
+
     [When(@"I receive an Account name updated event")]
     public void WhenIReceiveAnAccountNameUpdatedEvent()
     {
         var handler = Services.GetService<IAccountNameUpdatedHandler>();
 
         TestData.NewAccountName = "My New Account Name";
-            
+
         try
         {
             handler.Handle(new ChangedAccountNameEvent
@@ -112,14 +112,14 @@ public class AccountSteps :StepsBase
 
         account.Should().NotBeNull();
     }
-        
+
     [Then(@"the account name is updated")]
     public void ThenTheAccountNameIsUpdated()
     {
         var dbContext = Services.GetService<ReservationsDataContext>();
         var account = dbContext.Accounts.SingleOrDefault(acc =>
             acc.Id.Equals(TestData.NonLevyAccount.Id));
-            
+
         account.Should().NotBeNull();
         account.Name.Should().Be(TestData.NewAccountName);
     }
