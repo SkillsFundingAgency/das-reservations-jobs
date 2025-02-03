@@ -34,18 +34,21 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
         {
             try
             {
+                _logger.LogInformation($"AccountId = {updateEvent.AccountId}, ProviderId = {updateEvent.Ukprn}, CanCreateCohort = {updateEvent.GrantedOperations?.Contains(Operation.CreateCohort)}");
                 var permission = Map(updateEvent);
 
                 await _permissionRepository.Add(permission);
 
                 if (!permission.CanCreateCohort)
                 {
+                    _logger.LogInformation($"Deleting for AccountId = {updateEvent.AccountId}, ProviderId = {updateEvent.Ukprn}");
                     await _reservationService.DeleteProviderFromSearchIndex(
                         Convert.ToUInt32(permission.ProviderId),
                         permission.AccountLegalEntityId);
                 }
                 else
                 {
+                    _logger.LogInformation($"Adding for AccountId = {updateEvent.AccountId}, ProviderId = {updateEvent.Ukprn}");
                     await _reservationService.AddProviderToSearchIndex(
                         (uint) permission.ProviderId,
                         permission.AccountLegalEntityId);

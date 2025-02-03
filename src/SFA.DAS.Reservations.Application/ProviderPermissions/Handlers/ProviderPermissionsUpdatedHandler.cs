@@ -23,7 +23,7 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Handlers
 
         public async Task Handle(UpdatedPermissionsEvent updateEvent)
         {
-            _logger.LogWarning("Processing UpdatedPermissionsEventfor Account ID {0}, Ukprn: {1}, Account legal entity ID:{2}", updateEvent?.AccountId, updateEvent?.Ukprn, updateEvent?.AccountLegalEntityId);
+            _logger.LogInformation("Processing UpdatedPermissionsEvent for Account ID {0}, Ukprn: {1}, Account legal entity ID:{2}", updateEvent?.AccountId, updateEvent?.Ukprn, updateEvent?.AccountLegalEntityId);
 
             if (!_validator.Validate(updateEvent))
             {
