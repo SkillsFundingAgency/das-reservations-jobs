@@ -365,7 +365,7 @@
     {
       "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
       "apiVersion": "2021-04-01",
-      "name": "[concat('application-insights-', variables('functionAppNameCourse'), '-alert-', parameters('utcValue'))]",
+      "name": "[concat('app-insights-', variables('functionAppNameCourse'), '-alert-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
@@ -481,7 +481,7 @@
     {
       "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
       "apiVersion": "2021-04-01",
-      "name": "[concat('application-insights-', variables('functionAppNameReservation'), '-alert-', parameters('utcValue'))]",
+      "name": "[concat('app-insights-', variables('functionAppNameReservation'), '-alert-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
@@ -597,7 +597,7 @@
     {
       "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
       "apiVersion": "2021-04-01",
-      "name": "[concat('application-insights-', variables('functionAppNameLegalEntities'), '-alert-', parameters('utcValue'))]",
+      "name": "[concat('app-insights-', variables('functionAppNameLegalEntities'), '-alert-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
@@ -705,7 +705,7 @@
     {
       "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
       "apiVersion": "2021-04-01",
-      "name": "[concat('application-insights-', variables('functionAppNameReservationIndex'), '-alert-', parameters('utcValue'))]",
+      "name": "[concat('app-insights-', variables('functionAppNameReservationIndex'), '-alert-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
@@ -821,7 +821,7 @@
     {
       "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
       "apiVersion": "2021-04-01",
-      "name": "[concat('application-insights-', variables('functionAppNameProviderPermissions'), '-alert-', parameters('utcValue'))]",
+      "name": "[concat('app-insights-', variables('functionAppNameProviderPermissions'), '-alert-', parameters('utcValue'))]",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
