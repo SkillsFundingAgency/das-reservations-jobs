@@ -30,7 +30,7 @@ public static class ConfigurationExtensions
             options.EnvironmentName = config["EnvironmentName"];
 #endif
             options.PreFixConfigurationKeys = false;
-            options.ConfigurationKeysRawJsonResult = new[] { EncodingConfigKey };
+            options.ConfigurationKeysRawJsonResult = [EncodingConfigKey];
         });
 
         return configBuilder.Build();

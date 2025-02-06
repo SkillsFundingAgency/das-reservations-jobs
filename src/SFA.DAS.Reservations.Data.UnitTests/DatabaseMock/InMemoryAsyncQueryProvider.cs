@@ -42,13 +42,13 @@ namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
                 .GetMethod(
                     name: nameof(IQueryProvider.Execute),
                     genericParameterCount: 1,
-                    types: new[] { typeof(Expression) })
+                    types: [typeof(Expression)])
                 .MakeGenericMethod(expectedResultType)
-                .Invoke(this, new[] { expression });
+                .Invoke(this, [expression]);
 
             return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))
                 ?.MakeGenericMethod(expectedResultType)
-                .Invoke(null, new[] { executionResult });
+                .Invoke(null, [executionResult]);
         }
     }
 }

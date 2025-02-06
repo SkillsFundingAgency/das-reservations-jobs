@@ -23,7 +23,7 @@ namespace SFA.DAS.Reservations.Functions.ProviderPermission.UnitTests
                 10, 11, 12, 
                 13, 14, Guid.NewGuid(), 
                 "test@example.com", "Test", 
-                "Tester", new HashSet<Operation>(), null, DateTime.Now);
+                "Tester", [], null, DateTime.Now);
 
             var sut = new HandleProviderPermissionUpdatedEvent(handler.Object, Mock.Of<ILogger<UpdatedPermissionsEvent>>());
 

@@ -31,11 +31,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             _permissionsRepository = new Mock<IProviderPermissionRepository>();
             _logger = new Mock<ILogger<ReservationService>>();
 
-            _expectedReservations = new List<Reservation>
-            {
-                new() { Id = Guid.NewGuid(), AccountLegalEntityId = 1},
+            _expectedReservations =
+            [
+                new() { Id = Guid.NewGuid(), AccountLegalEntityId = 1 },
                 new() { Id = Guid.NewGuid(), AccountLegalEntityId = 1 }
-            };
+            ];
 
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(2)).Returns(_expectedReservations);
 
@@ -136,11 +136,11 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             var firstReservationId = Guid.NewGuid();
             var secondReservationId = Guid.NewGuid();
 
-            _expectedReservations = new List<Reservation>
-            {
-                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
-                new() {Id = secondReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
-            };
+            _expectedReservations =
+            [
+                new() { Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1 },
+                new() { Id = secondReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1 }
+            ];
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>
@@ -174,10 +174,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Arrange
             var firstReservationId = Guid.NewGuid();
 
-            _expectedReservations = new List<Reservation>
-            {
-                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1},
-            };
+            _expectedReservations =
+            [
+                new() { Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1 }
+            ];
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
@@ -213,7 +213,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public async Task Then_The_IndexIs_Still_Created_If_There_Are_No_Matching_Reservations()
         {
             //Arrange
-            _expectedReservations = new List<Reservation>();
+            _expectedReservations = [];
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
@@ -236,10 +236,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Arrange
             var firstReservationId = Guid.NewGuid();
             
-            _expectedReservations = new List<Reservation>
-            {
-                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
-            };
+            _expectedReservations =
+                [new() { Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1 }];
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(It.IsAny<long>())).Returns(new List<Reservation>());
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
@@ -275,10 +273,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
-
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once);
+            _indexRepository.Verify(x => x.CreateIndex(), Times.Once);
+            _indexRepository.Verify(x => x.Add(Enumerable.Empty<IndexedReservation>()), Times.Once());
+            _indexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
+            _indexRepository.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -287,10 +285,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             //Arrange
             var firstReservationId = Guid.NewGuid();
             
-            _expectedReservations = new List<Reservation>
-            {
-                new() {Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1}
-            };
+            _expectedReservations =
+                [new() { Id = firstReservationId, AccountId = 1, ProviderId = 1, AccountLegalEntityId = 1 }];
             _repository.Setup(x => x.GetAllNonLevyForAccountLegalEntity(1)).Returns(_expectedReservations);
 
             _permissionsRepository.Setup(r => r.GetAllWithCreateCohortPermission()).Returns(new List<Domain.Entities.ProviderPermission>());
@@ -299,10 +295,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
-
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once);
+            _indexRepository.Verify(x => x.CreateIndex(), Times.Once);
+            _indexRepository.Verify(x => x.Add(Enumerable.Empty<IndexedReservation>()), Times.Once);
+            _indexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
+            _indexRepository.VerifyNoOtherCalls();
         }
 
     }

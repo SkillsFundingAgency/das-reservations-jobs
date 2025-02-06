@@ -21,8 +21,8 @@ public class WhenGettingApprenticeshipCourses
         _standardApiClient = new Mock<IFindApprenticeshipTrainingService>();
         _standardApiClient.Setup(x => x.GetStandards()).ReturnsAsync(new StandardApiResponse
             {
-                Standards = new List<Standard>
-                {
+                Standards =
+                [
                     new Standard
                     {
                         Id = 1,
@@ -30,6 +30,7 @@ public class WhenGettingApprenticeshipCourses
                         Level = 1,
                         EffectiveTo = DateTime.Today.AddDays(-1)
                     },
+
                     new Standard
                     {
                         Id = 2,
@@ -37,7 +38,7 @@ public class WhenGettingApprenticeshipCourses
                         Level = 1,
                         EffectiveTo = DateTime.Today.AddDays(-1)
                     }
-                }
+                ]
             }
         );
 

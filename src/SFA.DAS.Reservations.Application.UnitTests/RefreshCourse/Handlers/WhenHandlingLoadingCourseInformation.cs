@@ -17,7 +17,7 @@ public class WhenHandlingLoadingCourseInformation
     public void Arrange()
     {
         _service = new Mock<IApprenticeshipCourseService>();
-        _service.Setup(x => x.GetCourseInformation()).Returns(new List<Course> {new Course(1, "", 1, DateTime.Today)});
+        _service.Setup(x => x.GetCourseInformation()).Returns([new Course(1, "", 1, DateTime.Today)]);
         _handler = new GetCoursesHandler(_service.Object);
     }
 

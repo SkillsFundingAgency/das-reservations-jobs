@@ -44,7 +44,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
                 10, 11, 12,
                 13, 14, Guid.NewGuid(),
                 "test@example.com", "Test",
-                "Tester", new HashSet<Operation> {Operation.CreateCohort},null, DateTime.Now);
+                "Tester", [Operation.CreateCohort],null, DateTime.Now);
 
             //Act
             await _service.AddProviderPermission(permissionEvent);
@@ -66,7 +66,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
                 10, 11, 12,
                 13, 14, Guid.NewGuid(),
                 "test@example.com", "Test",
-                "Tester", new HashSet<Operation> {Operation.Recruitment}, null, DateTime.Now);
+                "Tester", [Operation.Recruitment], null, DateTime.Now);
 
             //Act
             await _service.AddProviderPermission(permissionEvent);
