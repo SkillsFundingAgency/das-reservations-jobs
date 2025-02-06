@@ -102,6 +102,31 @@
     },
     "SharedServiceBusFqdn": {
       "type": "string"
+    },
+    "applicationInsightsConnectionString": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Shared application insights connection string retrieved from the get-product-app-insights step"
+      }
+    },
+    "applicationInsightsResourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Shared application insights resource ID retrieved from the get-product-app-insights step"
+      }
+    },
+    "alertActionGroupResourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Alert group resource ID found in the management resources variable groups"
+      }
+    },
+    "enableFailedRequestAlert": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enables alerting on app insights failed requests"
+      }
     }
   },
   "variables": {
@@ -123,8 +148,7 @@
       "type": "Microsoft.Resources/resourceGroups",
       "location": "[parameters('resourceGroupLocation')]",
       "tags": "[parameters('tags')]",
-      "properties": {
-      }
+      "properties": {}
     },
     {
       "apiVersion": "2020-06-01",
@@ -203,111 +227,6 @@
           },
           "aspInstances": {
             "value": "[parameters('appServicePlanInstances')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-insights-crs-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppNameCourse')]"
-          },
-          "attachedService": {
-            "value": "[variables('functionAppNameCourse')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-insights-rsrv-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppNameReservation')]"
-          },
-          "attachedService": {
-            "value": "[variables('functionAppNameReservation')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-insights-lgle-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppNameLegalEntities')]"
-          },
-          "attachedService": {
-            "value": "[variables('functionAppNameLegalEntities')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-insights-prv-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppNameProviderPermissions')]"
-          },
-          "attachedService": {
-            "value": "[variables('functionAppNameProviderPermissions')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-insights-idx-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppNameReservationIndex')]"
-          },
-          "attachedService": {
-            "value": "[variables('functionAppNameReservationIndex')]"
           }
         }
       }
@@ -412,7 +331,7 @@
                 },
                 {
                   "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[reference(concat('function-app-insights-crs-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                  "value": "[parameters('applicationInsightsConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -442,6 +361,31 @@
       "dependsOn": [
         "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
+    },
+    {
+      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+      "apiVersion": "2021-04-01",
+      "name": "[concat('application-insights-', variables('functionAppNameCourse'), '-alert-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceName": {
+            "value": "[variables('functionAppNameCourse')]"
+          },
+          "applicationInsightsResourceId": {
+            "value": "[parameters('applicationInsightsResourceId')]"
+          },
+          "alertActionGroupResourceId": {
+            "value": "[parameters('alertActionGroupResourceId')]"
+          }
+        }
+      }
     },
     {
       "apiVersion": "2020-06-01",
@@ -503,7 +447,7 @@
                 },
                 {
                   "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[reference(concat('function-app-insights-rsrv-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                  "value": "[parameters('applicationInsightsConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -533,6 +477,31 @@
       "dependsOn": [
         "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
+    },
+    {
+      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+      "apiVersion": "2021-04-01",
+      "name": "[concat('application-insights-', variables('functionAppNameReservation'), '-alert-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceName": {
+            "value": "[variables('functionAppNameReservation')]"
+          },
+          "applicationInsightsResourceId": {
+            "value": "[parameters('applicationInsightsResourceId')]"
+          },
+          "alertActionGroupResourceId": {
+            "value": "[parameters('alertActionGroupResourceId')]"
+          }
+        }
+      }
     },
     {
       "apiVersion": "2020-06-01",
@@ -594,7 +563,7 @@
                 },
                 {
                   "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[reference(concat('function-app-insights-lgle-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                  "value": "[parameters('applicationInsightsConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -624,6 +593,31 @@
       "dependsOn": [
         "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
+    },
+    {
+      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+      "apiVersion": "2021-04-01",
+      "name": "[concat('application-insights-', variables('functionAppNameLegalEntities'), '-alert-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceName": {
+            "value": "[variables('functionAppNameLegalEntities')]"
+          },
+          "applicationInsightsResourceId": {
+            "value": "[parameters('applicationInsightsResourceId')]"
+          },
+          "alertActionGroupResourceId": {
+            "value": "[parameters('alertActionGroupResourceId')]"
+          }
+        }
+      }
     },
     {
       "apiVersion": "2020-06-01",
@@ -677,7 +671,7 @@
                 },
                 {
                   "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[reference(concat('function-app-insights-idx-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                  "value": "[parameters('applicationInsightsConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -704,10 +698,34 @@
           }
         }
       },
-
       "dependsOn": [
         "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
+    },
+    {
+      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+      "apiVersion": "2021-04-01",
+      "name": "[concat('application-insights-', variables('functionAppNameReservationIndex'), '-alert-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceName": {
+            "value": "[variables('functionAppNameReservationIndex')]"
+          },
+          "applicationInsightsResourceId": {
+            "value": "[parameters('applicationInsightsResourceId')]"
+          },
+          "alertActionGroupResourceId": {
+            "value": "[parameters('alertActionGroupResourceId')]"
+          }
+        }
+      }
     },
     {
       "apiVersion": "2020-06-01",
@@ -769,7 +787,7 @@
                 },
                 {
                   "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[reference(concat('function-app-insights-prv-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                  "value": "[parameters('applicationInsightsConnectionString')]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -799,6 +817,31 @@
       "dependsOn": [
         "[concat('worker-app-service-plan-', parameters('utcValue'))]"
       ]
+    },
+    {
+      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+      "apiVersion": "2021-04-01",
+      "name": "[concat('application-insights-', variables('functionAppNameProviderPermissions'), '-alert-', parameters('utcValue'))]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[variables('resourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "serviceName": {
+            "value": "[variables('functionAppNameProviderPermissions')]"
+          },
+          "applicationInsightsResourceId": {
+            "value": "[parameters('applicationInsightsResourceId')]"
+          },
+          "alertActionGroupResourceId": {
+            "value": "[parameters('alertActionGroupResourceId')]"
+          }
+        }
+      }
     },
     {
       "apiVersion": "2021-04-01",
