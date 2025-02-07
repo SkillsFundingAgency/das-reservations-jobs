@@ -23,7 +23,7 @@ public class RefreshIndex
     {
         _logger.LogInformation($"Running reservation index refresh at: {DateTime.Now}");
 
-        await _handler.Handle();
+        _handler.Handle();
 
         _logger.LogInformation($"Finished  reservation index refresh at: {DateTime.Now}");
     }

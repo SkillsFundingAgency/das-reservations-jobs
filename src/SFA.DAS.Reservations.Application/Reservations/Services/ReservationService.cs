@@ -100,6 +100,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 }
 
                 await indexRepository.DeleteIndices(5);
+                
+                logger.LogInformation("Successfully refreshed reservations index");
             }
             catch (Exception e)
             {
