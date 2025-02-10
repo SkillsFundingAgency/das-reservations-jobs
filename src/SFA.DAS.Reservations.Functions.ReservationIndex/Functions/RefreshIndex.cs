@@ -15,7 +15,7 @@ public class RefreshIndex(ILogger<ReservationIndexRefreshHandler> logger, IReser
     {
         logger.LogInformation($"Running reservation index refresh at: {DateTime.Now}");
 
-        handler.Handle();
+        await handler.Handle();
 
         logger.LogInformation($"Finished  reservation index refresh at: {DateTime.Now}");
     }
