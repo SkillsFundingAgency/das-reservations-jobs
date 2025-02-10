@@ -51,7 +51,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             }
             catch (InvalidOperationException e)
             {
-                logger.LogWarning("Reservation {ReservationId} was not found in the database and not updated to {Status}", reservationId, status);
+                logger.LogWarning(
+                    "Reservation {ReservationId} was not found in the database and not updated to {Status}",
+                    reservationId, status);
             }
         }
 
@@ -67,22 +69,31 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 {
                     foreach (var permission in permissions)
                     {
-                        logger.LogInformation("Adding reservations to index for ({Ukprn}) ({AccountId})", permission.ProviderId, permission.AccountId);
+                        logger.LogInformation(
+                            "Adding reservations to index for ({Ukprn}) ({AccountId}) ({AccountLegalEntityId})",
+                            permission.ProviderId,
+                            permission.AccountId,
+                            permission.AccountLegalEntityId);
+
                         var matchingReservations = reservationsRepository
                             .GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
 
                         if (matchingReservations == null || matchingReservations.Count == 0)
                         {
-                            logger.LogInformation("No reservations to ad for ({Ukprn}) ({AccountId})", permission.ProviderId, permission.AccountId);
+                            logger.LogInformation(
+                                "No reservations to ad for ({Ukprn}) ({AccountId}) ({AccountLegalEntityId})",
+                                permission.ProviderId,
+                                permission.AccountId,
+                                permission.AccountLegalEntityId);
                             continue;
                         }
-                        
-                        var indexedReservations =  matchingReservations.ConvertAll(c =>
+
+                        var indexedReservations = matchingReservations.ConvertAll(c =>
                             MapReservation(c, Convert.ToUInt32(permission.ProviderId)));
-                        
+
                         await indexRepository.Add(indexedReservations);
                     }
-            
+
                     var permissionReservations = permissions.SelectMany(permission =>
                     {
                         var matchingReservations = reservationsRepository
@@ -100,7 +111,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 }
 
                 await indexRepository.DeleteIndices(5);
-                
+
                 logger.LogInformation("Successfully refreshed reservations index");
             }
             catch (Exception e)
@@ -117,7 +128,8 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
             var permissions = permissionsRepository.GetAllForAccountLegalEntity(reservation.AccountLegalEntityId)
                 .ToArray();
 
-            logger.LogInformation("[{NumberOfPermissions}] providers found for Reservation Id [{ReservationId}].", permissions.Length, reservation.Id);
+            logger.LogInformation("[{NumberOfPermissions}] providers found for Reservation Id [{ReservationId}].",
+                permissions.Length, reservation.Id);
 
             if (!permissions.Any())
             {
@@ -140,21 +152,27 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
         public async Task DeleteProviderFromSearchIndex(uint ukPrn, long accountLegalEntityId)
         {
-            logger.LogInformation("Deleting reservations for ProviderId [{UkPrn}], AccountLegalEntityId [{AccountLegalEntityId}] from index.", ukPrn, accountLegalEntityId);
+            logger.LogInformation(
+                "Deleting reservations for ProviderId [{UkPrn}], AccountLegalEntityId [{AccountLegalEntityId}] from index.",
+                ukPrn, accountLegalEntityId);
 
             await indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
         }
 
         public async Task AddProviderToSearchIndex(uint providerId, long accountLegalEntityId)
         {
-            logger.LogInformation("Adding reservations for ProviderId [{ProviderId}], AccountLegalEntityId [{AccountLegalEntityId}] to index.", providerId, accountLegalEntityId);
+            logger.LogInformation(
+                "Adding reservations for ProviderId [{ProviderId}], AccountLegalEntityId [{AccountLegalEntityId}] to index.",
+                providerId, accountLegalEntityId);
 
             var indexedReservations = new List<IndexedReservation>();
 
             var matchingReservations = reservationsRepository.GetAllNonLevyForAccountLegalEntity(accountLegalEntityId)
                 ?.ToList();
 
-            logger.LogInformation("[{MatchingReservationsCount}] providers found for ProviderId [{ProviderId}], AccountLegalEntityId [{AccountLegalEntityId}].", matchingReservations.Count, providerId, accountLegalEntityId);
+            logger.LogInformation(
+                "[{MatchingReservationsCount}] providers found for ProviderId [{ProviderId}], AccountLegalEntityId [{AccountLegalEntityId}].",
+                matchingReservations.Count, providerId, accountLegalEntityId);
 
             if (matchingReservations != null && matchingReservations.Any())
             {
@@ -164,7 +182,9 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
                 await indexRepository.Add(indexedReservations);
             }
 
-            logger.LogInformation("[{IndexedReservationsCount}] new documents have been created for ProviderId [{ProviderId}], AccountLegalEntityId [{AccountLegalEntityId}].", indexedReservations.Count, providerId, accountLegalEntityId);
+            logger.LogInformation(
+                "[{IndexedReservationsCount}] new documents have been created for ProviderId [{ProviderId}], AccountLegalEntityId [{AccountLegalEntityId}].",
+                indexedReservations.Count, providerId, accountLegalEntityId);
         }
 
         private static IndexedReservation MapReservation(Domain.Entities.Reservation entity, uint indexedProviderId)
