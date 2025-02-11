@@ -93,21 +93,6 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services
 
                         await indexRepository.Add(indexedReservations);
                     }
-
-                    var permissionReservations = permissions.SelectMany(permission =>
-                    {
-                        var matchingReservations = reservationsRepository
-                            .GetAllNonLevyForAccountLegalEntity(permission.AccountLegalEntityId)?.ToList();
-                        if (matchingReservations != null && matchingReservations.Any())
-                        {
-                            return matchingReservations.Select(c =>
-                                MapReservation(c, Convert.ToUInt32(permission.ProviderId)));
-                        }
-
-                        return [];
-                    });
-
-                    await indexRepository.Add(permissionReservations);
                 }
 
                 await indexRepository.DeleteIndices(5);
