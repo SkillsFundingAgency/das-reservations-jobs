@@ -154,7 +154,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(4))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(2))));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{firstReservationId}")))));
@@ -192,7 +192,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(
-                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(2))));
+                x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))), Times.Exactly(2));
 
             _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
@@ -227,7 +227,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Once());
+            _indexRepository.Verify(x => x.CreateIndex(), Times.Once());
         }
 
         [Test]
@@ -274,7 +274,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(x => x.CreateIndex(), Times.Once);
-            _indexRepository.Verify(x => x.Add(Enumerable.Empty<IndexedReservation>()), Times.Once());
             _indexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
             _indexRepository.VerifyNoOtherCalls();
         }
@@ -296,7 +295,6 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
 
             //Assert
             _indexRepository.Verify(x => x.CreateIndex(), Times.Once);
-            _indexRepository.Verify(x => x.Add(Enumerable.Empty<IndexedReservation>()), Times.Once);
             _indexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
             _indexRepository.VerifyNoOtherCalls();
         }
