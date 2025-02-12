@@ -9,22 +9,14 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class ReservationIndexRepository : IReservationIndexRepository
+    public class ReservationIndexRepository(
+        IElasticLowLevelClientWrapper client,
+        IIndexRegistry registry,
+        IElasticSearchQueries elasticSearchQueries,
+        ReservationJobsEnvironment environment)
+        : IReservationIndexRepository
     {
-        public string IndexNamePrefix { get; }
-
-        private readonly IElasticLowLevelClientWrapper _client;
-        private readonly IIndexRegistry _registry;
-        private readonly IElasticSearchQueries _elasticSearchQueries;
-
-        public ReservationIndexRepository(IElasticLowLevelClientWrapper client, IIndexRegistry registry, IElasticSearchQueries elasticSearchQueries,
-            ReservationJobsEnvironment environment)
-        {
-            IndexNamePrefix = $"{environment.EnvironmentName}-reservations-";
-            _client = client;
-            _registry = registry;
-            _elasticSearchQueries = elasticSearchQueries;
-        }
+        public string IndexNamePrefix { get; } = $"{environment.EnvironmentName}-reservations-";
 
         public async Task Add(IEnumerable<IndexedReservation> reservations)
         {
@@ -40,40 +32,40 @@ namespace SFA.DAS.Reservations.Data.Repository
 
             foreach (var batch in reservationBatches)
             {
-                await _client.CreateMany(_registry.CurrentIndexName, batch);
+                await client.CreateMany(registry.CurrentIndexName, batch);
             }
         }
 
         public async Task DeleteIndices(uint daysOld)
         {
-            await _registry.DeleteOldIndices(daysOld);
+            await registry.DeleteOldIndices(daysOld);
         }
 
         public async Task SaveReservationStatus(Guid id, ReservationStatus status)
         {
-            var query = _elasticSearchQueries.UpdateReservationStatus.Replace("{status}",((short)status).ToString())
+            var query = elasticSearchQueries.UpdateReservationStatus.Replace("{status}",((short)status).ToString())
                 .Replace("{reservationId}",id.ToString());
             
-            await _client.UpdateByQuery(_registry.CurrentIndexName, query);
+            await client.UpdateByQuery(registry.CurrentIndexName, query);
         }
 
         public async Task DeleteReservationsFromIndex(uint ukPrn, long accountLegalEntityId)
         {
-            var query = _elasticSearchQueries.DeleteReservationsByQuery
+            var query = elasticSearchQueries.DeleteReservationsByQuery
                 .Replace("{ukPrn}", ukPrn.ToString())
                 .Replace("{accountLegalEntityId}", accountLegalEntityId.ToString());
 
-            await _client.DeleteByQuery(_registry.CurrentIndexName, query);
+            await client.DeleteByQuery(registry.CurrentIndexName, query);
         }
 
         public async Task CreateIndex()
         {
             var indexName = IndexNamePrefix + Guid.NewGuid();
-            var mapping = _elasticSearchQueries.ReservationIndexMapping;
+            var mapping = elasticSearchQueries.ReservationIndexMapping;
             
-            await _client.CreateIndicesWithMapping(indexName, mapping);
+            await client.CreateIndicesWithMapping(indexName, mapping);
             
-            await _registry.Add(indexName);
+            await registry.Add(indexName);
         }
 
         private static IEnumerable<IEnumerable<string>> BatchReservationDocs(List<string> listOfJsonReservations)

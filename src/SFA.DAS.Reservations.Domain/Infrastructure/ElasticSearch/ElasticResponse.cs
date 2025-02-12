@@ -11,7 +11,7 @@ namespace SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch
         public Hits<T> hits { get; set; }
         public Aggregations aggregations { get; set; }
 
-        public ICollection<T> Items => hits?.hits?.Select(h => h._source).ToList() ?? new List<T>();
+        public ICollection<T> Items => hits?.hits?.Select(h => h._source).ToList() ?? [];
     }
 
     public class ElasticCountResponse

@@ -32,7 +32,8 @@ namespace SFA.DAS.Reservations.Infrastructure.Database
                         : new SqlConnection
                         {
                             ConnectionString = config.ConnectionString,
-                            AccessToken = azureServiceTokenProvider.GetTokenAsync(new TokenRequestContext(scopes: new string[] { AzureResource })).Result.Token
+                            AccessToken = azureServiceTokenProvider.GetTokenAsync(new TokenRequestContext(scopes:
+                                [AzureResource])).Result.Token
                         };
 
                 });

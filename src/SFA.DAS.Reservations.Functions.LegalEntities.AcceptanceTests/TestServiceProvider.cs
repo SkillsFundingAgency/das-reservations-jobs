@@ -54,15 +54,15 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
         {
             var configSource = new MemoryConfigurationSource
             {
-                InitialData = new[]
-                {
+                InitialData =
+                [
                     new KeyValuePair<string, string>("ConfigurationStorageConnectionString", "UseDevelopmentStorage=true;"),
                     new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
                     new KeyValuePair<string, string>("EnvironmentName", "DEV"),
                     new KeyValuePair<string, string>("Version", "1.0"),
                     new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
-                    new KeyValuePair<string, string>("ReservationsJobs:ReservationsApimUrl", "http://localhost:9201"),
-                }
+                    new KeyValuePair<string, string>("ReservationsJobs:ReservationsApimUrl", "http://localhost:9201")
+                ]
             };
 
             var provider = new MemoryConfigurationProvider(configSource);

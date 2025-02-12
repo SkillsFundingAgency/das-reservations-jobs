@@ -30,12 +30,12 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Registry
         public void Arrange()
         {
             
-            _listOfEntry = new List<TestIndexEntry>
-            {
-                CreateTestIndexEntry("test1",DateTime.UtcNow),
-                CreateTestIndexEntry("test2",DateTime.UtcNow.AddDays(-1)),
-                CreateTestIndexEntry("test3",DateTime.UtcNow.AddDays(-2), true)
-            };
+            _listOfEntry =
+            [
+                CreateTestIndexEntry("test1", DateTime.UtcNow),
+                CreateTestIndexEntry("test2", DateTime.UtcNow.AddDays(-1)),
+                CreateTestIndexEntry("test3", DateTime.UtcNow.AddDays(-2), true)
+            ];
             
             _indexLookUpResponse =  @"{""took"":0,""timed_out"":false,""_shards"":{""total"":1,""successful"":1,""skipped"":0,""failed"":0},""hits"":{""total"":
             {""value"":3,""relation"":""eq""},""max_score"":null,""hits"":" + JsonConvert.SerializeObject(_listOfEntry) + @"}}";

@@ -3,18 +3,11 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
-    public class ReservationIndexRefreshHandler : IReservationIndexRefreshHandler
+    public class ReservationIndexRefreshHandler(IReservationService service) : IReservationIndexRefreshHandler
     {
-        private readonly IReservationService _service;
-
-        public ReservationIndexRefreshHandler(IReservationService service)
-        {
-            _service = service;
-        }
-
         public async Task Handle()
         {
-            await _service.RefreshReservationIndex();
+            await service.RefreshReservationIndex();
         }
     }
 }

@@ -8,23 +8,15 @@ using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.ReservationIndex.Functions;
 
-public class RefreshIndex
+public class RefreshIndex(ILogger<ReservationIndexRefreshHandler> logger, IReservationIndexRefreshHandler handler)
 {
-    private readonly ILogger<ReservationIndexRefreshHandler> _logger;
-    private readonly IReservationIndexRefreshHandler _handler;
-
-    public RefreshIndex(ILogger<ReservationIndexRefreshHandler> logger, IReservationIndexRefreshHandler handler)
-    {
-        _logger = logger;
-        _handler = handler;
-    }
     [Function("RefreshIndex")]
     public async Task Run([QueueTrigger(QueueNames.RefreshReservationIndex)] string message)
     {
-        _logger.LogInformation($"Running reservation index refresh at: {DateTime.Now}");
+        logger.LogInformation($"Running reservation index refresh at: {DateTime.Now}");
 
-        await _handler.Handle();
+        await handler.Handle();
 
-        _logger.LogInformation($"Finished  reservation index refresh at: {DateTime.Now}");
+        logger.LogInformation($"Finished  reservation index refresh at: {DateTime.Now}");
     }
 }
