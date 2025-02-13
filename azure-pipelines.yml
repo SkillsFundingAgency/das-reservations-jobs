@@ -23,12 +23,12 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/2.2.6
+    ref: refs/tags/2.2.20
     endpoint: SkillsFundingAgency
   - repository: das-platform-automation
     type: github
     name: SkillsFundingAgency/das-platform-automation
-    ref: refs/tags/5.1.8
+    ref: refs/tags/5.1.15
     endpoint: SkillsFundingAgency
   pipelines:
   - pipeline: das-employer-config
@@ -66,7 +66,7 @@ stages:
   - group: DevTest Management Resources
   - group: TEST DevTest Shared Resources
   - group: TEST das-reservations-jobs
-  
+
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
@@ -108,7 +108,7 @@ stages:
   variables:
   - group: PROD Management Resources
   - group: PROD Shared Resources
-  - group: PROD das-reservations-jobs  
+  - group: PROD das-reservations-jobs
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
