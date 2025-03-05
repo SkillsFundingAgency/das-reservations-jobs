@@ -268,3 +268,4 @@ desktop.ini
 App.Debug.config
 
 src/**/**/*.feature.cs
+*.ncrunchsolution
