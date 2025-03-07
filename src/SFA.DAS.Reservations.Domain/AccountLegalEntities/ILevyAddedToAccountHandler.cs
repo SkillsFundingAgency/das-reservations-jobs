@@ -5,6 +5,6 @@ namespace SFA.DAS.Reservations.Domain.AccountLegalEntities
 {
     public interface ILevyAddedToAccountHandler
     {
-        Task Handle(LevyAddedToAccount levyAddedToAccountEvent);
+        Task Handle(LevyAddedToAccountEvent levyAddedToAccountEvent);
     }
 }

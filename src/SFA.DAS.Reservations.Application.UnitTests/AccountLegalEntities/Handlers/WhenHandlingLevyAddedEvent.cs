@@ -27,7 +27,7 @@ public class WhenHandlingLevyAddedEvent
     public async Task Then_The_Service_Is_Called_To_Update_The_Entity()
     {
         //Arrange
-        var levyAddedToAccountEvent = new LevyAddedToAccount
+        var levyAddedToAccountEvent = new LevyAddedToAccountEvent
         {
             AccountId= 5, 
             Amount = 100,
@@ -45,7 +45,7 @@ public class WhenHandlingLevyAddedEvent
     public void Then_Will_Throw_Exception_If_Signing_Agreement_And_Database_Update_Fails()
     {
         //Arrange
-        var levyAddedToAccountEvent = new LevyAddedToAccount
+        var levyAddedToAccountEvent = new LevyAddedToAccountEvent
         {
             AccountId= 5, 
             Amount = 100,
