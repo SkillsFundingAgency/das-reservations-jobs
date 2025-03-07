@@ -32,7 +32,10 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
             await sut.Handle(message, Mock.Of<IMessageHandlerContext>());
 
             //Assert
-            handler.Verify(x => x.Handle(message), Times.Once);
+            handler.Verify(
+                x => x.Handle(It.Is<LevyAddedToAccountEvent>(e =>
+                    e.AccountId == message.AccountId && e.Amount == message.Amount && e.Created == message.Created)),
+                Times.Once);
         }
     }
 }

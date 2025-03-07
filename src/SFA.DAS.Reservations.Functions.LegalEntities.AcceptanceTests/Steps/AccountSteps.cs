@@ -60,7 +60,7 @@ public class AccountSteps : StepsBase
 
         try
         {
-            handler.Handle(new LevyAddedToAccount
+            handler.Handle(new LevyAddedToAccountEvent
             {
                 AccountId = TestData.NonLevyAccount.Id
             }).Wait();
