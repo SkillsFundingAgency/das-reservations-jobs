@@ -19,7 +19,7 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
             _logger = logger;
         }
 
-        public async Task Handle(LevyAddedToAccount levyAddedToAccountEvent)
+        public async Task Handle(LevyAddedToAccountEvent levyAddedToAccountEvent)
         {
             try
             {

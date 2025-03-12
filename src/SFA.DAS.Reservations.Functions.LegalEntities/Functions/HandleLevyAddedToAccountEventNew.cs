@@ -8,9 +8,9 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
 public class HandleLevyAddedToAccountEventNew(ILevyAddedToAccountHandler handler,
-    ILogger<LevyAddedToAccountEvent> log) : IHandleMessages<LevyAddedToAccount>
+    ILogger<LevyAddedToAccountEvent> log) : IHandleMessages<LevyAddedToAccountEvent>
 {
-    public async Task Handle(LevyAddedToAccount message, IMessageHandlerContext context)
+    public async Task Handle(LevyAddedToAccountEvent message, IMessageHandlerContext context)
     {
         log.LogInformation($"NServiceBus LevyAddedToAccountEvent trigger function started execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
         await handler.Handle(message);

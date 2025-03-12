@@ -13,7 +13,13 @@ public class HandleLevyAddedToAccountEvent(ILevyAddedToAccountHandler handler,
     public async Task Handle(LevyAddedToAccount message, IMessageHandlerContext context)
     {
         log.LogInformation($"NServiceBus LevyAddedToAccount trigger function started execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
-        await handler.Handle(message);
+        await handler.Handle(new LevyAddedToAccountEvent
+            {
+                AccountId = message.AccountId, 
+                Amount = message.Amount, 
+                Created = message.Created
+            }
+        );
         log.LogInformation($"NServiceBus LevyAddedToAccount trigger function finished execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
     }
 }
