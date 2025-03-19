@@ -11,12 +11,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
 
 [Binding]
-public class LegalEntityCreatedSteps : StepsBase
+public class LegalEntityCreatedSteps(TestServiceProvider serviceProvider, TestData testData)
+    : StepsBase(serviceProvider, testData)
 {
-    public LegalEntityCreatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-    {
-    }
-
     [Given(@"I have a legal entity that is not in the database")]
     public void GivenIHaveALegalEntityThatIsNew()
     {

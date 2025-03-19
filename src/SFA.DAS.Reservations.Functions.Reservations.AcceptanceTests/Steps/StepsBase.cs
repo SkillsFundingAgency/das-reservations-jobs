@@ -10,20 +10,15 @@ using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 {
-    public class StepsBase
+    public class StepsBase(TestServiceProvider serviceProvider, TestData testData)
     {
         protected const long AccountId = 1;
         protected const long AccountLegalEntityId = 1;
         protected const uint ProviderId = 15214;
         protected Guid UserId;
-        protected readonly TestData TestData;
-        protected readonly IServiceProvider Services;
+        protected readonly TestData TestData = testData;
+        protected readonly IServiceProvider Services = serviceProvider;
         private ReservationsDataContext dbContext;
-        public StepsBase(TestServiceProvider serviceProvider, TestData testData)
-        {
-            Services = serviceProvider;
-            TestData = testData;
-        }
 
 
         [BeforeScenario()]

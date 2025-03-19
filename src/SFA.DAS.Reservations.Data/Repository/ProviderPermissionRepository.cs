@@ -6,36 +6,29 @@ using SFA.DAS.Reservations.Domain.ProviderPermissions;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class ProviderPermissionRepository : IProviderPermissionRepository
+    public class ProviderPermissionRepository(IReservationsDataContext dataContext) : IProviderPermissionRepository
     {
-        private readonly IReservationsDataContext _dataContext;
-
-        public ProviderPermissionRepository(IReservationsDataContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
         public IEnumerable<ProviderPermission> GetAllWithCreateCohortPermission()
         {
-            return _dataContext.ProviderPermissions
+            return dataContext.ProviderPermissions
                 .Where(c => c.CanCreateCohort);
         }
 
         public IEnumerable<ProviderPermission> GetAllForAccountLegalEntity(long accountLegalEntityId)
         {
-            return _dataContext.ProviderPermissions
+            return dataContext.ProviderPermissions
                 .Where(permission => permission.AccountLegalEntityId == accountLegalEntityId)
                 .Where(permission => permission.CanCreateCohort);
         }
 
         public async Task Add(ProviderPermission permission)
         {
-            var existingPermission = await _dataContext.ProviderPermissions.FindAsync(permission.AccountId,
+            var existingPermission = await dataContext.ProviderPermissions.FindAsync(permission.AccountId,
                 permission.AccountLegalEntityId, permission.ProviderId);
 
             if (existingPermission == null)
             {
-                await _dataContext.ProviderPermissions.AddAsync(permission);
+                await dataContext.ProviderPermissions.AddAsync(permission);
             }
             else
             {
@@ -43,7 +36,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
             }
 
-            _dataContext.SaveChanges();
+            dataContext.SaveChanges();
         }
     }
 }

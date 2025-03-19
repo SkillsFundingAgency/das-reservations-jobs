@@ -6,15 +6,9 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Services;
 
-public class ApprenticeshipCoursesService : IApprenticeshipCourseService
+public class ApprenticeshipCoursesService(IFindApprenticeshipTrainingService standardApiClient)
+    : IApprenticeshipCourseService
 {
-    private readonly IFindApprenticeshipTrainingService _standardApiClient;
-
-    public ApprenticeshipCoursesService(IFindApprenticeshipTrainingService standardApiClient)
-    {
-        _standardApiClient = standardApiClient;
-    }
-
     public List<Course> GetCourseInformation()
     {
         var list = new ConcurrentBag<Course>();
@@ -31,7 +25,7 @@ public class ApprenticeshipCoursesService : IApprenticeshipCourseService
 
     private async Task GetStandards(ConcurrentBag<Course> courses)
     {
-        var standardApiResponse = await _standardApiClient.GetStandards();
+        var standardApiResponse = await standardApiClient.GetStandards();
 
         foreach (var standard in standardApiResponse.Standards)
         {

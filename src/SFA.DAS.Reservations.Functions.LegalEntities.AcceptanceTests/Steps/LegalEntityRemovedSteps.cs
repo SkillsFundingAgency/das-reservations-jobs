@@ -9,12 +9,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
 
 [Binding]
-public class LegalEntityRemovedSteps : StepsBase
+public class LegalEntityRemovedSteps(TestServiceProvider serviceProvider, TestData testData)
+    : StepsBase(serviceProvider, testData)
 {
-    public LegalEntityRemovedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-    {
-    }
-
     [Given(@"I have an existing unsigned, non levy legal entity")]
     public void GivenIHaveAnExistingLegalEntity()
     {

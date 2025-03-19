@@ -4,17 +4,11 @@ using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.Accounts.Handlers
 {
-    public class AccountNameUpdatedHandler : IAccountNameUpdatedHandler
+    public class AccountNameUpdatedHandler(IAccountsService accountsService) : IAccountNameUpdatedHandler
     {
-        private readonly IAccountsService _accountsService;
-
-        public AccountNameUpdatedHandler (IAccountsService accountsService)
-        {
-            _accountsService = accountsService;
-        }
         public async Task Handle(ChangedAccountNameEvent accountNameChangeEvent)
         {
-            await _accountsService.UpdateAccountName(accountNameChangeEvent.AccountId,
+            await accountsService.UpdateAccountName(accountNameChangeEvent.AccountId,
                 accountNameChangeEvent.CurrentName);
         }
     }

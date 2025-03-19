@@ -3,18 +3,11 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Handlers
 {
-    public class GetCoursesHandler : IGetCoursesHandler
+    public class GetCoursesHandler(IApprenticeshipCourseService apprenticeshipCourseService) : IGetCoursesHandler
     {
-        private readonly IApprenticeshipCourseService _apprenticeshipCourseService;
-
-        public GetCoursesHandler(IApprenticeshipCourseService apprenticeshipCourseService)
-        {
-            _apprenticeshipCourseService = apprenticeshipCourseService;
-        }
-
         public IList<Course> Handle()
         {
-            return _apprenticeshipCourseService.GetCourseInformation();
+            return apprenticeshipCourseService.GetCourseInformation();
         }
     }
 }

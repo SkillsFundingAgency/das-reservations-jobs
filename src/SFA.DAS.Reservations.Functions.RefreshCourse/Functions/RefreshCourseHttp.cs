@@ -5,21 +5,14 @@ using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.RefreshCourse.Functions;
 
-public class RefreshCourseHttp
+public class RefreshCourseHttp(ILogger<RefreshCourseHttp> logger)
 {
-    private readonly ILogger<RefreshCourseHttp> _logger;
-
-    public RefreshCourseHttp(ILogger<RefreshCourseHttp> logger)
-    {
-        _logger = logger;
-    }
-
     [Function("RefreshCourseHttp")]
     [QueueOutput(QueueNames.GetCourses)]
     public string Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
-        _logger.LogInformation("C# RefreshCourseHttp trigger function processed a request.");
+        logger.LogInformation("C# RefreshCourseHttp trigger function processed a request.");
 
         return "store";
     }
