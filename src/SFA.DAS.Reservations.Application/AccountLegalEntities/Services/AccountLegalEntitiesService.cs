@@ -59,15 +59,5 @@ namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
                 AccountLegalEntityName = accountLegalEntity.OrganisationName
             };
         }
-
-        private AccountLegalEntity MapAccountLegalEntity(LevyAddedToAccount levyAddedToAccountEvent)
-        {
-            return new AccountLegalEntity
-            {
-                AccountId = levyAddedToAccountEvent.AccountId
-            };
-        }
-
-
     }
 }
