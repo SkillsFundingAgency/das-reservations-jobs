@@ -29,7 +29,7 @@ public class ApprenticeshipCoursesService(IFindApprenticeshipTrainingService sta
 
         foreach (var standard in standardApiResponse.Standards)
         {
-            courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo));
+            courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo, standard.ApprenticeshipType));
         }
     }
 }

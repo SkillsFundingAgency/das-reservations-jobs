@@ -2,11 +2,24 @@
 
 namespace SFA.DAS.Reservations.Domain.RefreshCourse
 {
-    public class Course(int id, string title, int level, DateTime? effectiveTo)
+    public class Course
     {
-        public string Id { get; } = id.ToString();
-        public string Title { get; } = title;
-        public int Level { get; } = level;
-        public DateTime? EffectiveTo { get; } = effectiveTo;
+        // Required for deserialization from queue.
+        public Course() { }
+
+        public Course(int id, string title, int level, DateTime? effectiveTo, string? apprenticeshipType = null)
+        {
+            Id = id.ToString();
+            Title = title;
+            Level = level;
+            EffectiveTo = effectiveTo;
+            ApprenticeshipType = apprenticeshipType;
+        }
+
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public int Level { get; set; }
+        public DateTime? EffectiveTo { get; set; }
+        public string? ApprenticeshipType { get; set; }
     }
 }
