@@ -34,8 +34,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
                 c=>c.CourseId.Equals(course.Id) &&
                    c.Level.Equals(course.Level) &&
                    c.Title.Equals(course.Title) &&
-                   c.EffectiveTo.Equals(course.EffectiveTo) &&
-                   c.ApprenticeshipType.Equals(course.ApprenticeshipType))), Times.Once);
+                   c.EffectiveTo == course.EffectiveTo &&
+                   c.ApprenticeshipType == course.ApprenticeshipType)), Times.Once);
         }
   
         [Test]

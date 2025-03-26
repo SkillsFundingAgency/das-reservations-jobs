@@ -18,7 +18,8 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
                 CourseId = course.Id,
                 Title = course.Title,
                 Level = course.Level,
-                EffectiveTo = course.EffectiveTo == DateTime.MinValue ? null : course.EffectiveTo
+                EffectiveTo = course.EffectiveTo == DateTime.MinValue ? null : course.EffectiveTo,
+                ApprenticeshipType = course.ApprenticeshipType
             };
         }
 
