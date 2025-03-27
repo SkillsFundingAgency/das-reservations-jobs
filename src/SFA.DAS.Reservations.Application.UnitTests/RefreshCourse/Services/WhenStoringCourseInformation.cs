@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
         public async Task Then_The_Repository_Is_Called_With_The_Mapped_Entity()
         {
             //Arrange
-            var course = new Course(1,"My Course", 1, DateTime.Today);
+            var course = new Course(1,"My Course", 1, DateTime.Today, "Apprenticeship");
             
             //Act
             await _service.Store(course);
