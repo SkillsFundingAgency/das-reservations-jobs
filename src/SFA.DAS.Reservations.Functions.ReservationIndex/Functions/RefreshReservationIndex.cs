@@ -5,19 +5,13 @@ using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.ReservationIndex.Functions;
 
-public class RefreshReservationIndex
+public class RefreshReservationIndex(ILogger<string> logger)
 {
-    private readonly ILogger<string> _logger;
-
-    public RefreshReservationIndex(ILogger<string> logger)
-    {
-        _logger = logger;
-    }
     [Function("RefreshReservationIndex")]
     [QueueOutput(QueueNames.RefreshReservationIndex)]
     public string Run([TimerTrigger("0 0 0 */1 * *")] TimerInfo myTimer)
     {
-        _logger.LogInformation($"C# Timer trigger function for reservation index refresh executed at: {DateTime.Now}");
+        logger.LogInformation($"C# Timer trigger function for reservation index refresh executed at: {DateTime.Now}");
 
         return "refresh";
     }

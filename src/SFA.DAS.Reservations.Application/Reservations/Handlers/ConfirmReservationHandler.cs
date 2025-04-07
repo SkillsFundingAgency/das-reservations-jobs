@@ -5,15 +5,8 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
-    public class ConfirmReservationHandler : IConfirmReservationHandler
+    public class ConfirmReservationHandler(IReservationService service) : IConfirmReservationHandler
     {
-        private readonly IReservationService _service;
-
-        public ConfirmReservationHandler(IReservationService service)
-        {
-            _service = service;
-        }
-
         public async Task Handle(DraftApprenticeshipCreatedEvent draftApprenticeshipCreatedEvent)
         {
             if (!draftApprenticeshipCreatedEvent.ReservationId.HasValue || draftApprenticeshipCreatedEvent.ReservationId.Value == Guid.Empty)
@@ -21,7 +14,7 @@ namespace SFA.DAS.Reservations.Application.Reservations.Handlers
                 throw new ArgumentException("ReservationId must be set", nameof(draftApprenticeshipCreatedEvent.ReservationId));
             }
 
-            await _service.UpdateReservationStatus(
+            await service.UpdateReservationStatus(
                 draftApprenticeshipCreatedEvent.ReservationId.Value, 
                 ReservationStatus.Confirmed,
                 draftApprenticeshipCreatedEvent.CreatedOn,

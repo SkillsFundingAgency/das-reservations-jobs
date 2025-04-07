@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
         public async Task Then_The_Repository_Is_Called_With_The_Mapped_Entity()
         {
             //Arrange
-            var course = new Course(1,"My Course", 1, DateTime.Today);
+            var course = new Course(1,"My Course", 1, DateTime.Today, "Apprenticeship");
             
             //Act
             await _service.Store(course);
@@ -34,14 +34,15 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
                 c=>c.CourseId.Equals(course.Id) &&
                    c.Level.Equals(course.Level) &&
                    c.Title.Equals(course.Title) &&
-                   c.EffectiveTo.Equals(course.EffectiveTo))), Times.Once);
+                   c.EffectiveTo == course.EffectiveTo &&
+                   c.ApprenticeshipType == course.ApprenticeshipType)), Times.Once);
         }
   
         [Test]
         public async Task Then_The_Repository_Is_Called_With_The_Mapped_Entity_And_Sets_EffectiveTo_To_Null_If_DateTime_Min()
         {
             //Arrange
-            var course = new Course(1,"My Course", 1, DateTime.MinValue);
+            var course = new Course(1,"My Course", 1, DateTime.MinValue, "Apprenticeship");
             
             //Act
             await _service.Store(course);

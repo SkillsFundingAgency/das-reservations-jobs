@@ -8,14 +8,9 @@ using SFA.DAS.Reservations.Domain.Infrastructure;
 
 namespace SFA.DAS.Reservations.Infrastructure.AzureServiceBus
 {
-    public class AzureQueueService : IAzureQueueService
+    public class AzureQueueService(IOptions<ReservationsJobs> options) : IAzureQueueService
     {
-        private readonly ReservationsJobs _configuration;
-
-        public AzureQueueService(IOptions<ReservationsJobs> options)
-        {
-            _configuration = options.Value;
-        }
+        private readonly ReservationsJobs _configuration = options.Value;
 
         public async Task SendMessage<T>(T message, string queueName) where T : class
         {

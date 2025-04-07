@@ -5,28 +5,20 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
-    public class AddNonLevyReservationToReservationsIndexAction : IAddNonLevyReservationToReservationsIndexAction
+    public class AddNonLevyReservationToReservationsIndexAction(
+        IReservationService reservationService,
+        ILogger<AddNonLevyReservationToReservationsIndexAction> logger)
+        : IAddNonLevyReservationToReservationsIndexAction
     {
-        private readonly IReservationService _reservationService;
-        private readonly ILogger<AddNonLevyReservationToReservationsIndexAction> _logger;
-
-        public AddNonLevyReservationToReservationsIndexAction(
-            IReservationService reservationService,
-            ILogger<AddNonLevyReservationToReservationsIndexAction> logger)
-        {
-            _reservationService = reservationService;
-            _logger = logger;
-        }
-
         public async Task Execute(Reservation reservation)
         {
             if (EventIsFromLevyAccount(reservation))
             {
-                _logger.LogInformation($"Reservation [{reservation.Id}] is from levy account, no further processing.");
+                logger.LogInformation($"Reservation [{reservation.Id}] is from levy account, no further processing.");
                 return;
             }
 
-            await _reservationService.AddReservationToReservationsIndex(reservation);
+            await reservationService.AddReservationToReservationsIndex(reservation);
         }
 
         private bool EventIsFromLevyAccount(Reservation reservation)

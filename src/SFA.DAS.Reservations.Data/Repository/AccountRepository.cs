@@ -8,23 +8,16 @@ using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class AccountRepository : IAccountRepository
+    public class AccountRepository(IReservationsDataContext dataContext, ILogger<AccountRepository> logger)
+        : IAccountRepository
     {
         private const int UniqueConstraintViolation = 2601;
         private const int UniqueKeyViolation = 2627;
-        private readonly IReservationsDataContext _dataContext;
-        private readonly ILogger<AccountRepository> _logger;
-
-        public AccountRepository(IReservationsDataContext dataContext, ILogger<AccountRepository> logger)
-        {
-            _dataContext = dataContext;
-            _logger = logger;
-        }
 
         public async Task Add(Account account)
         {
 
-            var existingEntity = await _dataContext.Accounts.FindAsync(account.Id);
+            var existingEntity = await dataContext.Accounts.FindAsync(account.Id);
 
             if (existingEntity != null)
             {
@@ -33,8 +26,8 @@ namespace SFA.DAS.Reservations.Data.Repository
 
             try
             {
-                await _dataContext.Accounts.AddAsync(account);
-                _dataContext.SaveChanges();
+                await dataContext.Accounts.AddAsync(account);
+                dataContext.SaveChanges();
 
             }
             catch (DbUpdateException e)
@@ -42,7 +35,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                 if (e.GetBaseException() is SqlException sqlException
                     && (sqlException.Number == UniqueConstraintViolation || sqlException.Number == UniqueKeyViolation))
                 {
-                    _logger.LogWarning($"AccountRepository: Rolling back Id:{account.Id} - item already exists.");
+                    logger.LogWarning($"AccountRepository: Rolling back Id:{account.Id} - item already exists.");
 
                 }
             }
@@ -52,12 +45,12 @@ namespace SFA.DAS.Reservations.Data.Repository
         public async Task UpdateName(Account account)
         {
 
-            var entity = await _dataContext.Accounts.FindAsync(account.Id);
+            var entity = await dataContext.Accounts.FindAsync(account.Id);
 
             if (entity != null)
             {
                 entity.Name = account.Name;
-                _dataContext.SaveChanges();
+                dataContext.SaveChanges();
             }
             else
             {
@@ -69,12 +62,12 @@ namespace SFA.DAS.Reservations.Data.Repository
         public async Task UpdateLevyStatus(Account account)
         {
 
-            var entity = await _dataContext.Accounts.FindAsync(account.Id);
+            var entity = await dataContext.Accounts.FindAsync(account.Id);
 
             if (entity != null)
             {
                 entity.IsLevy = account.IsLevy;
-                _dataContext.SaveChanges();
+                dataContext.SaveChanges();
             }
             else
             {

@@ -4,30 +4,24 @@ using Course = SFA.DAS.Reservations.Domain.Entities.Course;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class CourseRepository : ICourseRepository
+    public class CourseRepository(IReservationsDataContext reservationsDataContext) : ICourseRepository
     {
-        private readonly IReservationsDataContext _reservationsDataContext;
-
-        public CourseRepository(IReservationsDataContext reservationsDataContext)
-        {
-            _reservationsDataContext = reservationsDataContext;
-        }
-
         public async Task Add(Course course)
         {
-            var courseStored = await _reservationsDataContext.Apprenticeships.FindAsync(course.CourseId);
+            var courseStored = await reservationsDataContext.Apprenticeships.FindAsync(course.CourseId);
 
             if (courseStored != null)
             {
                 courseStored.Level = course.Level;
                 courseStored.Title = course.Title;
                 courseStored.EffectiveTo = course.EffectiveTo;
+                courseStored.ApprenticeshipType = course.ApprenticeshipType;
             }
             else
             {
-                await _reservationsDataContext.Apprenticeships.AddAsync(course);
+                await reservationsDataContext.Apprenticeships.AddAsync(course);
             }
-            _reservationsDataContext.SaveChanges();
+            reservationsDataContext.SaveChanges();
 
         }
     }

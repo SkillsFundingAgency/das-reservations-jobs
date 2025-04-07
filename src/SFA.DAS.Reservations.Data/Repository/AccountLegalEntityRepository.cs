@@ -8,23 +8,18 @@ using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class AccountLegalEntityRepository : IAccountLegalEntityRepository
+    public class AccountLegalEntityRepository(
+        IReservationsDataContext dataContext,
+        ILogger<AccountLegalEntityRepository> log)
+        : IAccountLegalEntityRepository
     {
         private const int UniqueConstraintViolation = 2601;
         private const int UniqueKeyViolation = 2627;
-        private readonly IReservationsDataContext _dataContext;
-        private readonly ILogger<AccountLegalEntityRepository> _log;
-
-        public AccountLegalEntityRepository(IReservationsDataContext dataContext, ILogger<AccountLegalEntityRepository> log)
-        {
-            _dataContext = dataContext;
-            _log = log;
-        }
 
         public async Task Add(AccountLegalEntity accountLegalEntity)
         {
            
-                var existingEntity = await _dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
+                var existingEntity = await dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
                     c.AccountLegalEntityId.Equals(accountLegalEntity.AccountLegalEntityId));
 
                 if (existingEntity != null)
@@ -34,8 +29,8 @@ namespace SFA.DAS.Reservations.Data.Repository
 
                 try
                 {
-                    await _dataContext.AccountLegalEntities.AddAsync(accountLegalEntity);
-                    _dataContext.SaveChanges();
+                    await dataContext.AccountLegalEntities.AddAsync(accountLegalEntity);
+                    dataContext.SaveChanges();
                    
                 }
                 catch (DbUpdateException e)
@@ -43,7 +38,7 @@ namespace SFA.DAS.Reservations.Data.Repository
                     if (e.GetBaseException() is SqlException sqlException
                         && (sqlException.Number == UniqueConstraintViolation || sqlException.Number == UniqueKeyViolation))
                     {
-                        _log.LogWarning($"AccountLegalEntityRepository: Rolling back Id:{accountLegalEntity.AccountLegalEntityId} - item already exists.");
+                        log.LogWarning($"AccountLegalEntityRepository: Rolling back Id:{accountLegalEntity.AccountLegalEntityId} - item already exists.");
                         
                     }
                 }
@@ -53,14 +48,14 @@ namespace SFA.DAS.Reservations.Data.Repository
         public async Task UpdateAgreementStatus(AccountLegalEntity accountLegalEntity)
         {
           
-                var entity = await _dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
+                var entity = await dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
                     c.AccountId.Equals(accountLegalEntity.AccountId) &&
                     c.LegalEntityId.Equals(accountLegalEntity.LegalEntityId));
 
                 if (entity != null)
                 {
                     entity.AgreementSigned = true;
-                    _dataContext.SaveChanges();
+                    dataContext.SaveChanges();
                 }
                 else
                 {
@@ -71,13 +66,13 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task Remove(AccountLegalEntity accountLegalEntity)
         {
-            var entity = await _dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
+            var entity = await dataContext.AccountLegalEntities.SingleOrDefaultAsync(c =>
                     c.AccountLegalEntityId.Equals(accountLegalEntity.AccountLegalEntityId));
 
                 if (entity != null)
                 {
-                    _dataContext.AccountLegalEntities.Remove(entity);
-                    _dataContext.SaveChanges();
+                    dataContext.AccountLegalEntities.Remove(entity);
+                    dataContext.SaveChanges();
                 }
         }
         

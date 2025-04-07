@@ -6,26 +6,20 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
 {
-    public class SignedLegalAgreementHandler : ISignedLegalAgreementHandler
+    public class SignedLegalAgreementHandler(
+        IAccountLegalEntitiesService service,
+        ILogger<SignedLegalAgreementHandler> logger)
+        : ISignedLegalAgreementHandler
     {
-        private readonly IAccountLegalEntitiesService _service;
-        private readonly ILogger<SignedLegalAgreementHandler> _logger;
-
-        public SignedLegalAgreementHandler(IAccountLegalEntitiesService service, ILogger<SignedLegalAgreementHandler> logger)
-        {
-            _service = service;
-            _logger = logger;
-        }
-
         public async Task Handle(SignedAgreementEvent signedAgreementEvent)
         {
             try
             {
-                await _service.SignAgreementForAccountLegalEntity(signedAgreementEvent);
+                await service.SignAgreementForAccountLegalEntity(signedAgreementEvent);
             }
             catch (DbUpdateException e)
             {
-                _logger.LogWarning("Could not update levy status to is levy payer", e);
+                logger.LogWarning("Could not update levy status to is levy payer", e);
                 throw;
             }
         }

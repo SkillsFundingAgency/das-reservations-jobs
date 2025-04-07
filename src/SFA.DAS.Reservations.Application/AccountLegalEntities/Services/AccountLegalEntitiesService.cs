@@ -7,28 +7,21 @@ using SFA.DAS.Reservations.Domain.Entities;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Services
 {
-    public class AccountLegalEntitiesService : IAccountLegalEntitiesService
+    public class AccountLegalEntitiesService(IAccountLegalEntityRepository repository) : IAccountLegalEntitiesService
     {
-        private readonly IAccountLegalEntityRepository _repository;
-
-        public AccountLegalEntitiesService(IAccountLegalEntityRepository repository)
-        {
-            _repository = repository;
-        }
-
         public async Task AddAccountLegalEntity(AddedLegalEntityEvent accountLegalEntity)
         {
-            await _repository.Add(MapAccountLegalEntity(accountLegalEntity));
+            await repository.Add(MapAccountLegalEntity(accountLegalEntity));
         }
 
         public async Task SignAgreementForAccountLegalEntity(SignedAgreementEvent signedAgreementEvent)
         {
-            await _repository.UpdateAgreementStatus(MapAccountLegalEntity(signedAgreementEvent));
+            await repository.UpdateAgreementStatus(MapAccountLegalEntity(signedAgreementEvent));
         }
 
         public async Task RemoveAccountLegalEntity(RemovedLegalEntityEvent accountLegalEntityRemovedEvent)
         {
-            await _repository.Remove(MapAccountLegalEntity(accountLegalEntityRemovedEvent));
+            await repository.Remove(MapAccountLegalEntity(accountLegalEntityRemovedEvent));
         }
 
         private AccountLegalEntity MapAccountLegalEntity(RemovedLegalEntityEvent removedLegalEntityEvent)

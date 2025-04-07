@@ -13,12 +13,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 {
     [Binding]
-    public class ReservationDeletedSteps : StepsBase
+    public class ReservationDeletedSteps(TestServiceProvider serviceProvider, TestData testData)
+        : StepsBase(serviceProvider, testData)
     {
-        public ReservationDeletedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-        {
-        }
-
         [Given(@"I have a reservation ready for deletion")]
         public void GivenIHaveAReservationReadyForDeletion()
         {

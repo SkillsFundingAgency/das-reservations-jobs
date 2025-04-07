@@ -1,12 +1,7 @@
 ﻿namespace SFA.DAS.Reservations.Domain.Configuration
 {
-    public class ReservationJobsEnvironment
+    public class ReservationJobsEnvironment(string environmentName)
     {
-        public virtual string EnvironmentName { get; }
-
-        public ReservationJobsEnvironment(string environmentName)
-        {
-            EnvironmentName = environmentName.ToLower();
-        }
+        public virtual string EnvironmentName { get; } = environmentName.ToLower();
     }
 }

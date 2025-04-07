@@ -8,12 +8,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps;
 
 [Binding]
-public class ApprenticeshipDeletedSteps : StepsBase
+public class ApprenticeshipDeletedSteps(TestServiceProvider serviceProvider, TestData testData)
+    : StepsBase(serviceProvider, testData)
 {
-    public ApprenticeshipDeletedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-    {
-    }
-
     [When(@"a delete apprenticeship event is triggered")]
     public void WhenADeleteApprenticeshipEventIsTriggered()
     {
