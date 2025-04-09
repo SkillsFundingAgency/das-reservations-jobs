@@ -8,18 +8,12 @@ using SFA.DAS.Reservations.Domain.AccountLegalEntities;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.Functions;
 
 public class HandleLevyAddedToAccountEvent(ILevyAddedToAccountHandler handler,
-    ILogger<LevyAddedToAccount> log) : IHandleMessages<LevyAddedToAccount>
+    ILogger<LevyAddedToAccountEvent> log) : IHandleMessages<LevyAddedToAccountEvent>
 {
-    public async Task Handle(LevyAddedToAccount message, IMessageHandlerContext context)
+    public async Task Handle(LevyAddedToAccountEvent message, IMessageHandlerContext context)
     {
-        log.LogInformation($"NServiceBus LevyAddedToAccount trigger function started execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
-        await handler.Handle(new LevyAddedToAccountEvent
-            {
-                AccountId = message.AccountId, 
-                Amount = message.Amount, 
-                Created = message.Created
-            }
-        );
-        log.LogInformation($"NServiceBus LevyAddedToAccount trigger function finished execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
+        log.LogInformation($"NServiceBus LevyAddedToAccountEvent trigger function started execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
+        await handler.Handle(message);
+        log.LogInformation($"NServiceBus LevyAddedToAccountEvent trigger function finished execution at: {DateTime.Now} for ${nameof(message.AccountId)}:${message.AccountId}");
     }
 }
