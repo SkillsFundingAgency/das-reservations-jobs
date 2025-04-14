@@ -62,11 +62,7 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
         services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
         services.AddTransient<IProviderService, ProviderService>();
 
-        services.AddHttpClient<IOuterApiClient, OuterApiClient>(client =>
-        {
-            var apimUrl = EnsureUrlEndWithForwardSlash(config.ReservationsApimUrl);
-            client.BaseAddress = new Uri(apimUrl);
-        });
+        services.AddHttpClient<IOuterApiClient, OuterApiClient>();
 
         services.AddTransient<IReservationRepository, ReservationRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
@@ -86,10 +82,5 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
         services.AddSingleton(new ReservationJobsEnvironment(environmentName));
         services.AddDatabaseRegistration(config, environmentName);
         return services;
-    }
-
-    private string EnsureUrlEndWithForwardSlash(string url)
-    {
-        return url.EndsWith('/') ? url : $"{url}/";
     }
 }

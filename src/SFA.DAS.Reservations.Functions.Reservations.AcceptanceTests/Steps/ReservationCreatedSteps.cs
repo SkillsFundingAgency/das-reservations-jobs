@@ -14,12 +14,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
 {
     [Binding]
-    public class ReservationCreatedSteps : StepsBase
+    public class ReservationCreatedSteps(TestServiceProvider serviceProvider, TestData testData)
+        : StepsBase(serviceProvider, testData)
     {
-        public ReservationCreatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-        {
-        }
-
         [Given(@"I have a reservation ready for creation")]
         public void GivenIHaveAReservationReadyForCreation()
         {

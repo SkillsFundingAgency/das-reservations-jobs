@@ -17,5 +17,7 @@ namespace SFA.DAS.Reservations.Domain.ImportTypes
         public int Level { get ; set ; }
 
         public int Id { get ; set ; }
+
+        public string ApprenticeshipType { get; set; }
     }
 }

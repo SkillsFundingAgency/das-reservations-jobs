@@ -28,7 +28,8 @@ public class WhenGettingApprenticeshipCourses
                         Id = 1,
                         Title = "Some Standard",
                         Level = 1,
-                        EffectiveTo = DateTime.Today.AddDays(-1)
+                        EffectiveTo = DateTime.Today.AddDays(-1),
+                        ApprenticeshipType = "Foundation"
                     },
 
                     new Standard
@@ -36,7 +37,8 @@ public class WhenGettingApprenticeshipCourses
                         Id = 2,
                         Title = "Some Standard 2",
                         Level = 1,
-                        EffectiveTo = DateTime.Today.AddDays(-1)
+                        EffectiveTo = DateTime.Today.AddDays(-1),
+                        ApprenticeshipType = "OtherType"
                     }
                 ]
             }

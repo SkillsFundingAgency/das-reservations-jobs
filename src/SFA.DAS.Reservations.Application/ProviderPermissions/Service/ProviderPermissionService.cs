@@ -11,24 +11,14 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
 {
-    public class ProviderPermissionService : IProviderPermissionService
+    public class ProviderPermissionService(
+        IProviderPermissionRepository permissionRepository,
+        ILogger<ProviderPermissionService> logger,
+        IReservationService reservationService)
+        : IProviderPermissionService
     {
-        private readonly IProviderPermissionRepository _permissionRepository;
-        private readonly ILogger<ProviderPermissionService> _logger;
-        private readonly IReservationService _reservationService;
-
         private const int UniqueConstraintViolation = 2601;
         private const int UniqueKeyViolation = 2627;
-
-        public ProviderPermissionService(
-            IProviderPermissionRepository permissionRepository,
-            ILogger<ProviderPermissionService> logger, 
-            IReservationService reservationService)
-        {
-            _permissionRepository = permissionRepository;
-            _logger = logger;
-            _reservationService = reservationService;
-        }
 
         public async Task AddProviderPermission(UpdatedPermissionsEvent updateEvent)
         {
@@ -36,17 +26,17 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
             {
                 var permission = Map(updateEvent);
 
-                await _permissionRepository.Add(permission);
+                await permissionRepository.Add(permission);
 
                 if (!permission.CanCreateCohort)
                 {
-                    await _reservationService.DeleteProviderFromSearchIndex(
+                    await reservationService.DeleteProviderFromSearchIndex(
                         Convert.ToUInt32(permission.ProviderId),
                         permission.AccountLegalEntityId);
                 }
                 else
                 {
-                    await _reservationService.AddProviderToSearchIndex(
+                    await reservationService.AddProviderToSearchIndex(
                         (uint) permission.ProviderId,
                         permission.AccountLegalEntityId);
                 }
@@ -57,13 +47,13 @@ namespace SFA.DAS.Reservations.Application.ProviderPermissions.Service
                     && (sqlException.Number == UniqueConstraintViolation ||
                         sqlException.Number == UniqueKeyViolation))
                 {
-                    _logger.LogWarning(
+                    logger.LogWarning(
                         $"ProviderPermissionService: Rolling back adding permission for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}] - item already exists.");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning($"Error updating index for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}]", ex);
+                logger.LogWarning($"Error updating index for ProviderId:[{updateEvent.Ukprn}], AccountLegalEntityId:[{updateEvent.AccountLegalEntityId}]", ex);
             }
         }
 

@@ -1,993 +1,1013 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "serviceName": {
-      "type": "string"
-    },
-    "resourceEnvironmentName": {
-      "type": "string",
-      "metadata": {
-        "description": "Short name of the environment. Used for the name of resources created"
-      }
-    },
-    "aseResourceGroup": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "aseHostingEnvironmentName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "appServicePlanSize": {
-      "type": "string",
-      "allowedValues": [
-        "1",
-        "2",
-        "3"
-      ],
-      "defaultValue": "1"
-    },
-    "configurationStorageConnectionString": {
-      "type": "securestring"
-    },
-    "nServiceBusConnectionString": {
-      "type": "securestring"
-    },
-    "nServiceBusLicense": {
-      "type": "securestring"
-    },
-    "configNames": {
-      "type": "string",
-      "defaultValue": "SFA.DAS.Reservations.Jobs,SFA.DAS.Encoding"
-    },
-    "environmentName": {
-      "type": "string"
-    },
-    "version": {
-      "type": "string",
-      "defaultValue": "1.0"
-    },
-    "appServicePlanInstances": {
-      "type": "int",
-      "defaultValue": 2
-    },
-    "functionsExtensionVersion": {
-      "type": "string",
-      "defaultValue": "~4"
-    },
-    "resourceGroupLocation": {
-      "type": "string"
-    },
-    "tags": {
-      "type": "object"
-    },
-    "sharedEnvResourceGroup": {
-      "type": "string"
-    },
-    "sharedApimResourceGroup": {
-      "type": "string"
-    },
-    "sharedApimName": {
-      "type": "string"
-    },
-    "sharedEnvVirtualNetworkName": {
-      "type": "string"
-    },
-    "sharedServiceBusName": {
-      "type": "string"
-    },
-    "subnetObject": {
-      "type": "object"
-    },
-    "subnetServiceEndpointList": {
-      "type": "array"
-    },
-    "subnetDelegations": {
-      "type": "array"
-    },
-    "workerAccessRestrictions": {
-      "type": "array"
-    },
-    "sharedSQLServerName": {
-      "type": "string"
-    },
-    "utcValue": {
-      "type": "string",
-      "defaultValue": "[utcNow()]"
-    },
-    "minimumTlsVersion": {
-      "type": "string",
-      "defaultValue": "TLS1_2"
-    },
-    "SharedServiceBusFqdn": {
-      "type": "string"
-    },
-    "applicationInsightsConnectionString": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Shared application insights connection string retrieved from the get-product-app-insights step"
-      }
-    },
-    "applicationInsightsResourceId": {
-      "type": "string",
-      "metadata": {
-        "description": "Shared application insights resource ID retrieved from the get-product-app-insights step"
-      }
-    },
-    "alertActionGroupResourceId": {
-      "type": "string",
-      "metadata": {
-        "description": "Alert group resource ID found in the management resources variable groups"
-      }
-    },
-    "enableFailedRequestAlert": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "Enables alerting on app insights failed requests"
-      }
-    }
-  },
-  "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
-    "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
-    "functionAppNameReservationIndex": "[concat(variables('resourcePrefix'),'-rsrv-idx')]",
-    "functionAppNameCourse": "[concat(variables('resourcePrefix'),'-refcrs-fa')]",
-    "functionAppNameReservation": "[concat(variables('resourcePrefix'),'-rsrv-fa')]",
-    "functionAppNameLegalEntities": "[concat(variables('resourcePrefix'),'-rsrv-le')]",
-    "functionAppNameProviderPermissions": "[concat(variables('resourcePrefix'),'-rsrv-prv')]",
-    "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
-    "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
-  },
-  "resources": [
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/resourceGroups",
-      "location": "[parameters('resourceGroupLocation')]",
-      "tags": "[parameters('tags')]",
-      "properties": {}
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('reservations-jobs-subnet-', parameters('utcValue'))]",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
-          "contentVersion": "1.0.0.0"
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceName": {
+            "type": "string"
         },
-        "parameters": {
-          "virtualNetworkName": {
-            "value": "[parameters('sharedEnvVirtualNetworkName')]"
-          },
-          "subnetName": {
-            "value": "[parameters('subnetObject').name]"
-          },
-          "subnetAddressPrefix": {
-            "value": "[parameters('subnetObject').addressSpace]"
-          },
-          "serviceEndpointList": {
-            "value": "[parameters('subnetServiceEndpointList')]"
-          },
-          "delegations": {
-            "value": "[parameters('subnetDelegations')]"
-          }
+        "resourceEnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Short name of the environment. Used for the name of resources created"
+            }
+        },
+        "aseResourceGroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aseHostingEnvironmentName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "appServicePlanSize": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2",
+                "3"
+            ],
+            "defaultValue": "1"
+        },
+        "configurationStorageConnectionString": {
+            "type": "securestring"
+        },
+        "nServiceBusConnectionString": {
+            "type": "securestring"
+        },
+        "nServiceBusLicense": {
+            "type": "securestring"
+        },
+        "configNames": {
+            "type": "string",
+            "defaultValue": "SFA.DAS.Reservations.Jobs,SFA.DAS.Encoding"
+        },
+        "environmentName": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "1.0"
+        },
+        "appServicePlanInstances": {
+            "type": "int",
+            "defaultValue": 2
+        },
+        "functionsExtensionVersion": {
+            "type": "string",
+            "defaultValue": "~4"
+        },
+        "resourceGroupLocation": {
+            "type": "string"
+        },
+        "tags": {
+            "type": "object"
+        },
+        "sharedEnvResourceGroup": {
+            "type": "string"
+        },
+        "sharedApimResourceGroup": {
+            "type": "string"
+        },
+        "sharedApimName": {
+            "type": "string"
+        },
+        "sharedEnvVirtualNetworkName": {
+            "type": "string"
+        },
+        "sharedServiceBusName": {
+            "type": "string"
+        },
+        "subnetObject": {
+            "type": "object"
+        },
+        "subnetServiceEndpointList": {
+            "type": "array"
+        },
+        "subnetDelegations": {
+            "type": "array"
+        },
+        "workerAccessRestrictions": {
+            "type": "array"
+        },
+        "sharedSQLServerName": {
+            "type": "string"
+        },
+        "utcValue": {
+            "type": "string",
+            "defaultValue": "[utcNow()]"
+        },
+        "minimumTlsVersion": {
+            "type": "string",
+            "defaultValue": "TLS1_2"
+        },
+        "SharedServiceBusFqdn": {
+            "type": "string"
+        },
+        "applicationInsightsConnectionString": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Shared application insights connection string retrieved from the get-product-app-insights step"
+            }
+        },
+        "applicationInsightsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared application insights resource ID retrieved from the get-product-app-insights step"
+            }
+        },
+        "alertActionGroupResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Alert group resource ID found in the management resources variable groups"
+            }
+        },
+        "enableFailedRequestAlert": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Enables alerting on app insights failed requests"
+            }
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
         }
-      }
     },
-    {
-      "apiVersion": "2021-04-01",
-      "name": "[concat('reservations-jobs-sql-firewall-rule-', parameters('utcValue'))]",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'sql-server-firewall-rules.json')]",
-          "contentVersion": "1.0.0.0"
+    "variables": {
+        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+        "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-' , parameters('serviceName'))]",
+        "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
+        "functionAppNameReservationIndex": "[concat(variables('resourcePrefix'),'-rsrv-idx')]",
+        "functionAppNameCourse": "[concat(variables('resourcePrefix'),'-refcrs-fa')]",
+        "functionAppNameReservation": "[concat(variables('resourcePrefix'),'-rsrv-fa')]",
+        "functionAppNameLegalEntities": "[concat(variables('resourcePrefix'),'-rsrv-le')]",
+        "functionAppNameProviderPermissions": "[concat(variables('resourcePrefix'),'-rsrv-prv')]",
+        "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
+        "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
         },
-        "parameters": {
-          "serverName": {
-            "value": "[parameters('sharedSQLServerName')]"
-          },
-          "subnetResourceIdList": {
-            "value": "[createArray(reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
-          }
+        "emptyObject": {}
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('reservations-jobs-subnet-', parameters('utcValue'))]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'subnet.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('sharedEnvVirtualNetworkName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetObject').name]"
+                    },
+                    "subnetAddressPrefix": {
+                        "value": "[parameters('subnetObject').addressSpace]"
+                    },
+                    "serviceEndpointList": {
+                        "value": "[parameters('subnetServiceEndpointList')]"
+                    },
+                    "delegations": {
+                        "value": "[parameters('subnetDelegations')]"
+                    },
+                    "routeTable": {
+                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('reservations-jobs-sql-firewall-rule-', parameters('utcValue'))]",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'sql-server-firewall-rules.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serverName": {
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "subnetResourceIdList": {
+                        "value": "[createArray(reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value)]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('worker-app-service-plan-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "aseHostingEnvironmentName": {
+                        "value": "[parameters('aseHostingEnvironmentName')]"
+                    },
+                    "aseResourceGroup": {
+                        "value": "[parameters('aseResourceGroup')]"
+                    },
+                    "aspSize": {
+                        "value": "[parameters('appServicePlanSize')]"
+                    },
+                    "aspInstances": {
+                        "value": "[parameters('appServicePlanInstances')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('storage-account-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "allowSharedKeyAccess": {
+                        "value": true
+                    },
+                    "minimumTlsVersion": {
+                        "value": "[parameters('minimumTlsVersion')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('apim-product-subscription-', parameters('utcValue'))]",
+            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimName": {
+                        "value": "[parameters('sharedApimName')]"
+                    },
+                    "subscriptionName": {
+                        "value": "[variables('functionAppNameReservation')]"
+                    },
+                    "subscriptionScope": {
+                        "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ReservationsOuterApi')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('function-app-crs-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppNameCourse')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[parameters('configNames')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "[parameters('version')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[parameters('applicationInsightsConnectionString')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "AppName",
+                                    "value": "das-reservations-jobs-refresh-course"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
+                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
+                                    "value": "1"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('SharedServiceBusFqdn')]"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('worker-app-service-plan-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('app-insights-', variables('functionAppNameCourse'), '-alert-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceName": {
+                        "value": "[variables('functionAppNameCourse')]"
+                    },
+                    "applicationInsightsResourceId": {
+                        "value": "[parameters('applicationInsightsResourceId')]"
+                    },
+                    "alertActionGroupResourceId": {
+                        "value": "[parameters('alertActionGroupResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('function-app-rsrv-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppNameReservation')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusConnectionString",
+                                    "value": "[parameters('nServiceBusConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusLicense",
+                                    "value": "[parameters('nServiceBusLicense')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[parameters('configNames')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "[parameters('version')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[parameters('applicationInsightsConnectionString')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "AppName",
+                                    "value": "das-reservations-jobs-reservation-status"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
+                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
+                                    "value": "1"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('SharedServiceBusFqdn')]"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('worker-app-service-plan-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('app-insights-', variables('functionAppNameReservation'), '-alert-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceName": {
+                        "value": "[variables('functionAppNameReservation')]"
+                    },
+                    "applicationInsightsResourceId": {
+                        "value": "[parameters('applicationInsightsResourceId')]"
+                    },
+                    "alertActionGroupResourceId": {
+                        "value": "[parameters('alertActionGroupResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('function-app-legalentities-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppNameLegalEntities')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusConnectionString",
+                                    "value": "[parameters('nServiceBusConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusLicense",
+                                    "value": "[parameters('nServiceBusLicense')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[parameters('configNames')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "[parameters('version')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[parameters('applicationInsightsConnectionString')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "AppName",
+                                    "value": "das-reservations-jobs-legal-entities"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
+                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
+                                    "value": "1"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('SharedServiceBusFqdn')]"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('worker-app-service-plan-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('app-insights-', variables('functionAppNameLegalEntities'), '-alert-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceName": {
+                        "value": "[variables('functionAppNameLegalEntities')]"
+                    },
+                    "applicationInsightsResourceId": {
+                        "value": "[parameters('applicationInsightsResourceId')]"
+                    },
+                    "alertActionGroupResourceId": {
+                        "value": "[parameters('alertActionGroupResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('function-app-rsrv-idx-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppNameReservationIndex')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[parameters('configNames')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "[parameters('version')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[parameters('applicationInsightsConnectionString')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "AppName",
+                                    "value": "das-reservations-jobs-reservation-index"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
+                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
+                                    "value": "1"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('SharedServiceBusFqdn')]"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('worker-app-service-plan-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('app-insights-', variables('functionAppNameReservationIndex'), '-alert-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceName": {
+                        "value": "[variables('functionAppNameReservationIndex')]"
+                    },
+                    "applicationInsightsResourceId": {
+                        "value": "[parameters('applicationInsightsResourceId')]"
+                    },
+                    "alertActionGroupResourceId": {
+                        "value": "[parameters('alertActionGroupResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "[concat('function-app-rsrv-prv-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppNameProviderPermissions')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('resourceGroupName')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusConnectionString",
+                                    "value": "[parameters('nServiceBusConnectionString')]"
+                                },
+                                {
+                                    "name": "NServiceBusLicense",
+                                    "value": "[parameters('nServiceBusLicense')]"
+                                },
+                                {
+                                    "name": "ConfigNames",
+                                    "value": "[parameters('configNames')]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "Version",
+                                    "value": "[parameters('version')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
+                                },
+                                {
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[parameters('applicationInsightsConnectionString')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                                    "value": "[parameters('functionsExtensionVersion')]"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
+                                },
+                                {
+                                    "name": "AppName",
+                                    "value": "das-reservations-jobs-reservation-provider"
+                                },
+                                {
+                                    "name": "WEBSITE_RUN_FROM_PACKAGE",
+                                    "value": "1"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
+                                    "value": "[parameters('SharedServiceBusFqdn')]"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('worker-app-service-plan-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('app-insights-', variables('functionAppNameProviderPermissions'), '-alert-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceName": {
+                        "value": "[variables('functionAppNameProviderPermissions')]"
+                    },
+                    "applicationInsightsResourceId": {
+                        "value": "[parameters('applicationInsightsResourceId')]"
+                    },
+                    "alertActionGroupResourceId": {
+                        "value": "[parameters('alertActionGroupResourceId')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('role-assignment-', variables('functionAppNameCourse'), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference(concat('function-app-crs-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusOwner"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('role-assignment-', variables('functionAppNameReservation'), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference(concat('function-app-rsrv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusOwner"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('role-assignment-', variables('functionAppNameLegalEntities'), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference(concat('function-app-legalentities-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusOwner"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference(concat('function-app-rsrv-idx-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusOwner"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[concat('role-assignment-', variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference(concat('function-app-rsrv-prv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "ServiceBusOwner"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedServiceBusName')]"
+                    }
+                }
+            }
         }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('worker-app-service-plan-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "aseHostingEnvironmentName": {
-            "value": "[parameters('aseHostingEnvironmentName')]"
-          },
-          "aseResourceGroup": {
-            "value": "[parameters('aseResourceGroup')]"
-          },
-          "aspSize": {
-            "value": "[parameters('appServicePlanSize')]"
-          },
-          "aspInstances": {
-            "value": "[parameters('appServicePlanInstances')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('storage-account-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "allowSharedKeyAccess": {
-            "value": true
-          },
-          "minimumTlsVersion": {
-            "value": "[parameters('minimumTlsVersion')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('apim-product-subscription-', parameters('utcValue'))]",
-      "resourceGroup": "[parameters('sharedApimResourceGroup')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-subscription.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "apimName": {
-            "value": "[parameters('sharedApimName')]"
-          },
-          "subscriptionName": {
-            "value": "[variables('functionAppNameReservation')]"
-          },
-          "subscriptionScope": {
-            "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('sharedApimResourceGroup'), '/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'), '/products/ReservationsOuterApi')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-crs-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "functionAppName": {
+    ],
+    "outputs": {
+        "functionAppNameCourse": {
+            "type": "string",
             "value": "[variables('functionAppNameCourse')]"
-          },
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[variables('resourceGroupName')]"
-          },
-          "subnetResourceId": {
-            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
-          },
-          "ipSecurityRestrictions": {
-            "value": "[parameters('workerAccessRestrictions')]"
-          },
-          "functionAppAppSettings": {
-            "value": {
-              "array": [
-                {
-                  "name": "ConfigurationStorageConnectionString",
-                  "value": "[parameters('configurationStorageConnectionString')]"
-                },
-                {
-                  "name": "ConfigNames",
-                  "value": "[parameters('configNames')]"
-                },
-                {
-                  "name": "EnvironmentName",
-                  "value": "[parameters('environmentName')]"
-                },
-                {
-                  "name": "Version",
-                  "value": "[parameters('version')]"
-                },
-                {
-                  "name": "AzureWebJobsStorage",
-                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                },
-                {
-                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[parameters('applicationInsightsConnectionString')]"
-                },
-                {
-                  "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
-                },
-                {
-                  "name": "AppName",
-                  "value": "das-reservations-jobs-refresh-course"
-                },
-                {
-                  "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet-isolated"
-                },
-                {
-                  "name": "WEBSITE_RUN_FROM_PACKAGE",
-                  "value": "1"
-                },
-                {
-                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
-                  "value": "[parameters('SharedServiceBusFqdn')]"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
-      "apiVersion": "2021-04-01",
-      "name": "[concat('app-insights-', variables('functionAppNameCourse'), '-alert-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
-          "contentVersion": "1.0.0.0"
         },
-        "parameters": {
-          "serviceName": {
-            "value": "[variables('functionAppNameCourse')]"
-          },
-          "applicationInsightsResourceId": {
-            "value": "[parameters('applicationInsightsResourceId')]"
-          },
-          "alertActionGroupResourceId": {
-            "value": "[parameters('alertActionGroupResourceId')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-rsrv-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "functionAppName": {
+        "functionAppNameReservation": {
+            "type": "string",
             "value": "[variables('functionAppNameReservation')]"
-          },
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[variables('resourceGroupName')]"
-          },
-          "subnetResourceId": {
-            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
-          },
-          "ipSecurityRestrictions": {
-            "value": "[parameters('workerAccessRestrictions')]"
-          },
-          "functionAppAppSettings": {
-            "value": {
-              "array": [
-                {
-                  "name": "ConfigurationStorageConnectionString",
-                  "value": "[parameters('configurationStorageConnectionString')]"
-                },
-                {
-                  "name": "NServiceBusConnectionString",
-                  "value": "[parameters('nServiceBusConnectionString')]"
-                },
-                {
-                  "name": "NServiceBusLicense",
-                  "value": "[parameters('nServiceBusLicense')]"
-                },
-                {
-                  "name": "ConfigNames",
-                  "value": "[parameters('configNames')]"
-                },
-                {
-                  "name": "EnvironmentName",
-                  "value": "[parameters('environmentName')]"
-                },
-                {
-                  "name": "Version",
-                  "value": "[parameters('version')]"
-                },
-                {
-                  "name": "AzureWebJobsStorage",
-                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                },
-                {
-                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[parameters('applicationInsightsConnectionString')]"
-                },
-                {
-                  "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
-                },
-                {
-                  "name": "AppName",
-                  "value": "das-reservations-jobs-reservation-status"
-                },
-                {
-                  "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet-isolated"
-                },
-                {
-                  "name": "WEBSITE_RUN_FROM_PACKAGE",
-                  "value": "1"
-                },
-                {
-                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
-                  "value": "[parameters('SharedServiceBusFqdn')]"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
-      "apiVersion": "2021-04-01",
-      "name": "[concat('app-insights-', variables('functionAppNameReservation'), '-alert-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
-          "contentVersion": "1.0.0.0"
         },
-        "parameters": {
-          "serviceName": {
-            "value": "[variables('functionAppNameReservation')]"
-          },
-          "applicationInsightsResourceId": {
-            "value": "[parameters('applicationInsightsResourceId')]"
-          },
-          "alertActionGroupResourceId": {
-            "value": "[parameters('alertActionGroupResourceId')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-legalentities-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "functionAppName": {
+        "functionAppNameLegalEntities": {
+            "type": "string",
             "value": "[variables('functionAppNameLegalEntities')]"
-          },
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[variables('resourceGroupName')]"
-          },
-          "subnetResourceId": {
-            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
-          },
-          "ipSecurityRestrictions": {
-            "value": "[parameters('workerAccessRestrictions')]"
-          },
-          "functionAppAppSettings": {
-            "value": {
-              "array": [
-                {
-                  "name": "ConfigurationStorageConnectionString",
-                  "value": "[parameters('configurationStorageConnectionString')]"
-                },
-                {
-                  "name": "NServiceBusConnectionString",
-                  "value": "[parameters('nServiceBusConnectionString')]"
-                },
-                {
-                  "name": "NServiceBusLicense",
-                  "value": "[parameters('nServiceBusLicense')]"
-                },
-                {
-                  "name": "ConfigNames",
-                  "value": "[parameters('configNames')]"
-                },
-                {
-                  "name": "EnvironmentName",
-                  "value": "[parameters('environmentName')]"
-                },
-                {
-                  "name": "Version",
-                  "value": "[parameters('version')]"
-                },
-                {
-                  "name": "AzureWebJobsStorage",
-                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                },
-                {
-                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[parameters('applicationInsightsConnectionString')]"
-                },
-                {
-                  "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
-                },
-                {
-                  "name": "AppName",
-                  "value": "das-reservations-jobs-legal-entities"
-                },
-                {
-                  "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet-isolated"
-                },
-                {
-                  "name": "WEBSITE_RUN_FROM_PACKAGE",
-                  "value": "1"
-                },
-                {
-                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
-                  "value": "[parameters('SharedServiceBusFqdn')]"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
-      "apiVersion": "2021-04-01",
-      "name": "[concat('app-insights-', variables('functionAppNameLegalEntities'), '-alert-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
-          "contentVersion": "1.0.0.0"
         },
-        "parameters": {
-          "serviceName": {
-            "value": "[variables('functionAppNameLegalEntities')]"
-          },
-          "applicationInsightsResourceId": {
-            "value": "[parameters('applicationInsightsResourceId')]"
-          },
-          "alertActionGroupResourceId": {
-            "value": "[parameters('alertActionGroupResourceId')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-rsrv-idx-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "functionAppName": {
+        "functionAppNameReservationIndex": {
+            "type": "string",
             "value": "[variables('functionAppNameReservationIndex')]"
-          },
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[variables('resourceGroupName')]"
-          },
-          "subnetResourceId": {
-            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
-          },
-          "ipSecurityRestrictions": {
-            "value": "[parameters('workerAccessRestrictions')]"
-          },
-          "functionAppAppSettings": {
-            "value": {
-              "array": [
-                {
-                  "name": "ConfigurationStorageConnectionString",
-                  "value": "[parameters('configurationStorageConnectionString')]"
-                },
-                {
-                  "name": "ConfigNames",
-                  "value": "[parameters('configNames')]"
-                },
-                {
-                  "name": "EnvironmentName",
-                  "value": "[parameters('environmentName')]"
-                },
-                {
-                  "name": "Version",
-                  "value": "[parameters('version')]"
-                },
-                {
-                  "name": "AzureWebJobsStorage",
-                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                },
-                {
-                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[parameters('applicationInsightsConnectionString')]"
-                },
-                {
-                  "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
-                },
-                {
-                  "name": "AppName",
-                  "value": "das-reservations-jobs-reservation-index"
-                },
-                {
-                  "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet-isolated"
-                },
-                {
-                  "name": "WEBSITE_RUN_FROM_PACKAGE",
-                  "value": "1"
-                },
-                {
-                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
-                  "value": "[parameters('SharedServiceBusFqdn')]"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
-      "apiVersion": "2021-04-01",
-      "name": "[concat('app-insights-', variables('functionAppNameReservationIndex'), '-alert-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
-          "contentVersion": "1.0.0.0"
         },
-        "parameters": {
-          "serviceName": {
-            "value": "[variables('functionAppNameReservationIndex')]"
-          },
-          "applicationInsightsResourceId": {
-            "value": "[parameters('applicationInsightsResourceId')]"
-          },
-          "alertActionGroupResourceId": {
-            "value": "[parameters('alertActionGroupResourceId')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-06-01",
-      "name": "[concat('function-app-rsrv-prv-', parameters('utcValue'))]",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'function-app-v2.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "functionAppName": {
+        "functionAppNameProviderPermissions": {
+            "type": "string",
             "value": "[variables('functionAppNameProviderPermissions')]"
-          },
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
+        },
+        "ResourceGroupName": {
+            "type": "string",
             "value": "[variables('resourceGroupName')]"
-          },
-          "subnetResourceId": {
-            "value": "[reference(concat('reservations-jobs-subnet-', parameters('utcValue'))).outputs.SubnetResourceId.value]"
-          },
-          "ipSecurityRestrictions": {
-            "value": "[parameters('workerAccessRestrictions')]"
-          },
-          "functionAppAppSettings": {
-            "value": {
-              "array": [
-                {
-                  "name": "ConfigurationStorageConnectionString",
-                  "value": "[parameters('configurationStorageConnectionString')]"
-                },
-                {
-                  "name": "NServiceBusConnectionString",
-                  "value": "[parameters('nServiceBusConnectionString')]"
-                },
-                {
-                  "name": "NServiceBusLicense",
-                  "value": "[parameters('nServiceBusLicense')]"
-                },
-                {
-                  "name": "ConfigNames",
-                  "value": "[parameters('configNames')]"
-                },
-                {
-                  "name": "EnvironmentName",
-                  "value": "[parameters('environmentName')]"
-                },
-                {
-                  "name": "Version",
-                  "value": "[parameters('version')]"
-                },
-                {
-                  "name": "AzureWebJobsStorage",
-                  "value": "[reference(concat('storage-account-', parameters('utcValue'))).outputs.storageConnectionString.value]"
-                },
-                {
-                  "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                  "value": "[parameters('applicationInsightsConnectionString')]"
-                },
-                {
-                  "name": "FUNCTIONS_EXTENSION_VERSION",
-                  "value": "[parameters('functionsExtensionVersion')]"
-                },
-                {
-                  "name": "FUNCTIONS_WORKER_RUNTIME",
-                  "value": "dotnet-isolated"
-                },
-                {
-                  "name": "AppName",
-                  "value": "das-reservations-jobs-reservation-provider"
-                },
-                {
-                  "name": "WEBSITE_RUN_FROM_PACKAGE",
-                  "value": "1"
-                },
-                {
-                  "name": "AzureWebJobsServiceBus__fullyQualifiedNamespace",
-                  "value": "[parameters('SharedServiceBusFqdn')]"
-                }
-              ]
-            }
-          }
         }
-      },
-      "dependsOn": [
-        "[concat('worker-app-service-plan-', parameters('utcValue'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('enableFailedRequestAlert'), true())]",
-      "apiVersion": "2021-04-01",
-      "name": "[concat('app-insights-', variables('functionAppNameProviderPermissions'), '-alert-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights-failed-requests-alert.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "serviceName": {
-            "value": "[variables('functionAppNameProviderPermissions')]"
-          },
-          "applicationInsightsResourceId": {
-            "value": "[parameters('applicationInsightsResourceId')]"
-          },
-          "alertActionGroupResourceId": {
-            "value": "[parameters('alertActionGroupResourceId')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2021-04-01",
-      "name": "[concat('role-assignment-', variables('functionAppNameCourse'), '-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "principalId": {
-            "value": "[reference(concat('function-app-crs-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-          },
-          "assignmentType": {
-            "value": "ServiceBusOwner"
-          },
-          "resourceName": {
-            "value": "[parameters('sharedServiceBusName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2021-04-01",
-      "name": "[concat('role-assignment-', variables('functionAppNameReservation'), '-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "principalId": {
-            "value": "[reference(concat('function-app-rsrv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-          },
-          "assignmentType": {
-            "value": "ServiceBusOwner"
-          },
-          "resourceName": {
-            "value": "[parameters('sharedServiceBusName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2021-04-01",
-      "name": "[concat('role-assignment-', variables('functionAppNameLegalEntities'), '-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "principalId": {
-            "value": "[reference(concat('function-app-legalentities-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-          },
-          "assignmentType": {
-            "value": "ServiceBusOwner"
-          },
-          "resourceName": {
-            "value": "[parameters('sharedServiceBusName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2021-04-01",
-      "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "principalId": {
-            "value": "[reference(concat('function-app-rsrv-idx-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-          },
-          "assignmentType": {
-            "value": "ServiceBusOwner"
-          },
-          "resourceName": {
-            "value": "[parameters('sharedServiceBusName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2021-04-01",
-      "name": "[concat('role-assignment-', variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))]",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "principalId": {
-            "value": "[reference(concat('function-app-rsrv-prv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-          },
-          "assignmentType": {
-            "value": "ServiceBusOwner"
-          },
-          "resourceName": {
-            "value": "[parameters('sharedServiceBusName')]"
-          }
-        }
-      }
     }
-  ],
-  "outputs": {
-    "functionAppNameCourse": {
-      "type": "string",
-      "value": "[variables('functionAppNameCourse')]"
-    },
-    "functionAppNameReservation": {
-      "type": "string",
-      "value": "[variables('functionAppNameReservation')]"
-    },
-    "functionAppNameLegalEntities": {
-      "type": "string",
-      "value": "[variables('functionAppNameLegalEntities')]"
-    },
-    "functionAppNameReservationIndex": {
-      "type": "string",
-      "value": "[variables('functionAppNameReservationIndex')]"
-    },
-    "functionAppNameProviderPermissions": {
-      "type": "string",
-      "value": "[variables('functionAppNameProviderPermissions')]"
-    },
-    "ResourceGroupName": {
-      "type": "string",
-      "value": "[variables('resourceGroupName')]"
-    }
-  }
 }

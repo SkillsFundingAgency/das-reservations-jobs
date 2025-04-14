@@ -9,15 +9,8 @@ using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class ReservationRepository : IReservationRepository
+    public class ReservationRepository(IReservationsDataContext dataContext) : IReservationRepository
     {
-        private readonly IReservationsDataContext _dataContext;
-
-        public ReservationRepository(IReservationsDataContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
         public async Task Update(
             Guid reservationId,
             ReservationStatus status,
@@ -26,7 +19,7 @@ namespace SFA.DAS.Reservations.Data.Repository
             long? draftApprenticeshipId = null)
         {
 
-                var reservation = await _dataContext.Reservations.FindAsync(reservationId);
+                var reservation = await dataContext.Reservations.FindAsync(reservationId);
 
                 if (reservation == null)
                 {
@@ -67,13 +60,13 @@ namespace SFA.DAS.Reservations.Data.Repository
                         break;
                 }
 
-                _dataContext.SaveChanges();
+                dataContext.SaveChanges();
               
         }
 
         public IEnumerable<Reservation> GetAllNonLevyForAccountLegalEntity(long accountLegalEntityId)
         {
-            return _dataContext.Reservations
+            return dataContext.Reservations
                 .Where(c => c.AccountLegalEntityId.Equals(accountLegalEntityId)
                             && c.Status != (byte)ReservationStatus.Deleted
                             && c.Status != (byte)ReservationStatus.Change
@@ -82,7 +75,7 @@ namespace SFA.DAS.Reservations.Data.Repository
 
         public async Task<Reservation> GetReservationById(Guid reservationId)
         {
-            var reservation = await _dataContext.Reservations
+            var reservation = await dataContext.Reservations
                 .FirstOrDefaultAsync(c => c.Id.Equals(reservationId))
                 .ConfigureAwait(false);
 

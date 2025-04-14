@@ -7,22 +7,17 @@ using SFA.DAS.Reservations.Infrastructure;
 
 namespace SFA.DAS.Reservations.Functions.ReservationIndex.Functions;
 
-public class RefreshReservationIndexHttp
+public class RefreshReservationIndexHttp(
+    ILogger<ReservationIndexRefreshHandler> logger,
+    IReservationIndexRefreshHandler handler)
 {
-    private readonly ILogger<ReservationIndexRefreshHandler> _logger;
-    private readonly IReservationIndexRefreshHandler _handler;
-
-    public RefreshReservationIndexHttp(ILogger<ReservationIndexRefreshHandler> logger, IReservationIndexRefreshHandler handler)
-    {
-        _logger = logger;
-        _handler = handler;
-    }
+    private readonly IReservationIndexRefreshHandler _handler = handler;
 
     [Function("IndexRefresh")]
     [QueueOutput(QueueNames.RefreshReservationIndex)]
     public string Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
-        _logger.LogInformation("C# RefreshIndexHttp trigger function processed a request.");
+        logger.LogInformation("C# RefreshIndexHttp trigger function processed a request.");
 
         return "refresh";
     }

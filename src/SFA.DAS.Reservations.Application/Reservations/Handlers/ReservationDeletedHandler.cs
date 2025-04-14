@@ -6,21 +6,15 @@ using SFA.DAS.Reservations.Messages;
 
 namespace SFA.DAS.Reservations.Application.Reservations.Handlers
 {
-    public class ReservationDeletedHandler : IReservationDeletedHandler
+    public class ReservationDeletedHandler(
+        IReservationService reservationService,
+        INotifyEmployerOfReservationEventAction action)
+        : IReservationDeletedHandler
     {
-        private readonly IReservationService _reservationService;
-        private readonly INotifyEmployerOfReservationEventAction _action;
-
-        public ReservationDeletedHandler(IReservationService reservationService, INotifyEmployerOfReservationEventAction action)
-        {
-            _reservationService = reservationService;
-            _action = action;
-        }
-
         public async Task Handle(ReservationDeletedEvent deletedEvent, IMessageHandlerContext context)
         {
-            await _action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, context);
-            await _reservationService.UpdateReservationStatus(deletedEvent.Id, ReservationStatus.Deleted);
+            await action.Execute<ReservationDeletedNotificationEvent>(deletedEvent, context);
+            await reservationService.UpdateReservationStatus(deletedEvent.Id, ReservationStatus.Deleted);
         }
     }
 }

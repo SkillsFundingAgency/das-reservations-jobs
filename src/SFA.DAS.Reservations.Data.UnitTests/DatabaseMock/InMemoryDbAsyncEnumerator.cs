@@ -4,17 +4,11 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
 {
-    public class InMemoryDbAsyncEnumerator<T> : IAsyncEnumerator<T>
+    public class InMemoryDbAsyncEnumerator<T>(IEnumerator<T> enumerator) : IAsyncEnumerator<T>
     {
-        private readonly IEnumerator<T> innerEnumerator;
         private bool disposed = false;
 
-        public InMemoryDbAsyncEnumerator(IEnumerator<T> enumerator)
-        {
-            this.innerEnumerator = enumerator;
-        }
-
-        public T Current => this.innerEnumerator.Current;
+        public T Current => enumerator.Current;
 
         protected virtual async ValueTask Dispose(bool disposing)
         {
@@ -23,7 +17,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    this.innerEnumerator.Dispose();
+                    enumerator.Dispose();
                 }
 
                 this.disposed = true;
@@ -32,7 +26,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.DatabaseMock
 
         public ValueTask<bool> MoveNextAsync()
         {
-            return ValueTask.FromResult(this.innerEnumerator.MoveNext());
+            return ValueTask.FromResult(enumerator.MoveNext());
         }
 
         public async ValueTask DisposeAsync()

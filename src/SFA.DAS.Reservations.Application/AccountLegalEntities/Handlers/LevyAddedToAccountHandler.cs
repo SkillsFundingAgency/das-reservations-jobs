@@ -7,27 +7,20 @@ using SFA.DAS.Reservations.Domain.Accounts;
 
 namespace SFA.DAS.Reservations.Application.AccountLegalEntities.Handlers
 {
-    public class LevyAddedToAccountHandler : ILevyAddedToAccountHandler
+    public class LevyAddedToAccountHandler(
+        IAccountsService accountLegalEntitiesService,
+        ILogger<LevyAddedToAccountHandler> logger)
+        : ILevyAddedToAccountHandler
     {
-        private readonly IAccountsService _accountLegalEntitiesService;
-        private readonly ILogger<LevyAddedToAccountHandler> _logger;
-
-        public LevyAddedToAccountHandler(IAccountsService accountLegalEntitiesService,
-            ILogger<LevyAddedToAccountHandler> logger)
-        {
-            _accountLegalEntitiesService = accountLegalEntitiesService;
-            _logger = logger;
-        }
-
         public async Task Handle(LevyAddedToAccountEvent levyAddedToAccountEvent)
         {
             try
             {
-                await _accountLegalEntitiesService.UpdateLevyStatus(levyAddedToAccountEvent.AccountId,true);
+                await accountLegalEntitiesService.UpdateLevyStatus(levyAddedToAccountEvent.AccountId,true);
             }
             catch (DbUpdateException e)
             {
-                _logger.LogWarning("Could not update agreement status to signed", e);
+                logger.LogWarning("Could not update agreement status to signed", e);
                 throw;
             }
         }

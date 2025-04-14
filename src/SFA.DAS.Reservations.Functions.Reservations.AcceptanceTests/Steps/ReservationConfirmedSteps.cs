@@ -10,12 +10,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps;
 
 [Binding]
-public class ReservationConfirmedSteps : StepsBase
+public class ReservationConfirmedSteps(TestServiceProvider serviceProvider, TestData testData)
+    : StepsBase(serviceProvider, testData)
 {
-    public ReservationConfirmedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-    {
-    }
-
     [Given(@"I have a (.*) reservation")]
     public void GivenIHaveAReservation(ReservationStatus reservationStatus)
     {

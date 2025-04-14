@@ -10,12 +10,9 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
 
 [Binding]
-public class LegalEntityUpdatedSteps : StepsBase
+public class LegalEntityUpdatedSteps(TestServiceProvider serviceProvider, TestData testData)
+    : StepsBase(serviceProvider, testData)
 {
-    public LegalEntityUpdatedSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-    {
-    }
-
     [When(@"signed agreement event is triggered")]
     public void WhenSignedAgreementEventIsTriggered()
     {

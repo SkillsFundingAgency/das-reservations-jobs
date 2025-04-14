@@ -12,12 +12,8 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests.Steps;
 
 [Binding]
-public class AccountSteps : StepsBase
+public class AccountSteps(TestServiceProvider serviceProvider, TestData testData) : StepsBase(serviceProvider, testData)
 {
-    public AccountSteps(TestServiceProvider serviceProvider, TestData testData) : base(serviceProvider, testData)
-    {
-    }
-
     [Given(@"I have a non levy account")]
     public void WhenIHaveANonLevyAccount()
     {
