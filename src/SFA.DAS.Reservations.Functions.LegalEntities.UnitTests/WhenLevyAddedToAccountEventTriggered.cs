@@ -18,14 +18,14 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.UnitTests
         public async Task ThenMessageIsHandled()
         {
             //Arrange
-            var message = new LevyAddedToAccount
+            var message = new LevyAddedToAccountEvent
             {
                 AccountId = 1234345,
                 Amount = 23423.3m,
                 Created = DateTime.Now.AddDays(-1)
             };
             var handler = new Mock<ILevyAddedToAccountHandler>();
-            var logger = new Mock<ILogger<LevyAddedToAccount>>();
+            var logger = new Mock<ILogger<LevyAddedToAccountEvent>>();
             var sut = new HandleLevyAddedToAccountEvent(handler.Object, logger.Object);
 
             //Act
