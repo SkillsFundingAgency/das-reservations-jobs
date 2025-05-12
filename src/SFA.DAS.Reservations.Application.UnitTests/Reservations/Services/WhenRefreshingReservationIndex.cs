@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Services;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using Reservation = SFA.DAS.Reservations.Domain.Entities.Reservation;
@@ -17,7 +18,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
     {
         private ReservationService _service;
         private Mock<IReservationRepository> _repository;
-        private Mock<IReservationIndexRepository> _indexRepository;
+        private Mock<IElasticReservationIndexRepository> _elasticIndexRepository;
+        private Mock<IAzureSearchReservationIndexRepository> _azureSearchIndexRepository;
         private Mock<IProviderPermissionRepository> _permissionsRepository;
 
         private List<Reservation> _expectedReservations;
@@ -27,7 +29,8 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public void Arrange()
         {
             _repository = new Mock<IReservationRepository>();
-            _indexRepository = new Mock<IReservationIndexRepository>();
+            _elasticIndexRepository = new Mock<IElasticReservationIndexRepository>();
+            _azureSearchIndexRepository = new Mock<IAzureSearchReservationIndexRepository>();
             _permissionsRepository = new Mock<IProviderPermissionRepository>();
             _logger = new Mock<ILogger<ReservationService>>();
 
@@ -45,7 +48,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
                 new() {AccountId = 1, AccountLegalEntityId = 1, ProviderId = 2, CanCreateCohort = true}
             });
 
-            _service = new ReservationService(_repository.Object, _indexRepository.Object, _permissionsRepository.Object, _logger.Object);
+            _service = new ReservationService(
+                _repository.Object,
+                _elasticIndexRepository.Object,
+                _azureSearchIndexRepository.Object,
+                _permissionsRepository.Object, 
+                _logger.Object);
         }
 
         [Test]
@@ -71,9 +79,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{_expectedReservations.First().Id}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{_expectedReservations.Skip(1).First().Id}")))));
 
         }
@@ -85,7 +93,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(r => r.CreateIndex(), Times.Once);
+            _elasticIndexRepository.Verify(r => r.CreateIndex(), Times.Once);
         }
 
         [Test]
@@ -95,7 +103,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(r => r.DeleteIndices(5), Times.Once);
+            _elasticIndexRepository.Verify(r => r.DeleteIndices(5), Times.Once);
         }
 
 
@@ -114,14 +122,14 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             action.Should().ThrowAsync<Exception>();
 
             //Assert
-            _indexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Never);
+            _elasticIndexRepository.Verify(repo => repo.Add(It.IsAny<IEnumerable<IndexedReservation>>()), Times.Never);
         }
 
         [Test]
         public void ThenIfExceptionIsThrownFromIndexingThenExceptionIsThrown()
         {
             //Arrange
-            _indexRepository.Setup(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()))
+            _elasticIndexRepository.Setup(x => x.Add(It.IsAny<IEnumerable<IndexedReservation>>()))
                 .ThrowsAsync(new Exception("Test"));
 
             //Act + Assert
@@ -153,16 +161,16 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(
+            _elasticIndexRepository.Verify(
                 x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(2))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{firstReservationId}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"2_1_{firstReservationId}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"1_1_{secondReservationId}")))));
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r => r.Id.Equals($"2_1_{secondReservationId}")))));
 
             
@@ -191,17 +199,17 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(
+            _elasticIndexRepository.Verify(
                 x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))), Times.Exactly(2));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
                     r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
                     r.ProviderId.Value.Equals(1) &&
                     r.AccountLegalEntityId.Equals(1)))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
                     r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
@@ -227,7 +235,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.CreateIndex(), Times.Once());
+            _elasticIndexRepository.Verify(x => x.CreateIndex(), Times.Once());
         }
 
         [Test]
@@ -251,10 +259,10 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(
+            _elasticIndexRepository.Verify(
                 x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex => rIndex.Count().Equals(1))));
 
-            _indexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
+            _elasticIndexRepository.Verify(x => x.Add(It.Is<IEnumerable<IndexedReservation>>(rIndex =>
                 rIndex.Any(r =>
                     r.ReservationId.Equals(firstReservationId) &&
                     r.AccountId.Equals(1) &&
@@ -273,9 +281,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.CreateIndex(), Times.Once);
-            _indexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
-            _indexRepository.VerifyNoOtherCalls();
+            _elasticIndexRepository.Verify(x => x.CreateIndex(), Times.Once);
+            _elasticIndexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
+            _elasticIndexRepository.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -294,9 +302,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             await _service.RefreshReservationIndex();
 
             //Assert
-            _indexRepository.Verify(x => x.CreateIndex(), Times.Once);
-            _indexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
-            _indexRepository.VerifyNoOtherCalls();
+            _elasticIndexRepository.Verify(x => x.CreateIndex(), Times.Once);
+            _elasticIndexRepository.Verify(x => x.DeleteIndices(5), Times.Once);
+            _elasticIndexRepository.VerifyNoOtherCalls();
         }
 
     }
