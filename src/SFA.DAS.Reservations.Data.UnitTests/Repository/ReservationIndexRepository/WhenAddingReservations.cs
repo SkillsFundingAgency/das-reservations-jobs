@@ -16,7 +16,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         private const string ExpectedIndexName = "Test";
         private Mock<IElasticLowLevelClientWrapper> _clientMock;
         private Mock<IIndexRegistry> _registryMock;
-        private Data.Repository.ReservationIndexRepository _repository;
+        private Data.Repository.ElasticReservationIndexRepository _repository;
         private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
         [SetUp]
@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             _registryMock = new Mock<IIndexRegistry>();
             _elasticSearchQueries = new Mock<IElasticSearchQueries>();
             
-            _repository = new Data.Repository.ReservationIndexRepository(_clientMock.Object, _registryMock.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment("LOCAL"));
+            _repository = new Data.Repository.ElasticReservationIndexRepository(_clientMock.Object, _registryMock.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment("LOCAL"));
 
             _registryMock.SetupGet(x => x.CurrentIndexName).Returns(ExpectedIndexName);
         }

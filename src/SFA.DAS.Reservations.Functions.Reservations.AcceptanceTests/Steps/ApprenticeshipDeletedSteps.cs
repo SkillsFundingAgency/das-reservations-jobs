@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Reservations;
 using TechTalk.SpecFlow;
 
@@ -26,7 +27,7 @@ public class ApprenticeshipDeletedSteps(TestServiceProvider serviceProvider, Tes
 
         ((ReservationStatus)reservation.Status).Should().Be(ReservationStatus.Pending);
 
-        var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
+        var reservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
         var mockReservationIndexRepository = Mock.Get(reservationIndexRepository);
 
         mockReservationIndexRepository.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Once);
@@ -39,7 +40,7 @@ public class ApprenticeshipDeletedSteps(TestServiceProvider serviceProvider, Tes
         var reservation = dbContext.Reservations.Find(TestData.ReservationId);
         reservation.Should().BeNull();
 
-        var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
+        var reservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
         var mock = Mock.Get(reservationIndexRepository);
 
         mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Pending), Times.Never);

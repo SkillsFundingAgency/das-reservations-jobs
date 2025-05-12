@@ -36,7 +36,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             var findApprenticeshipTrainingService = new Mock<IFindApprenticeshipTrainingService>();
             serviceCollection.AddSingleton(findApprenticeshipTrainingService.Object);
 
-            var mockReservationIndex = new Mock<IReservationIndexRepository>();
+            var mockReservationIndex = new Mock<IElasticReservationIndexRepository>();
             serviceCollection.AddSingleton(mockReservationIndex.Object);
 
             var mockProviderPermissions = new Mock<IProviderPermissionRepository>();

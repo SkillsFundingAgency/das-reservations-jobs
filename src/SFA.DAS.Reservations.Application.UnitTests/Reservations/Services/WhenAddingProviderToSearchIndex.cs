@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             long accountLegalEntityId,
             List<Reservation> reservationsFound,
             [Frozen] Mock<IReservationRepository> mockReservationsRepo,
-            [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
+            [Frozen] Mock<IElasticReservationIndexRepository> mockIndexRepo,
             ReservationService service)
         {
             IEnumerable<IndexedReservation> actualIndexedReservations = null;
@@ -76,7 +76,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             uint providerId,
             long accountLegalEntityId,
             [Frozen] Mock<IReservationRepository> mockReservationsRepo,
-            [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
+            [Frozen] Mock<IElasticReservationIndexRepository> mockIndexRepo,
             ReservationService service)
         {
             IEnumerable<IndexedReservation> actualIndexedReservations = new List<IndexedReservation>();

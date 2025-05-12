@@ -66,7 +66,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation search index should be updated with the deleted reservation removed")]
         public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheDeletedReservationRemoved()
         {
-            var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
+            var reservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
             var mock = Mock.Get(reservationIndexRepository);
             mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Deleted), Times.Once);
         }

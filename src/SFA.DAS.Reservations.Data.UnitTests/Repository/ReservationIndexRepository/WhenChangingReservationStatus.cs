@@ -15,7 +15,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         private const string ExpectedReservationStatusQuery = "{status} {reservationId}";
         
         private Mock<IElasticLowLevelClientWrapper> _elasticClientWrapper;
-        private Data.Repository.ReservationIndexRepository _reservationIndexRepository;
+        private Data.Repository.ElasticReservationIndexRepository _elasticReservationIndexRepository;
         private Mock<IIndexRegistry> _indexRegistry;
         private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
@@ -29,7 +29,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
 
             _indexRegistry.Setup(x => x.CurrentIndexName).Returns(ExpectedCurrentIndexName);
             
-            _reservationIndexRepository = new Data.Repository.ReservationIndexRepository(_elasticClientWrapper.Object,_indexRegistry.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment(ExpectedEnvironmentName));
+            _elasticReservationIndexRepository = new Data.Repository.ElasticReservationIndexRepository(_elasticClientWrapper.Object,_indexRegistry.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment(ExpectedEnvironmentName));
             
         }
         
@@ -41,7 +41,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
             var reservationStatus = ReservationStatus.Confirmed;
             
             //Act
-            await _reservationIndexRepository.SaveReservationStatus(reservationId, reservationStatus);
+            await _elasticReservationIndexRepository.SaveReservationStatus(reservationId, reservationStatus);
             
             //Assert
             _elasticClientWrapper.Verify(x=>x.UpdateByQuery(ExpectedCurrentIndexName, $"{(short)reservationStatus} {reservationId}"));

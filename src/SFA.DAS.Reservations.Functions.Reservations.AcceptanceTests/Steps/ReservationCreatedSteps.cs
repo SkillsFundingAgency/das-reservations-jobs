@@ -72,7 +72,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation search index should be updated with the new reservation")]
         public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheNewReservation()
         {
-            var indexRepository = Services.GetService<IReservationIndexRepository>();
+            var indexRepository = Services.GetService<IElasticReservationIndexRepository>();
             var mock = Mock.Get(indexRepository);
 
             mock.Verify(x => x.Add(It.IsAny<List<IndexedReservation>>()), Times.Once);

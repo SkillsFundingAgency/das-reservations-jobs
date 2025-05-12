@@ -16,6 +16,8 @@ using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
+using SFA.DAS.Reservations.Domain.Interfaces;
+using SFA.DAS.Reservations.Infrastructure.AzureSearch;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -31,13 +33,16 @@ var host = new HostBuilder()
 
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
         services.AddDasLogging(typeof(Program).Namespace);
-
+        
         services.AddTransient<IReservationIndexRefreshHandler, ReservationIndexRefreshHandler>();
+
         services.AddTransient<IReservationService, ReservationService>();
         services.AddTransient<IReservationRepository, ReservationRepository>();
-        services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+        services.AddTransient<IElasticReservationIndexRepository, ElasticReservationIndexRepository>();
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
         services.AddTransient<IIndexRegistry, IndexRegistry>();
+        
+        services.AddAzureSearch();
 
         services.AddElasticSearch(config);
         services.AddSingleton(new ReservationJobsEnvironment(configuration["EnvironmentName"]));
