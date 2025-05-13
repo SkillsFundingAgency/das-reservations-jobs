@@ -975,7 +975,7 @@
                 },
                 "parameters": {
                     "principalId": {
-                        "value": "[reference(concat(function-app-rsrv-idx-, parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                        "value": "[reference(concat(variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
                         "value": "AiSearchIndexContributor"
