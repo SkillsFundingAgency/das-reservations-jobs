@@ -136,7 +136,7 @@ public class ReservationService(
             indexedReservations.Add(indexedReservation);
         }
 
-        // await _indexRepository.Add(indexedReservations);
+        await indexRepository.Add(indexedReservations);
         await azureSearchIndexRepository.Add(indexedReservations);
 
         logger.LogInformation(
@@ -149,7 +149,7 @@ public class ReservationService(
             "Deleting reservations for ProviderId [{UkPrn}], AccountLegalEntityId [{AccountLegalEntityId}] from index.",
             ukPrn, accountLegalEntityId);
 
-        // await _indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
+        await indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
         await azureSearchIndexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
     }
 
@@ -173,7 +173,7 @@ public class ReservationService(
             indexedReservations.AddRange(matchingReservations.Select(c =>
                 MapReservation(c, providerId)));
 
-            // await _indexRepository.Add(indexedReservations);
+            await indexRepository.Add(indexedReservations);
             await azureSearchIndexRepository.Add(indexedReservations);
         }
 
