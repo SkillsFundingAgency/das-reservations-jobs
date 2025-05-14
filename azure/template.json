@@ -256,30 +256,6 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat('role-assignment-', variables('functionAppNameReservation'), '-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-ai-search.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "principalId": {
-                        "value": "[reference(concat(variables('functionAppNameReservation'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-                    },
-                    "assignmentType": {
-                        "value": "AiSearchIndexReader"
-                    },
-                    "resourceName": {
-                        "value": "[parameters('sharedAiSearchName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2021-04-01",
             "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
@@ -291,7 +267,7 @@
                 },
                 "parameters": {
                     "principalId": {
-                        "value": "[reference(concat(variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                        "value": "[reference(concat('function-app-rsrv-idx-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
                         "value": "AiSearchIndexReader"
@@ -315,7 +291,7 @@
                 },
                 "parameters": {
                     "principalId": {
-                        "value": "[reference(concat(variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
+                        "value": "[reference(concat('function-app-rsrv-prv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
                         "value": "AiSearchIndexReader"
