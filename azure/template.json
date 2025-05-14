@@ -256,7 +256,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))]",
+            "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-ai-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
@@ -280,7 +280,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "[concat('role-assignment-', variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))]",
+            "name": "[concat('role-assignment-', variables('functionAppNameProviderPermissions'), '-ai-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
