@@ -6,6 +6,7 @@ using NServiceBus;
 using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Entities;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
@@ -72,10 +73,14 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation search index should be updated with the new reservation")]
         public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheNewReservation()
         {
-            var indexRepository = Services.GetService<IReservationIndexRepository>();
-            var mock = Mock.Get(indexRepository);
+            var elasticReservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
+            var elasticMock = Mock.Get(elasticReservationIndexRepository);
+            
+            var azureSearchIndexRepository = Services.GetService<IAzureSearchReservationIndexRepository>();
+            var azSearchMock = Mock.Get(azureSearchIndexRepository);
 
-            mock.Verify(x => x.Add(It.IsAny<List<IndexedReservation>>()), Times.Once);
+            elasticMock.Verify(x => x.Add(It.IsAny<List<IndexedReservation>>()), Times.Once);
+            azSearchMock.Verify(x => x.Add(It.IsAny<List<IndexedReservation>>(), It.IsAny<string>()), Times.Once);
         }
 
         [Then(@"the employer should be notified of the created reservation")]

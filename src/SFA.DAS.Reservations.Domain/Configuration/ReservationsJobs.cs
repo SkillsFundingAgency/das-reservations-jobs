@@ -10,6 +10,8 @@
         public string ElasticSearchUsername { get; set; }
         public string ElasticSearchPassword { get; set; }
         public string ElasticSearchServerUrl { get; set; }
+        public string AzureSearchBaseUrl { get; set; }
+        public string AzureSearchResource { get; set; }
         public string ReservationCreatedEmailTemplateId { get; set; }
         public virtual string ReservationsApimUrl { get; set; }
         public virtual string ReservationsApimSubscriptionKey { get; set; }
