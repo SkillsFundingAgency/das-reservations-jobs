@@ -1036,54 +1036,6 @@
                     }
                 }
             }
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat('role-assignment-', variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-ai-search.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "principalId": {
-                        "value": "[reference(concat(variables('functionAppNameReservationIndex'), '-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-                    },
-                    "assignmentType": {
-                        "value": "AiSearchIndexContributor"
-                    },
-                    "resourceName": {
-                        "value": "[parameters('sharedAiSearchName')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2021-04-01",
-            "name": "[concat('role-assignment-', variables('functionAppNameProviderPermissions'), '-', parameters('utcValue'))]",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-service-bus.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "principalId": {
-                        "value": "[reference(concat('function-app-rsrv-prv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
-                    },
-                    "assignmentType": {
-                        "value": "ServiceBusOwner"
-                    },
-                    "resourceName": {
-                        "value": "[parameters('sharedServiceBusName')]"
-                    }
-                }
-            }
         }
     ],
     "outputs": {
