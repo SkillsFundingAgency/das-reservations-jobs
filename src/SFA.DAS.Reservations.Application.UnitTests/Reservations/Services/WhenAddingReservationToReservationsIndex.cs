@@ -30,7 +30,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
             Reservation reservation,
             List<Domain.Entities.ProviderPermission> permissions,
             [Frozen] Mock<IProviderPermissionRepository> mockPermissionsRepo,
-            [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
+            [Frozen] Mock<IElasticReservationIndexRepository> mockIndexRepo,
             ReservationService service)
         {
             IEnumerable<IndexedReservation> actualIndexedReservations = null;
@@ -72,7 +72,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public async Task Then_If_No_Provider_Permissions_Found_Does_Not_Update_Index(
             Reservation reservation,
             [Frozen] Mock<IProviderPermissionRepository> mockPermissionsRepo,
-            [Frozen] Mock<IReservationIndexRepository> mockIndexRepo,
+            [Frozen] Mock<IElasticReservationIndexRepository> mockIndexRepo,
             ReservationService service)
         {
             //Arrange

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using NServiceBus;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Messages;

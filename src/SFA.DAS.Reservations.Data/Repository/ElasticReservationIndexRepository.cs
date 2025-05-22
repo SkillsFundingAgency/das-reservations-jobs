@@ -9,12 +9,12 @@ using SFA.DAS.Reservations.Domain.Reservations;
 
 namespace SFA.DAS.Reservations.Data.Repository
 {
-    public class ReservationIndexRepository(
+    public class ElasticReservationIndexRepository(
         IElasticLowLevelClientWrapper client,
         IIndexRegistry registry,
         IElasticSearchQueries elasticSearchQueries,
         ReservationJobsEnvironment environment)
-        : IReservationIndexRepository
+        : IElasticReservationIndexRepository
     {
         public string IndexNamePrefix { get; } = $"{environment.EnvironmentName}-reservations-";
 

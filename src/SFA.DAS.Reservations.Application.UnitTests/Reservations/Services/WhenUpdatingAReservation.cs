@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Services;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 
@@ -15,17 +16,20 @@ public class WhenUpdatingAReservation
 {
     private ReservationService _service;
     private Mock<IReservationRepository> _repository;
-    private Mock<IReservationIndexRepository> _reservationIndex;
+    private Mock<IElasticReservationIndexRepository> _elasticIndexRepository;
+    private Mock<IAzureSearchReservationIndexRepository> _azureSearchIndexRepository;
 
     [SetUp]
     public void Arrange()
     {
         _repository = new Mock<IReservationRepository>();
-        _reservationIndex = new Mock<IReservationIndexRepository>();
+        _elasticIndexRepository = new Mock<IElasticReservationIndexRepository>();
+        _azureSearchIndexRepository = new Mock<IAzureSearchReservationIndexRepository>();
 
         _service = new ReservationService(
             _repository.Object,
-            _reservationIndex.Object, 
+            _elasticIndexRepository.Object, 
+            _azureSearchIndexRepository.Object,
             Mock.Of<IProviderPermissionRepository>(), 
             Mock.Of<ILogger<ReservationService>>());
     }
@@ -54,7 +58,7 @@ public class WhenUpdatingAReservation
                 cohortId, 
                 draftApprenticeshipId), 
             Times.Once);
-        _reservationIndex.Verify(r => r.SaveReservationStatus(reservationId, status), Times.Once);
+        _elasticIndexRepository.Verify(r => r.SaveReservationStatus(reservationId, status), Times.Once);
     }
 
     [Test]
@@ -78,7 +82,7 @@ public class WhenUpdatingAReservation
                 It.IsAny<long>()), 
             Times.Never);
             
-        _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
+        _elasticIndexRepository.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
     }
 
     [Test]
@@ -99,6 +103,6 @@ public class WhenUpdatingAReservation
         await _service.UpdateReservationStatus(reservationId, status);
             
         //Assert
-        _reservationIndex.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
+        _elasticIndexRepository.Verify(r => r.SaveReservationStatus(It.IsAny<Guid>(), It.IsAny<ReservationStatus>()), Times.Never);
     }
 }

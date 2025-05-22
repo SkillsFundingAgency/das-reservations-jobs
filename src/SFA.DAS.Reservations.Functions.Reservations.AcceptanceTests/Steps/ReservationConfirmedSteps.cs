@@ -56,7 +56,7 @@ public class ReservationConfirmedSteps(TestServiceProvider serviceProvider, Test
         reservation.CohortId.Should().Be(TestData.DraftApprenticeshipCreatedEvent.CohortId);
         reservation.DraftApprenticeshipId.Should().Be(TestData.DraftApprenticeshipCreatedEvent.DraftApprenticeshipId);
 
-        var reservationIndexRepository = Services.GetService<IReservationIndexRepository>();
+        var reservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
         var mock = Mock.Get(reservationIndexRepository);
 
         mock.Verify(x => x.SaveReservationStatus(
