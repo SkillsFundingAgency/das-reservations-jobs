@@ -273,7 +273,7 @@
                         "value": "[reference(concat('function-app-rsrv-idx-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
-                        "value": "AiSearchIndexReader"
+                        "value": "AiSearchIndexContributor"
                     },
                     "resourceName": {
                         "value": "[parameters('sharedAiSearchName')]"
@@ -297,7 +297,7 @@
                         "value": "[reference(concat('function-app-rsrv-prv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
-                        "value": "AiSearchIndexReader"
+                        "value": "AiSearchIndexContributor"
                     },
                     "resourceName": {
                         "value": "[parameters('sharedAiSearchName')]"
@@ -321,7 +321,7 @@
                         "value": "[reference(concat('function-app-rsrv-', parameters('utcValue'))).outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
-                        "value": "AiSearchIndexReader"
+                        "value": "AiSearchIndexContributor"
                     },
                     "resourceName": {
                         "value": "[parameters('sharedAiSearchName')]"
