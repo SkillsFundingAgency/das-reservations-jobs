@@ -19,7 +19,9 @@ using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
 using NServiceBus;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Infrastructure;
+using SFA.DAS.Reservations.Infrastructure.AzureSearch;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 [assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ProviderPermissionQueue)]
@@ -44,7 +46,8 @@ var host = new HostBuilder()
         services.AddTransient<IReservationIndexRefreshHandler, ReservationIndexRefreshHandler>();
         services.AddTransient<IReservationService, ReservationService>();
         services.AddTransient<IReservationRepository, ReservationRepository>();
-        services.AddTransient<IReservationIndexRepository, ReservationIndexRepository>();
+        services.AddTransient<IElasticReservationIndexRepository, ElasticReservationIndexRepository>();
+
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
         services.AddTransient<IIndexRegistry, IndexRegistry>();
 
@@ -53,6 +56,7 @@ var host = new HostBuilder()
         services.AddTransient<IProviderPermissionService, ProviderPermissionService>();
 
         services.AddElasticSearch(config);
+        services.AddAzureSearch();
         services.AddSingleton(new ReservationJobsEnvironment(configuration["EnvironmentName"]));
 
         services.AddDatabaseRegistration(config, configuration["EnvironmentName"]);

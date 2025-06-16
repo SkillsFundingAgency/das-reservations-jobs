@@ -2,7 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
-using SFA.DAS.Reservations.Domain.Reservations;
+using SFA.DAS.Reservations.Domain.Interfaces;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Handlers
 {

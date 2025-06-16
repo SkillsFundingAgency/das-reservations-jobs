@@ -14,7 +14,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Services
         public async Task Then_The_Reservations_Are_Deleted_By_Provider_And_AccountLegalEntityId(
             uint ukPrn,
             long accountLegalEntityId,
-            [Frozen]Mock<IReservationIndexRepository> indexRepository,
+            [Frozen]Mock<IElasticReservationIndexRepository> indexRepository,
             ReservationService service
             )
         {

@@ -13,7 +13,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
         private const string ExpectedDeleteQuery = @"{ukPrn}_{accountLegalEntityId}_";
         
         private Mock<IElasticLowLevelClientWrapper> _elasticClientWrapper;
-        private Data.Repository.ReservationIndexRepository _reservationIndexRepository;
+        private Data.Repository.ElasticReservationIndexRepository _elasticReservationIndexRepository;
         private Mock<IIndexRegistry> _indexRegistry;
         private Mock<IElasticSearchQueries> _elasticSearchQueries;
 
@@ -27,7 +27,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
 
             _indexRegistry.Setup(x => x.CurrentIndexName).Returns(ExpectedCurrentIndexName);
             
-            _reservationIndexRepository = new Data.Repository.ReservationIndexRepository(_elasticClientWrapper.Object,_indexRegistry.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment(ExpectedEnvironmentName));
+            _elasticReservationIndexRepository = new Data.Repository.ElasticReservationIndexRepository(_elasticClientWrapper.Object,_indexRegistry.Object, _elasticSearchQueries.Object, new ReservationJobsEnvironment(ExpectedEnvironmentName));
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.ReservationIndexReposit
                 .Replace("{accountLegalEntityId}", expectedAccountLegalEntityId.ToString());
             
             //Act
-            await _reservationIndexRepository.DeleteReservationsFromIndex(expectedUkPrn, expectedAccountLegalEntityId);
+            await _elasticReservationIndexRepository.DeleteReservationsFromIndex(expectedUkPrn, expectedAccountLegalEntityId);
             
             //Assert
             _elasticClientWrapper.Verify(x=>x.DeleteByQuery(ExpectedCurrentIndexName, expectedQuery), Times.Once);

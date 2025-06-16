@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Microsoft.Extensions.Logging;
@@ -9,8 +8,8 @@ using SFA.DAS.ProviderRelationships.Messages.Events;
 using SFA.DAS.ProviderRelationships.Types.Models;
 using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
 using SFA.DAS.Reservations.Application.UnitTests.Customisations;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
-using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.ProviderPermission.Service
