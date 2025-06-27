@@ -35,7 +35,16 @@ public class AzureSearchReservationIndexRepository(
     {
         var documents = reservations.Select(r => (ReservationAzureSearchDocument)r);
 
-        indexName = indexName ?? (await azureSearchHelper.GetAlias(AliasName)).Indexes.First();
+        if (indexName == null)
+        {
+            var alias = await azureSearchHelper.GetAlias(AliasName);
+            if (alias?.Indexes?.FirstOrDefault() == null)
+            {
+                logger.LogWarning("Alias '{AliasName}' not found or has no indexes. Skipping document upload.", AliasName);
+                return;
+            }
+            indexName = alias.Indexes.First();
+        }
         
         await azureSearchHelper.UploadDocuments(indexName, documents);
     }
