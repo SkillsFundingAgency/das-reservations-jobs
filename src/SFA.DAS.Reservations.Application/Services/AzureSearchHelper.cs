@@ -53,7 +53,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when creating index with name {IndexName}", indexName);
-            throw new RequestFailedException($"Failure returned when creating index with name {indexName}", ex);
+            //throw new RequestFailedException($"Failure returned when creating index with name {indexName}", ex); //temp 
         }
     }
 
@@ -63,7 +63,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         
         try
         {
-            if (index.Value != null)
+            if (index?.Value != null)
             {
                 await _adminClient.DeleteIndexAsync(indexName);
             }
@@ -71,7 +71,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when deleting index with name {IndexName}", indexName);
-            throw new RequestFailedException($"Failure returned when deleting index with name {indexName}", ex);
+            //throw new RequestFailedException($"Failure returned when deleting index with name {indexName}", ex); //temp
         }
     }
 
@@ -85,7 +85,7 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when uploading documents to index with name {IndexName}", indexName);
-            throw new RequestFailedException("Failure returned when uploading documents to index", ex);
+            //throw new RequestFailedException("Failure returned when uploading documents to index", ex); //temp
         }
     }
 
@@ -98,7 +98,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when requesting index with name {IndexName}", indexName);
-            throw new RequestFailedException($"Failure returned when requesting index with name {indexName}", ex);
+            //throw new RequestFailedException($"Failure returned when requesting index with name {indexName}", ex);
+            return null; //temp
         }
     }
 
@@ -120,7 +121,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when requesting indexes");
-            throw new RequestFailedException("Failure returned when requesting indexes", ex);
+            //throw new RequestFailedException("Failure returned when requesting indexes", ex);
+            return new List<SearchIndex>(); //temp
         }
     }
 
@@ -137,7 +139,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when requesting alias {AliasName}", aliasName);
-            throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
+            //throw new RequestFailedException($"Failure returned when requesting alias {aliasName}", ex);
+            return null; //temp
         }
     }
 
@@ -166,7 +169,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
         catch (Exception ex)
         {
-            throw new RequestFailedException($"Failure returned when updating alias {aliasName} for index {indexName}", ex);
+            _logger.LogWarning(ex, $"Failure returned when updating alias {aliasName} for index {indexName}");
+            //throw new RequestFailedException($"Failure returned when updating alias {aliasName} for index {indexName}", ex); //temp
         }
     }
 
@@ -213,7 +217,8 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when searching documents with filter {Filter}", filter);
-            throw new RequestFailedException($"Failure returned when searching documents with filter {filter}", ex);
+            //throw new RequestFailedException($"Failure returned when searching documents with filter {filter}", ex);
+            return null; //temp
         }
     }
 } 

@@ -83,7 +83,7 @@ public class AzureSearchReservationIndexRepository(
         }
 
         var index = await azureSearchHelper.GetIndex(alias.Indexes.First());
-        if (index.Value == null)
+        if (index?.Value == null)
         {
             return;
         }
@@ -94,9 +94,9 @@ public class AzureSearchReservationIndexRepository(
 
             var searchResults = await azureSearchHelper.SearchDocuments(index.Value.Name, filter, ["Id"]);
 
-            var documentIds = searchResults.GetResults().Select(r => r.Document.Id).ToList();
+            var documentIds = searchResults?.GetResults().Select(r => r.Document.Id).ToList();
 
-            if (documentIds.Any())
+            if (documentIds?.Count > 0)
             {
                 await azureSearchHelper.DeleteDocuments(index.Value.Name, documentIds);
             }
@@ -123,7 +123,7 @@ public class AzureSearchReservationIndexRepository(
         }
 
         var index = await azureSearchHelper.GetIndex(alias.Indexes.First());
-        if (index.Value == null)
+        if (index?.Value == null)
         {
             return;
         }
