@@ -151,7 +151,9 @@ public class AzureSearchHelper : IAzureSearchHelper
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failure returned when requesting document {ReservationId}", reservationId);
-            throw new RequestFailedException($"Failure returned when requesting document {reservationId}", ex);
+            //temporarily commented out to avoid throwing an exception while finctionality is being worked on
+            //throw new RequestFailedException($"Failure returned when requesting document {reservationId}", ex);
+            return null;
         }
     }
 
