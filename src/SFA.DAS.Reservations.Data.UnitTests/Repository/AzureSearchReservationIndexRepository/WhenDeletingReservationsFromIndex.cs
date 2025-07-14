@@ -18,7 +18,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationI
     {
 
         [Test, MoqAutoData]
-        public async Task DoesNothing_WhenAliasIsNull(
+        public async Task Then_Returns_Early_If_Alias_Is_Null(
             uint ukPrn,
             long accountLegalEntityId,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelperMock,
@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationI
         }
 
         [Test, MoqAutoData]
-        public async Task DoesNothing_WhenIndexIsNull(
+        public async Task Then_Returns_Early_If_Index_Is_Null(
             uint ukPrn,
             long accountLegalEntityId,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelperMock,
@@ -57,7 +57,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationI
         }
 
         [Test, MoqAutoData]
-        public async Task DoesNothing_WhenIndexValueIsNull(
+        public async Task Then_Returns_Early_If_Index_Value_Is_Null(
             uint ukPrn,
             long accountLegalEntityId,
             [Frozen] Mock<IAzureSearchHelper> azureSearchHelperMock,
@@ -76,7 +76,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationI
         }
 
         [Test, MoqAutoData]
-        public async Task DeletesDocuments_WhenDocumentsExist(
+        public async Task Deletes_Documents_When_Documents_Exist(
             uint ukPrn,
             long accountLegalEntityId,
             string documentId,
@@ -114,7 +114,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationI
         }
 
         [Test, MoqAutoData]
-        public void Throws_WhenExceptionOccurs(
+        public void Throws_When_Exception_Occurs(
             uint ukPrn,
             long accountLegalEntityId,
             Exception exception,
