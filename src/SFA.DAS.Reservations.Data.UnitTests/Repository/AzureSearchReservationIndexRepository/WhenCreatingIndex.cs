@@ -1,7 +1,7 @@
 ﻿using AutoFixture.NUnit3;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
 using System.Threading.Tasks;
@@ -24,7 +24,7 @@ public class WhenCreatingIndex
         var result = await repository.CreateIndex();
 
         // Assert
-        StringAssert.StartsWith("reservations-", result);
+        result.Should().StartWith("reservations-");
         azureSearchHelperMock.Verify(x => x.CreateIndex(result), Times.Once);
     }
 }

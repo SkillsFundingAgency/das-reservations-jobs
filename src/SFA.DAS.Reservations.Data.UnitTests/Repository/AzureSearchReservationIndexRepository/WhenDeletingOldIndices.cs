@@ -79,7 +79,7 @@ public class WhenDeletingOldIndices
         await repository.DeleteIndices(daysOld);
 
         // Assert
-        azureSearchHelper.Verify(x => x.DeleteIndex(It.IsAny<string>()), Times.Never);
+        azureSearchHelper.Verify(x => x.DeleteIndex(recentIndex), Times.Never);
     }
 
     [Test, MoqAutoData]

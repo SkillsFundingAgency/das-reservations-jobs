@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationIndexRepository;
 public class WhenUpdatingAlias
 {
+    private const string AliasName = "reservations";
     private const string IndexName = "reservations-123";
 
     [Test, MoqAutoData]
@@ -20,7 +21,7 @@ public class WhenUpdatingAlias
 
         // Assert
         azureSearchHelper.Verify(x => x.UpdateAlias(
-            It.IsAny<string>(),
+            AliasName,
             IndexName),
             Times.Once);
     }

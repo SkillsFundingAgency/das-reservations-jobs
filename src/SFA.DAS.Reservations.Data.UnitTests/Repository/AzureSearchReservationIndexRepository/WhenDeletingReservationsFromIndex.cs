@@ -17,6 +17,7 @@ namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationI
 
 public class WhenDeletingReservationsFromIndex
 {
+    private const string AliasName = "reservations";
 
     [Test, MoqAutoData]
     public async Task Then_Returns_Early_If_Alias_Is_Null(
@@ -34,7 +35,7 @@ public class WhenDeletingReservationsFromIndex
         await repository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
 
         // Assert 
-        azureSearchHelperMock.Verify(x => x.GetAlias(It.IsAny<string>()), Times.Once);
+        azureSearchHelperMock.Verify(x => x.GetAlias(AliasName), Times.Once);
         azureSearchHelperMock.Verify(x => x.GetIndex(It.IsAny<string>()), Times.Never);
     }
 
@@ -81,13 +82,14 @@ public class WhenDeletingReservationsFromIndex
         uint ukPrn,
         long accountLegalEntityId,
         string documentId,
+        string indexName,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelperMock,
         Data.Repository.AzureSearchReservationIndexRepository repository,
         ReservationAzureSearchDocument document)
     {
         // Arrange            
         azureSearchHelperMock.Setup(x => x.GetIndex(It.IsAny<string>()))
-         .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex("test"), new Mock<Response>().Object));
+         .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex(indexName), new Mock<Response>().Object));
 
         var searchResult = SearchModelFactory.SearchResult(
                    document: document,
@@ -110,8 +112,8 @@ public class WhenDeletingReservationsFromIndex
         await repository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
 
         // Assert            
-        azureSearchHelperMock.Verify(x => x.SearchDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>()), Times.Once);
-        azureSearchHelperMock.Verify(x => x.DeleteDocuments(It.IsAny<string>(), It.Is<IEnumerable<string>>(ids => ids.Contains(document.Id))), Times.Once);
+        azureSearchHelperMock.Verify(x => x.SearchDocuments(indexName, It.IsAny<string>(), It.IsAny<string[]>()), Times.Once);
+        azureSearchHelperMock.Verify(x => x.DeleteDocuments(indexName, It.Is<IEnumerable<string>>(ids => ids.Contains(document.Id))), Times.Once);
     }
 
     [Test, MoqAutoData]

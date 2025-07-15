@@ -62,6 +62,7 @@ public class WhenSavingReservationStatus
         Guid reservationId,
         ReservationStatus status,
         SearchAlias alias,
+        string indexName,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         [Frozen] Mock<ILogger<Data.Repository.AzureSearchReservationIndexRepository>> mockLogger,
         Data.Repository.AzureSearchReservationIndexRepository repository)
@@ -70,7 +71,7 @@ public class WhenSavingReservationStatus
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>()))
             .ReturnsAsync(alias);
         azureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>()))
-          .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex("test"), new Mock<Response>().Object));
+          .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex(indexName), new Mock<Response>().Object));
 
         azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((Response<ReservationAzureSearchDocument>)null);
@@ -92,6 +93,7 @@ public class WhenSavingReservationStatus
         Guid reservationId,
         ReservationStatus status,
         SearchAlias alias,
+        string indexName,
         ReservationAzureSearchDocument document,
         [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
         [Frozen] Mock<ILogger<Data.Repository.AzureSearchReservationIndexRepository>> mockLogger,
@@ -101,7 +103,7 @@ public class WhenSavingReservationStatus
         azureSearchHelper.Setup(x => x.GetAlias(It.IsAny<string>()))
             .ReturnsAsync(alias);
         azureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>()))
-            .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex("test"), new Mock<Response>().Object));
+            .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex(indexName), new Mock<Response>().Object));
         azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(Response.FromValue(document, new Mock<Response>().Object));
 
