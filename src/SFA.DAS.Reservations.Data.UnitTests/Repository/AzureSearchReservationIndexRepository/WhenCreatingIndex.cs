@@ -6,26 +6,25 @@ using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationIndexRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationIndexRepository;
+
+public class WhenCreatingIndex
 {
-    public class WhenCreatingIndex
+    [Test, MoqAutoData]
+    public async Task Then_The_Index_Is_Created_And_Returned(
+        [Frozen] Mock<IAzureSearchHelper> azureSearchHelperMock,
+        Data.Repository.AzureSearchReservationIndexRepository repository)
     {
-        [Test, MoqAutoData]
-        public async Task Then_The_Index_Is_Created_And_Returned(
-            [Frozen] Mock<IAzureSearchHelper> azureSearchHelperMock,
-            Data.Repository.AzureSearchReservationIndexRepository repository)
-        {
-            // Arrange
-            azureSearchHelperMock
-                .Setup(x => x.CreateIndex(It.IsAny<string>()))
-                .Returns(Task.CompletedTask);
+        // Arrange
+        azureSearchHelperMock
+            .Setup(x => x.CreateIndex(It.IsAny<string>()))
+            .Returns(Task.CompletedTask);
 
-            // Act
-            var result = await repository.CreateIndex();
+        // Act
+        var result = await repository.CreateIndex();
 
-            // Assert
-            StringAssert.StartsWith("reservations-", result);
-            azureSearchHelperMock.Verify(x => x.CreateIndex(result), Times.Once);
-        }
+        // Assert
+        StringAssert.StartsWith("reservations-", result);
+        azureSearchHelperMock.Verify(x => x.CreateIndex(result), Times.Once);
     }
 }

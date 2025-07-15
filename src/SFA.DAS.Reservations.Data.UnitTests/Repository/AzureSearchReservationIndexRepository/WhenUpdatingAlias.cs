@@ -5,25 +5,23 @@ using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Testing.AutoFixture;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationIndexRepository
+namespace SFA.DAS.Reservations.Data.UnitTests.Repository.AzureSearchReservationIndexRepository;
+public class WhenUpdatingAlias
 {
-    public class WhenUpdatingAlias
+    private const string IndexName = "reservations-123";
+
+    [Test, MoqAutoData]
+    public async Task Then_Alias_Is_Created_Or_Updated(
+    [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
+    Data.Repository.AzureSearchReservationIndexRepository repository)
     {
-        private const string IndexName = "reservations-123";
+        // Act
+        await repository.UpdateAlias(IndexName);
 
-        [Test, MoqAutoData]
-        public async Task Then_Alias_Is_Created_Or_Updated(
-        [Frozen] Mock<IAzureSearchHelper> azureSearchHelper,
-        Data.Repository.AzureSearchReservationIndexRepository repository)
-        {
-            // Act
-            await repository.UpdateAlias(IndexName);
-
-            // Assert
-            azureSearchHelper.Verify(x => x.UpdateAlias(
-                It.IsAny<string>(),
-                IndexName),
-                Times.Once);
-        }
+        // Assert
+        azureSearchHelper.Verify(x => x.UpdateAlias(
+            It.IsAny<string>(),
+            IndexName),
+            Times.Once);
     }
 }
