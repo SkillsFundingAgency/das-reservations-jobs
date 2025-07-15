@@ -115,7 +115,7 @@ public class WhenDeletingReservationsFromIndex
     }
 
     [Test, MoqAutoData]
-    public void Throws_When_Exception_Occurs(
+    public async Task Throws_When_Exception_OccursAsync(
         uint ukPrn,
         long accountLegalEntityId,
         Exception exception,
@@ -130,7 +130,7 @@ public class WhenDeletingReservationsFromIndex
             .ThrowsAsync(exception);
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<Exception>(() => repository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId));
-        ex.Should().Be(exception);
+        Func<Task> act = () => repository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
+        (await act.Should().ThrowAsync<Exception>()).Which.Should().Be(exception);
     }
 }

@@ -117,7 +117,7 @@ public class WhenSavingReservationStatus
     }
 
     [Test, MoqAutoData]
-    public void Throws_When_Exception_Occurs(
+    public async Task Throws_When_Exception_Occurs(
        Guid reservationId,
         SearchAlias alias,
         Exception exception,
@@ -134,8 +134,8 @@ public class WhenSavingReservationStatus
             .ThrowsAsync(exception);
 
         //Act Assert 
-        var ex = Assert.ThrowsAsync<Exception>(() => repository.SaveReservationStatus(reservationId, status));
-        ex.Should().Be(exception);
+        Func<Task> act = () => repository.SaveReservationStatus(reservationId, status);
+        (await act.Should().ThrowAsync<Exception>()).Which.Should().Be(exception);
     }
 }
 
