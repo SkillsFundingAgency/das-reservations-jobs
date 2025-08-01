@@ -39,9 +39,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             var findApprenticeshipTrainingService = new Mock<IFindApprenticeshipTrainingService>();
             serviceCollection.AddSingleton(findApprenticeshipTrainingService.Object);
 
-            var mockElasticReservationIndex = new Mock<IElasticReservationIndexRepository>();
-            serviceCollection.AddSingleton(mockElasticReservationIndex.Object);
-
             var mockAzureSearchReservationIndex = new Mock<IAzureSearchReservationIndexRepository>();
             serviceCollection.AddSingleton(mockAzureSearchReservationIndex.Object);
 
@@ -72,7 +69,6 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
                     new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
                     new KeyValuePair<string, string>("EnvironmentName", "DEV"),
                     new KeyValuePair<string, string>("Version", "1.0"),
-                    new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
                     new KeyValuePair<string, string>("ReservationsJobs:AzureSearchBaseUrl", "https://localhost:9301")
                 ]
             };

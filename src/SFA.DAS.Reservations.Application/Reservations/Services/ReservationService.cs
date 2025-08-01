@@ -11,7 +11,6 @@ namespace SFA.DAS.Reservations.Application.Reservations.Services;
 
 public class ReservationService(
     IReservationRepository reservationsRepository,
-    IElasticReservationIndexRepository indexRepository,
     IAzureSearchReservationIndexRepository azureSearchIndexRepository,
     IProviderPermissionRepository permissionsRepository,
     ILogger<ReservationService> logger)
@@ -49,7 +48,6 @@ public class ReservationService(
                 confirmedDate,
                 cohortId,
                 draftApprenticeshipId);
-            await indexRepository.SaveReservationStatus(reservationId, status);
             await azureSearchIndexRepository.SaveReservationStatus(reservationId, status);
         }
         catch (InvalidOperationException e)
@@ -64,7 +62,6 @@ public class ReservationService(
     {
         try
         {
-            await indexRepository.CreateIndex();
             var indexName = await azureSearchIndexRepository.CreateIndex();
 
             var permissions = permissionsRepository.GetAllWithCreateCohortPermission().ToList();
@@ -95,12 +92,10 @@ public class ReservationService(
                     var indexedReservations = matchingReservations.ConvertAll(c =>
                         MapReservation(c, Convert.ToUInt32(permission.ProviderId)));
 
-                    await indexRepository.Add(indexedReservations);
                     await azureSearchIndexRepository.Add(indexedReservations, indexName);
                 }
             }
 
-            await indexRepository.DeleteIndices(5);
             await azureSearchIndexRepository.UpdateAlias(indexName);
             await azureSearchIndexRepository.DeleteIndices(5);
 
@@ -136,7 +131,6 @@ public class ReservationService(
             indexedReservations.Add(indexedReservation);
         }
 
-        await indexRepository.Add(indexedReservations);
         await azureSearchIndexRepository.Add(indexedReservations);
 
         logger.LogInformation(
@@ -149,7 +143,6 @@ public class ReservationService(
             "Deleting reservations for ProviderId [{UkPrn}], AccountLegalEntityId [{AccountLegalEntityId}] from index.",
             ukPrn, accountLegalEntityId);
 
-        await indexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
         await azureSearchIndexRepository.DeleteReservationsFromIndex(ukPrn, accountLegalEntityId);
     }
 
@@ -173,7 +166,6 @@ public class ReservationService(
             indexedReservations.AddRange(matchingReservations.Select(c =>
                 MapReservation(c, providerId)));
 
-            await indexRepository.Add(indexedReservations);
             await azureSearchIndexRepository.Add(indexedReservations);
         }
 

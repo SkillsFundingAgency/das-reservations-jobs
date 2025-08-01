@@ -60,7 +60,6 @@ namespace SFA.DAS.Reservations.Functions.LegalEntities.AcceptanceTests
                     new KeyValuePair<string, string>("ConfigNames", "SFA.DAS.Reservations.Jobs"),
                     new KeyValuePair<string, string>("EnvironmentName", "DEV"),
                     new KeyValuePair<string, string>("Version", "1.0"),
-                    new KeyValuePair<string, string>("ReservationsJobs:ElasticSearchServerUrl", "http://localhost:9200"),
                     new KeyValuePair<string, string>("ReservationsJobs:ReservationsApimUrl", "http://localhost:9201"),
                     new KeyValuePair<string, string>("ReservationsJobs:AzureSearchBaseUrl", "https://localhost:9301")
                 ]

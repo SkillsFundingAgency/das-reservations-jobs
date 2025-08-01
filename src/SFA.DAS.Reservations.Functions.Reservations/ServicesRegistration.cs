@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -11,11 +9,9 @@ using SFA.DAS.Reservations.Application.OuterApi;
 using SFA.DAS.Reservations.Application.Providers.Services;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data.Registry;
 using SFA.DAS.Reservations.Data.Repository;
 using SFA.DAS.Reservations.Domain.Accounts;
 using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
 using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
@@ -26,7 +22,8 @@ using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.Api;
 using SFA.DAS.Reservations.Infrastructure.AzureSearch;
 using SFA.DAS.Reservations.Infrastructure.Database;
-using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
+using System;
+using System.Net.Http;
 using ServiceDescriptor = Microsoft.Extensions.DependencyInjection.ServiceDescriptor;
 
 namespace SFA.DAS.Reservations.Functions.Reservations;
@@ -70,7 +67,6 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
         services.AddTransient<IAccountRepository, AccountRepository>();
 
         services.AddTransient<IEncodingService, EncodingService>();
-        services.AddTransient<IElasticReservationIndexRepository, ElasticReservationIndexRepository>();
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
         services.AddTransient<IAccountsService, AccountsService>();
         services.AddTransient<INotificationTokenBuilder, NotificationTokenBuilder>();
@@ -78,9 +74,7 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
         services.AddSingleton<HttpClient>(x => x.GetService<IHttpClientFactory>().CreateClient());
 
         services.AddTransient<IAddNonLevyReservationToReservationsIndexAction, AddNonLevyReservationToReservationsIndexAction>();
-        services.AddTransient<IIndexRegistry, IndexRegistry>();
-
-        services.AddElasticSearch(config);
+        
         services.AddAzureSearch();
         services.AddSingleton(new ReservationJobsEnvironment(environmentName));
         services.AddDatabaseRegistration(config, environmentName);

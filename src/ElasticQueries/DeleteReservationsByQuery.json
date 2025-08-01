@@ -1,7 +1,0 @@
-{
-  "query": {
-    "match_phrase_prefix": {
-      "id": "{ukPrn}_{accountLegalEntityId}_"
-    }
-  }
-}

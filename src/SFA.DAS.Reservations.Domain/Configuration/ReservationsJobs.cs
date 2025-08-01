@@ -7,9 +7,6 @@
         public string NServiceBusConnectionString { get; set; }
         public string NServiceBusLicense { get; set; }
         public string AzureWebJobsStorage { get; set; }
-        public string ElasticSearchUsername { get; set; }
-        public string ElasticSearchPassword { get; set; }
-        public string ElasticSearchServerUrl { get; set; }
         public string AzureSearchBaseUrl { get; set; }
         public string AzureSearchResource { get; set; }
         public string ReservationCreatedEmailTemplateId { get; set; }
