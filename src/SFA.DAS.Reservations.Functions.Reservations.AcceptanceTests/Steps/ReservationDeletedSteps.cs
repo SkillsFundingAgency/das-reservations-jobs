@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NServiceBus;
 using SFA.DAS.Notifications.Messages.Commands;
 using SFA.DAS.Reservations.Data;
 using SFA.DAS.Reservations.Domain.Accounts;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Notifications;
 using SFA.DAS.Reservations.Domain.Reservations;
+using System;
+using System.Collections.Generic;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
@@ -66,7 +67,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps
         [Then(@"the reservation search index should be updated with the deleted reservation removed")]
         public void ThenTheReservationSearchIndexShouldBeUpdatedWithTheDeletedReservationRemoved()
         {
-            var reservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
+            var reservationIndexRepository = Services.GetService<IAzureSearchReservationIndexRepository>();
             var mock = Mock.Get(reservationIndexRepository);
             mock.Verify(x => x.SaveReservationStatus(TestData.ReservationId, ReservationStatus.Deleted), Times.Once);
         }

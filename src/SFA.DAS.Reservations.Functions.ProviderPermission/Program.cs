@@ -1,27 +1,24 @@
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using SFA.DAS.Reservations.Data.Repository;
-using SFA.DAS.Reservations.Domain.Configuration;
-using SFA.DAS.Reservations.Infrastructure.Database;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using NServiceBus;
 using SFA.DAS.Reservations.Application.OuterApi;
+using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
+using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
 using SFA.DAS.Reservations.Application.Reservations.Handlers;
 using SFA.DAS.Reservations.Application.Reservations.Services;
-using SFA.DAS.Reservations.Data.Registry;
-using SFA.DAS.Reservations.Domain.Infrastructure.ElasticSearch;
+using SFA.DAS.Reservations.Data.Repository;
+using SFA.DAS.Reservations.Domain.Configuration;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.ProviderPermissions;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Functions.ProviderPermission;
-using SFA.DAS.Reservations.Infrastructure.ElasticSearch;
-using NServiceBus;
-using SFA.DAS.Reservations.Application.ProviderPermissions.Handlers;
-using SFA.DAS.Reservations.Application.ProviderPermissions.Service;
-using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Infrastructure;
 using SFA.DAS.Reservations.Infrastructure.AzureSearch;
+using SFA.DAS.Reservations.Infrastructure.Database;
 using SFA.DAS.Reservations.Infrastructure.NServiceBus;
 
 [assembly: NServiceBusTriggerFunction(AzureFunctionsQueueNames.ProviderPermissionQueue)]
@@ -46,16 +43,13 @@ var host = new HostBuilder()
         services.AddTransient<IReservationIndexRefreshHandler, ReservationIndexRefreshHandler>();
         services.AddTransient<IReservationService, ReservationService>();
         services.AddTransient<IReservationRepository, ReservationRepository>();
-        services.AddTransient<IElasticReservationIndexRepository, ElasticReservationIndexRepository>();
 
         services.AddTransient<IProviderPermissionRepository, ProviderPermissionRepository>();
-        services.AddTransient<IIndexRegistry, IndexRegistry>();
 
         services.AddTransient<IProviderPermissionsUpdatedHandler, ProviderPermissionsUpdatedHandler>();
         services.AddTransient<IUpdatedPermissionsEventValidator, UpdatedPermissionsEventValidator>();
         services.AddTransient<IProviderPermissionService, ProviderPermissionService>();
-
-        services.AddElasticSearch(config);
+        
         services.AddAzureSearch();
         services.AddSingleton(new ReservationJobsEnvironment(configuration["EnvironmentName"]));
 

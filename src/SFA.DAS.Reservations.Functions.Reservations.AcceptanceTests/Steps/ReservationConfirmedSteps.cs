@@ -1,10 +1,11 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SFA.DAS.CommitmentsV2.Messages.Events;
 using SFA.DAS.Reservations.Data;
+using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Reservations;
+using System;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests.Steps;
@@ -56,7 +57,7 @@ public class ReservationConfirmedSteps(TestServiceProvider serviceProvider, Test
         reservation.CohortId.Should().Be(TestData.DraftApprenticeshipCreatedEvent.CohortId);
         reservation.DraftApprenticeshipId.Should().Be(TestData.DraftApprenticeshipCreatedEvent.DraftApprenticeshipId);
 
-        var reservationIndexRepository = Services.GetService<IElasticReservationIndexRepository>();
+        var reservationIndexRepository = Services.GetService<IAzureSearchReservationIndexRepository>();
         var mock = Mock.Get(reservationIndexRepository);
 
         mock.Verify(x => x.SaveReservationStatus(
