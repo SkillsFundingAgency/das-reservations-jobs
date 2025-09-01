@@ -15,7 +15,7 @@ public interface IAzureSearchHelper
     Task<Response<SearchIndex>> GetIndex(string indexName);
     Task<List<SearchIndex>> GetIndexes();
     Task<SearchAlias> GetAlias(string aliasName);
-    Task<Response<ReservationAzureSearchDocument>> GetDocument(string indexName, string reservationId);
+    Task<SearchResults<ReservationAzureSearchDocument>> GetDocuments(string indexName, string reservationId);
     Task UpdateAlias(string aliasName, string indexName);
     Task DeleteDocument(string indexName, string reservationId);
     Task DeleteDocuments(string indexName, IEnumerable<string> ids);

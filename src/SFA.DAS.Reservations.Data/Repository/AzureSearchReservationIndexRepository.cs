@@ -130,17 +130,23 @@ public class AzureSearchReservationIndexRepository(
 
         try
         {
-            var document = await azureSearchHelper.GetDocument(index.Value.Name, id.ToString());
-            if (document?.Value == null)
+            var documents = await azureSearchHelper.GetDocuments(index.Value.Name, id.ToString());
+            
+            if (documents is null || documents.TotalCount == 0)
             {
                 logger.LogWarning("Reservation {ReservationId} was not found in the index", id);
                 return;
             }
 
-            var updatedDocument = document.Value;
-            updatedDocument.Status = (int)status;
+            var updatedDocuments = new List<ReservationAzureSearchDocument>();
+            foreach (var document in documents.GetResults())
+            {
+                var updatedDocument = document.Document;
+                updatedDocument.Status = (int)status;
+                updatedDocuments.Add(updatedDocument);
+            }
 
-            await azureSearchHelper.UploadDocuments(index.Value.Name, [updatedDocument]);
+            await azureSearchHelper.UploadDocuments(index.Value.Name, updatedDocuments);
 
             logger.LogInformation("Successfully updated status for reservation {ReservationId} to {Status}", id, status);
         }
