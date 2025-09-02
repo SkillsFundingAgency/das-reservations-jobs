@@ -144,12 +144,18 @@ public class AzureSearchHelper : IAzureSearchHelper
         }
     }
 
-    public async Task<Response<ReservationAzureSearchDocument>> GetDocument(string indexName, string reservationId)
+    public async Task<SearchResults<ReservationAzureSearchDocument>> GetDocuments(string indexName, string reservationId)
     {
         try
         {
             var searchClient = new SearchClient(_endpoint, indexName, _azureKeyCredential, _clientOptions);
-            return await searchClient.GetDocumentAsync<ReservationAzureSearchDocument>(reservationId);
+
+            var options = new SearchOptions
+            {
+                Filter = $"ReservationId eq '{reservationId}'",
+                IncludeTotalCount = true
+            };
+            return await searchClient.SearchAsync<ReservationAzureSearchDocument>("*", options);
         }
         catch (Exception ex)
         {

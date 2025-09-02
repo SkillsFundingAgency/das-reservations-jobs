@@ -1,6 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using Azure;
 using Azure.Search.Documents.Indexes.Models;
+using Azure.Search.Documents.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -54,7 +55,7 @@ public class WhenSavingReservationStatus
         await repository.SaveReservationStatus(reservationId, status);
 
         //Assert
-        azureSearchHelper.Verify(x => x.GetDocument(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        azureSearchHelper.Verify(x => x.GetDocuments(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Test, MoqAutoData]
@@ -73,8 +74,8 @@ public class WhenSavingReservationStatus
         azureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>()))
           .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex(indexName), new Mock<Response>().Object));
 
-        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync((Response<ReservationAzureSearchDocument>)null);
+        azureSearchHelper.Setup(x => x.GetDocuments(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((SearchResults<ReservationAzureSearchDocument>)null);
 
         //Act
         await repository.SaveReservationStatus(reservationId, status);
@@ -104,8 +105,15 @@ public class WhenSavingReservationStatus
             .ReturnsAsync(alias);
         azureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>()))
             .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex(indexName), new Mock<Response>().Object));
-        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync(Response.FromValue(document, new Mock<Response>().Object));
+        
+        var mockResponse = new Mock<Response>();
+        var mockResults = SearchModelFactory.SearchResults<ReservationAzureSearchDocument>(new[]
+        {
+            SearchModelFactory.SearchResult<ReservationAzureSearchDocument>(document,1.0,null,null,null)
+        }, 1, facets:null, coverage:null, rawResponse: mockResponse.Object);
+            
+        azureSearchHelper.Setup(x => x.GetDocuments(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(Response.FromValue(mockResults, mockResponse.Object));
 
         //Act
         await repository.SaveReservationStatus(reservationId, status);
@@ -132,7 +140,7 @@ public class WhenSavingReservationStatus
             .ReturnsAsync(alias);
         azureSearchHelper.Setup(x => x.GetIndex(It.IsAny<string>()))
             .ReturnsAsync(Response.FromValue<SearchIndex>(value: new SearchIndex("test"), new Mock<Response>().Object));
-        azureSearchHelper.Setup(x => x.GetDocument(It.IsAny<string>(), It.IsAny<string>()))
+        azureSearchHelper.Setup(x => x.GetDocuments(It.IsAny<string>(), It.IsAny<string>()))
             .ThrowsAsync(exception);
 
         //Act Assert 
