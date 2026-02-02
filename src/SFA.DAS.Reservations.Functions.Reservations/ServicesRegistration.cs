@@ -58,7 +58,7 @@ public class ServicesRegistration(IServiceCollection services, IConfiguration co
 
         services.AddTransient<IReservationService, ReservationService>();
 
-        services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+        services.AddTransient<IReferenceDataImportService, ReferenceDataImportService>();
         services.AddTransient<IProviderService, ProviderService>();
 
         services.AddHttpClient<IOuterApiClient, OuterApiClient>();

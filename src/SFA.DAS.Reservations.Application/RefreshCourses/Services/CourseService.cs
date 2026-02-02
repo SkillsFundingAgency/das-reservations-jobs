@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 
@@ -19,7 +19,8 @@ namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
                 Title = course.Title,
                 Level = course.Level,
                 EffectiveTo = course.EffectiveTo == DateTime.MinValue ? null : course.EffectiveTo,
-                ApprenticeshipType = course.ApprenticeshipType
+                ApprenticeshipType = course.ApprenticeshipType,
+                LearningType = course.LearningType
             };
         }
 

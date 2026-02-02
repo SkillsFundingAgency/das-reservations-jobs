@@ -4,7 +4,7 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.Providers.Services;
 
-public class ProviderService(IFindApprenticeshipTrainingService providerApiClient) : IProviderService
+public class ProviderService(IReferenceDataImportService providerApiClient) : IProviderService
 {
     public async Task<ProviderDetails> GetDetails(uint providerId)
     {

@@ -1,6 +1,6 @@
 namespace SFA.DAS.Reservations.Application.OuterApi.Requests;
 
-public record GetStandardsRequest : IGetApiRequest
+public record GetCoursesRequest : IGetApiRequest
 {
     public string GetUrl => "trainingcourses";
 }

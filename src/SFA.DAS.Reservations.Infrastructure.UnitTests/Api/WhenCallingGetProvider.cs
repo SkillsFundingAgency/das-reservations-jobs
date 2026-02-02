@@ -22,7 +22,7 @@ public class WhenCallingGetProvider
     {
         outerApiClient.Setup(x => x.Get<ProviderApiResponse>(new GetProviderRequest(ukPrn))).ReturnsAsync(providerApiResponse);
 
-        var sut = new FindApprenticeshipTrainingService(outerApiClient.Object);
+        var sut = new ReferenceDataImportService(outerApiClient.Object);
 
         var result = await sut.GetProvider(ukPrn);
 
@@ -34,7 +34,7 @@ public class WhenCallingGetProvider
     {
         outerApiClient.Setup(x => x.Get<ProviderApiResponse>(new GetProviderRequest(ukPrn))).Throws<HttpRequestException>();
 
-        var sut = new FindApprenticeshipTrainingService(outerApiClient.Object);
+        var sut = new ReferenceDataImportService(outerApiClient.Object);
 
         var result = async () => await sut.GetProvider(ukPrn);
         

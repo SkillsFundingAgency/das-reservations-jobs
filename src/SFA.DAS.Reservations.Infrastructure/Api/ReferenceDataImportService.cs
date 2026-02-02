@@ -6,11 +6,11 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Infrastructure.Api;
 
-public class FindApprenticeshipTrainingService(IOuterApiClient outerApiClient) : IFindApprenticeshipTrainingService
+public class ReferenceDataImportService(IOuterApiClient outerApiClient) : IReferenceDataImportService
 {
-    public async Task<StandardApiResponse> GetStandards()
+    public async Task<CourseApiResponse> GetCourses()
     {
-        return await outerApiClient.Get<StandardApiResponse>(new GetStandardsRequest()).ConfigureAwait(false);
+        return await outerApiClient.Get<CourseApiResponse>(new GetCoursesRequest()).ConfigureAwait(false);
     }
 
     public async Task<ProviderApiResponse> GetProvider(uint ukPrn)

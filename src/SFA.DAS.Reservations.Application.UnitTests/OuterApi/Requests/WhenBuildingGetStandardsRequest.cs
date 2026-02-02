@@ -1,17 +1,16 @@
-﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.OuterApi.Requests;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.OuterApi.Requests;
 
-public class WhenBuildingGetStandardsRequest
+public class WhenBuildingGetCoursesRequest
 {
-    [Test, AutoData]
+    [Test]
     public void Then_The_Url_Is_Correct()
     {
-        var actual = new GetStandardsRequest();
-        
+        var actual = new GetCoursesRequest();
+
         actual.GetUrl.Should().Be("trainingcourses");
     }
 }

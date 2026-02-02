@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +6,7 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Services;
 
-public class ApprenticeshipCoursesService(IFindApprenticeshipTrainingService standardApiClient)
+public class ApprenticeshipCoursesService(IReferenceDataImportService outerApiClient)
     : IApprenticeshipCourseService
 {
     public List<Course> GetCourseInformation()
@@ -15,7 +15,7 @@ public class ApprenticeshipCoursesService(IFindApprenticeshipTrainingService sta
 
         var tasks = new List<Task>
         {
-            GetStandards(list)
+            GetCourses(list)
         };
 
         Task.WaitAll(tasks.ToArray());
@@ -23,13 +23,13 @@ public class ApprenticeshipCoursesService(IFindApprenticeshipTrainingService sta
         return list.ToList();
     }
 
-    private async Task GetStandards(ConcurrentBag<Course> courses)
+    private async Task GetCourses(ConcurrentBag<Course> courses)
     {
-        var standardApiResponse = await standardApiClient.GetStandards();
+        var courseApiResponse = await outerApiClient.GetCourses();
 
-        foreach (var standard in standardApiResponse.Standards)
+        foreach (var course in courseApiResponse.Courses)
         {
-            courses.Add(new Course(standard.Id, standard.Title, standard.Level, standard.EffectiveTo, standard.ApprenticeshipType));
+            courses.Add(new Course(course.Id, course.Title, course.Level, course.EffectiveTo, course.ApprenticeshipType, course.LearningType));
         }
     }
 }

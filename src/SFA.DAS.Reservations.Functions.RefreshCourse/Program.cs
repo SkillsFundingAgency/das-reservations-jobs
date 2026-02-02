@@ -29,7 +29,7 @@ var host = new HostBuilder()
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
         services.AddDasLogging(typeof(Program).Namespace);
 
-        services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
+        services.AddTransient<IReferenceDataImportService, ReferenceDataImportService>();
         services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
         services.AddTransient<ICourseService, CourseService>();
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
         public async Task Then_The_Repository_Is_Called_With_The_Mapped_Entity()
         {
             //Arrange
-            var course = new Course(1,"My Course", 1, DateTime.Today, "Apprenticeship");
+            var course = new Course("1", "My Course", 1, DateTime.Today, "Apprenticeship");
             
             //Act
             await _service.Store(course);
@@ -35,14 +35,26 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
                    c.Level.Equals(course.Level) &&
                    c.Title.Equals(course.Title) &&
                    c.EffectiveTo == course.EffectiveTo &&
-                   c.ApprenticeshipType == course.ApprenticeshipType)), Times.Once);
+                   c.ApprenticeshipType == course.ApprenticeshipType &&
+                   c.LearningType == course.LearningType)), Times.Once);
+        }
+
+        [Test]
+        public async Task Then_The_Repository_Is_Called_With_LearningType_Mapped()
+        {
+            var course = new Course("1", "My Course", 1, DateTime.Today, "Apprenticeship", "ApprenticeshipUnit");
+
+            await _service.Store(course);
+
+            _repository.Verify(x=>x.Add(It.Is<Domain.Entities.Course>(
+                c=>c.CourseId == course.Id && c.LearningType == "ApprenticeshipUnit")), Times.Once);
         }
   
         [Test]
         public async Task Then_The_Repository_Is_Called_With_The_Mapped_Entity_And_Sets_EffectiveTo_To_Null_If_DateTime_Min()
         {
             //Arrange
-            var course = new Course(1,"My Course", 1, DateTime.MinValue, "Apprenticeship");
+            var course = new Course("1", "My Course", 1, DateTime.MinValue, "Apprenticeship");
             
             //Act
             await _service.Store(course);
@@ -52,7 +64,9 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services
                 c=>c.CourseId.Equals(course.Id) &&
                    c.Level.Equals(course.Level) &&
                    c.Title.Equals(course.Title) &&
-                   c.EffectiveTo.Equals(null))), Times.Once);
+                   c.EffectiveTo == null &&
+                   c.ApprenticeshipType == course.ApprenticeshipType &&
+                   c.LearningType == course.LearningType)), Times.Once);
         }
 
 

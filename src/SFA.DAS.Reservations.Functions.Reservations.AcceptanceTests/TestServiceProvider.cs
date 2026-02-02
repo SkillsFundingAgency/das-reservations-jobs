@@ -36,7 +36,7 @@ namespace SFA.DAS.Reservations.Functions.Reservations.AcceptanceTests
             encodingService.Setup(x => x.Encode(It.Is<long>(l => l.Equals(TestDataValues.LevyAccountId)), It.IsAny<EncodingType>())).Returns(TestDataValues.LevyHashedAccountId);
             serviceCollection.AddSingleton(encodingService.Object);
 
-            var findApprenticeshipTrainingService = new Mock<IFindApprenticeshipTrainingService>();
+            var findApprenticeshipTrainingService = new Mock<IReferenceDataImportService>();
             serviceCollection.AddSingleton(findApprenticeshipTrainingService.Object);
 
             var mockAzureSearchReservationIndex = new Mock<IAzureSearchReservationIndexRepository>();
