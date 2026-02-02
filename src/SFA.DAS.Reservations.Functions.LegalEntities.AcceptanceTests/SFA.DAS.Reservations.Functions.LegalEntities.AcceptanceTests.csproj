@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,9 +16,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
-    <PackageReference Include="SpecFlow" Version="3.9.74" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
+    <PackageReference Include="Reqnroll.NUnit" Version="2.0.0" />
+    <PackageReference Include="Reqnroll.SpecFlowCompatibility" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,22 +25,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SpecFlowFeatureFiles Update="Features\LegalEntityCreated.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    <ReqnrollFeatureFiles Update="Features\LegalEntityCreated.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>LegalEntityCreated.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\LegalEntityRemoved.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </ReqnrollFeatureFiles>
+    <ReqnrollFeatureFiles Update="Features\LegalEntityRemoved.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>LegalEntityRemoved.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\LegalEntityUpdated.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </ReqnrollFeatureFiles>
+    <ReqnrollFeatureFiles Update="Features\LegalEntityUpdated.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>LegalEntityUpdated.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\AccountUpdate.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </ReqnrollFeatureFiles>
+    <ReqnrollFeatureFiles Update="Features\AccountUpdate.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>AccountUpdate.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
+    </ReqnrollFeatureFiles>
   </ItemGroup>
 
   <ItemGroup>

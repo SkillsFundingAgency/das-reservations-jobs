@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,28 +16,27 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
-    <PackageReference Include="SpecFlow" Version="3.9.74" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
+    <PackageReference Include="Reqnroll.NUnit" Version="2.0.0" />
+    <PackageReference Include="Reqnroll.SpecFlowCompatibility" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <SpecFlowFeatureFiles Update="Features\ConfimReservation.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    <ReqnrollFeatureFiles Update="Features\ConfimReservation.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>ConfimReservation.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\DeleteApprenticeship.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </ReqnrollFeatureFiles>
+    <ReqnrollFeatureFiles Update="Features\DeleteApprenticeship.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>DeleteApprenticeship.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\CreateReservation.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </ReqnrollFeatureFiles>
+    <ReqnrollFeatureFiles Update="Features\CreateReservation.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>CreateReservation.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-    <SpecFlowFeatureFiles Update="Features\CreateReservation.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </ReqnrollFeatureFiles>
+    <ReqnrollFeatureFiles Update="Features\CreateReservation.feature">
+      <Generator>ReqnrollSingleFileGenerator</Generator>
       <LastGenOutput>DeleteReservation.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
+    </ReqnrollFeatureFiles>
   </ItemGroup>
 
   <ItemGroup>
