@@ -1,11 +1,10 @@
 using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.ImportTypes;
 
-namespace SFA.DAS.Reservations.Domain.RefreshCourse
+namespace SFA.DAS.Reservations.Domain.RefreshCourse;
+
+public interface IReferenceDataImportService
 {
-    public interface IReferenceDataImportService
-    {
-        Task<CourseApiResponse> GetCourses();
-        Task<ProviderApiResponse> GetProvider(uint ukPrn);
-    }
+    Task<CourseApiResponse> GetCourses();
+    Task<ProviderApiResponse> GetProvider(uint ukPrn);
 }

@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Reservations.Domain.RefreshCourse;
 
-public interface IGetCoursesHandler
+public interface ICourseImportService
 {
-    IList<Course> Handle();
+    List<Course> GetCourseInformation();
 }

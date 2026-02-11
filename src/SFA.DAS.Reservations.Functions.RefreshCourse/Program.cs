@@ -30,7 +30,7 @@ var host = new HostBuilder()
         services.AddDasLogging(typeof(Program).Namespace);
 
         services.AddTransient<IReferenceDataImportService, ReferenceDataImportService>();
-        services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
+        services.AddTransient<ICourseImportService, CourseImportImportService>();
         services.AddTransient<ICourseService, CourseService>();
 
         services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();

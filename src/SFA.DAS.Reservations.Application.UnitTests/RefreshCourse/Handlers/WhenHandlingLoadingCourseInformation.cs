@@ -11,12 +11,12 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Handlers;
 public class WhenHandlingLoadingCourseInformation
 {
     private GetCoursesHandler _handler;
-    private Mock<IApprenticeshipCourseService> _service;
+    private Mock<ICourseImportService> _service;
 
     [SetUp]
     public void Arrange()
     {
-        _service = new Mock<IApprenticeshipCourseService>();
+        _service = new Mock<ICourseImportService>();
         _service.Setup(x => x.GetCourseInformation()).Returns([new Course("1", "", 1, DateTime.Today, "Apprenticeship")]);
         _handler = new GetCoursesHandler(_service.Object);
     }

@@ -11,7 +11,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services;
 
 public class WhenGettingApprenticeshipCourses
 {
-    private ApprenticeshipCoursesService _apprenticeshipCoursesService;
+    private CourseImportImportService _courseImportImportService;
     private Mock<IReferenceDataImportService> _courseApiClient;
 
     [SetUp]
@@ -28,8 +28,7 @@ public class WhenGettingApprenticeshipCourses
                         Title = "Some Course",
                         Level = 1,
                         EffectiveTo = DateTime.Today.AddDays(-1),
-                        ApprenticeshipType = "Foundation",
-                        LearningType = "Standard"
+                        LearningType = "FoundationApprenticeship"
                     },
                     new CourseApiResponseItem
                     {
@@ -37,20 +36,19 @@ public class WhenGettingApprenticeshipCourses
                         Title = "Some Course 2",
                         Level = 1,
                         EffectiveTo = DateTime.Today.AddDays(-1),
-                        ApprenticeshipType = "OtherType",
-                        LearningType = "Standard"
+                        LearningType = "ApprenticeshipUnit"
                     }
                 ]
             }
         );
 
-        _apprenticeshipCoursesService = new ApprenticeshipCoursesService(_courseApiClient.Object);
+        _courseImportImportService = new CourseImportImportService(_courseApiClient.Object);
     }
 
     [Test]
     public void Then_The_Api_Client_Is_Called_To_Get_Courses()
     {
-        _apprenticeshipCoursesService.GetCourseInformation();
+        _courseImportImportService.GetCourseInformation();
 
         _courseApiClient.Verify(x => x.GetCourses(), Times.Once);
     }
@@ -59,7 +57,7 @@ public class WhenGettingApprenticeshipCourses
     public void Then_The_List_Of_Mapped_Courses_Is_Returned()
     {
         //Act
-        var actual = _apprenticeshipCoursesService.GetCourseInformation();
+        var actual = _courseImportImportService.GetCourseInformation();
 
         //Assert
         actual.Should().BeOfType<List<Course>>();

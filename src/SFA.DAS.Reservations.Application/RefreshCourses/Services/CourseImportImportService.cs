@@ -6,8 +6,8 @@ using SFA.DAS.Reservations.Domain.RefreshCourse;
 
 namespace SFA.DAS.Reservations.Application.RefreshCourses.Services;
 
-public class ApprenticeshipCoursesService(IReferenceDataImportService outerApiClient)
-    : IApprenticeshipCourseService
+public class CourseImportImportService(IReferenceDataImportService outerApiClient)
+    : ICourseImportService
 {
     public List<Course> GetCourseInformation()
     {
@@ -29,7 +29,7 @@ public class ApprenticeshipCoursesService(IReferenceDataImportService outerApiCl
 
         foreach (var course in courseApiResponse.Courses)
         {
-            courses.Add(new Course(course.Id, course.Title, course.Level, course.EffectiveTo, course.ApprenticeshipType, course.LearningType));
+            courses.Add(new Course(course.Id, course.Title, course.Level, course.EffectiveTo, course.LearningType));
         }
     }
 }

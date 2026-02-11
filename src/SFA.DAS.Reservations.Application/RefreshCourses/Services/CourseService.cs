@@ -2,27 +2,25 @@ using System;
 using System.Threading.Tasks;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
 
-namespace SFA.DAS.Reservations.Application.RefreshCourses.Services
+namespace SFA.DAS.Reservations.Application.RefreshCourses.Services;
+
+public class CourseService(ICourseRepository courseRepository) : ICourseService
 {
-    public class CourseService(ICourseRepository courseRepository) : ICourseService
+    public async Task Store(Course course)
     {
-        public async Task Store(Course course)
-        {
-            await courseRepository.Add(MapCourse(course));
-        }
+        await courseRepository.Add(MapCourse(course));
+    }
 
-        private Domain.Entities.Course MapCourse(Course course)
+    private Domain.Entities.Course MapCourse(Course course)
+    {
+        return new Domain.Entities.Course
         {
-            return new Domain.Entities.Course
-            {
-                CourseId = course.Id,
-                Title = course.Title,
-                Level = course.Level,
-                EffectiveTo = course.EffectiveTo == DateTime.MinValue ? null : course.EffectiveTo,
-                ApprenticeshipType = course.ApprenticeshipType,
-                LearningType = course.LearningType
-            };
-        }
-
+            CourseId = course.Id,
+            Title = course.Title,
+            Level = course.Level,
+            EffectiveTo = course.EffectiveTo == DateTime.MinValue ? null : course.EffectiveTo,
+            ApprenticeshipType = course.LearningType,
+            LearningType = course.LearningType
+        };
     }
 }
