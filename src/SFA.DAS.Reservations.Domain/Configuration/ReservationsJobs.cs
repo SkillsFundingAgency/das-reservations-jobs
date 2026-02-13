@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Reservations.Domain.Configuration
+namespace SFA.DAS.Reservations.Domain.Configuration
 {
     public class ReservationsJobs
     {
@@ -12,5 +12,6 @@
         public string ReservationCreatedEmailTemplateId { get; set; }
         public virtual string ReservationsApimUrl { get; set; }
         public virtual string ReservationsApimSubscriptionKey { get; set; }
+        public bool IncludeShortCourses { get; set; }
     }
 }
