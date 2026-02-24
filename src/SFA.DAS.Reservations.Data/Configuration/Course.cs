@@ -15,7 +15,7 @@ namespace SFA.DAS.Reservations.Data.Configuration
             builder.Property(x => x.Level).HasColumnName(@"Level").HasColumnType("tinyint").IsRequired();
             builder.Property(x => x.EffectiveTo).HasColumnName(@"EffectiveTo").HasColumnType("datetime");
             builder.Property(x => x.ApprenticeshipType).HasColumnName(@"ApprenticeshipType").HasColumnType("varchar").HasMaxLength(50).IsRequired(false);
-            builder.Property(x => x.LearningType).HasColumnName(@"LearningType").HasColumnType("varchar").HasMaxLength(50).IsRequired(false);
+            builder.Property(x => x.LearningType).HasColumnName(@"LearningType").HasColumnType("tinyint").IsRequired(false);
         }
     }
 }
