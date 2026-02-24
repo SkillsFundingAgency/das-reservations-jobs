@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace SFA.DAS.Reservations.Domain.RefreshCourse
+namespace SFA.DAS.Reservations.Domain.RefreshCourse;
+
+public interface ICourseService
 {
-    public interface ICourseService
-    {
-        Task Store(Course course);
-    }
+    Task Store(Course course);
 }
