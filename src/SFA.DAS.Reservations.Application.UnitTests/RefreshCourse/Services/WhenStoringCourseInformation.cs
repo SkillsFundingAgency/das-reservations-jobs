@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
+using SFA.DAS.Reservations.Domain.Types;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services;
 
@@ -36,7 +37,7 @@ public class WhenStoringCourseInformation
                c.Title.Equals(course.Title) &&
                c.EffectiveTo == course.EffectiveTo &&
                c.ApprenticeshipType == course.LearningType &&
-               c.LearningType == course.LearningType)), Times.Once);
+               c.LearningType == LearningType.Apprenticeship)), Times.Once);
     }
 
     [Test]
@@ -49,7 +50,7 @@ public class WhenStoringCourseInformation
         _repository.Verify(x => x.Add(It.Is<Domain.Entities.Course>(c =>
             c.CourseId == course.Id
             && c.ApprenticeshipType == course.LearningType
-            && c.LearningType == course.LearningType)), Times.Once);
+            && c.LearningType == LearningType.ApprenticeshipUnit)), Times.Once);
     }
   
     [Test]
@@ -68,7 +69,7 @@ public class WhenStoringCourseInformation
                c.Title.Equals(course.Title) &&
                c.EffectiveTo == null &&
                c.ApprenticeshipType == course.LearningType &&
-               c.LearningType == course.LearningType)), Times.Once);
+               c.LearningType == LearningType.Apprenticeship)), Times.Once);
     }
 
 
