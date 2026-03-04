@@ -12,16 +12,16 @@ using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Api;
 
-public class WhenCallingGetStandards
+public class WhenCallingGetCourses
 {
     [Test, MoqAutoData]
-    public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Standards_Returned(StandardApiResponse response, Mock<IOuterApiClient> outerApiClient)
+    public async Task Then_The_Endpoint_Is_Called_With_Api_Key_And_Courses_Returned(CourseApiResponse response, Mock<IOuterApiClient> outerApiClient)
     {
-        outerApiClient.Setup(x => x.Get<StandardApiResponse>(new GetStandardsRequest())).ReturnsAsync(response);
+        outerApiClient.Setup(x => x.Get<CourseApiResponse>(new GetCoursesRequest())).ReturnsAsync(response);
 
-        var sut = new FindApprenticeshipTrainingService(outerApiClient.Object);
+        var sut = new ReferenceDataImportService(outerApiClient.Object);
 
-        var result = await sut.GetStandards();
+        var result = await sut.GetCourses();
 
         result.Should().BeEquivalentTo(response);
     }
@@ -29,11 +29,11 @@ public class WhenCallingGetStandards
     [Test, AutoData]
     public void Then_If_It_Is_Not_Successful_An_Exception_Is_Thrown(Mock<IOuterApiClient> outerApiClient)
     {
-        outerApiClient.Setup(x => x.Get<StandardApiResponse>(new GetStandardsRequest())).Throws<HttpRequestException>();
+        outerApiClient.Setup(x => x.Get<CourseApiResponse>(new GetCoursesRequest())).Throws<HttpRequestException>();
 
-        var sut = new FindApprenticeshipTrainingService(outerApiClient.Object);
+        var sut = new ReferenceDataImportService(outerApiClient.Object);
 
-        var result = async () => await sut.GetStandards();
+        var result = async () => await sut.GetCourses();
 
         result.Should().ThrowAsync<HttpRequestException>();
     }

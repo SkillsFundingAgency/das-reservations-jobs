@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
@@ -6,62 +6,58 @@ using NUnit.Framework;
 using SFA.DAS.Reservations.Application.RefreshCourses.Services;
 using SFA.DAS.Reservations.Domain.ImportTypes;
 using SFA.DAS.Reservations.Domain.RefreshCourse;
-using Standard = SFA.DAS.Reservations.Domain.ImportTypes.Standard;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.RefreshCourse.Services;
 
 public class WhenGettingApprenticeshipCourses
 {
-    private ApprenticeshipCoursesService _apprenticeshipCoursesService;
-    private Mock<IFindApprenticeshipTrainingService> _standardApiClient;
+    private CourseImportImportService _courseImportImportService;
+    private Mock<IReferenceDataImportService> _courseApiClient;
 
     [SetUp]
     public void Arrange()
     {
-        _standardApiClient = new Mock<IFindApprenticeshipTrainingService>();
-        _standardApiClient.Setup(x => x.GetStandards()).ReturnsAsync(new StandardApiResponse
+        _courseApiClient = new Mock<IReferenceDataImportService>();
+        _courseApiClient.Setup(x => x.GetCourses()).ReturnsAsync(new CourseApiResponse
             {
-                Standards =
+                Courses =
                 [
-                    new Standard
+                    new CourseApiResponseItem
                     {
-                        Id = 1,
-                        Title = "Some Standard",
+                        Id = "1",
+                        Title = "Some Course",
                         Level = 1,
                         EffectiveTo = DateTime.Today.AddDays(-1),
-                        ApprenticeshipType = "Foundation"
+                        LearningType = "FoundationApprenticeship"
                     },
-
-                    new Standard
+                    new CourseApiResponseItem
                     {
-                        Id = 2,
-                        Title = "Some Standard 2",
+                        Id = "2",
+                        Title = "Some Course 2",
                         Level = 1,
                         EffectiveTo = DateTime.Today.AddDays(-1),
-                        ApprenticeshipType = "OtherType"
+                        LearningType = "ApprenticeshipUnit"
                     }
                 ]
             }
         );
 
-        _apprenticeshipCoursesService = new ApprenticeshipCoursesService(_standardApiClient.Object);
+        _courseImportImportService = new CourseImportImportService(_courseApiClient.Object);
     }
 
     [Test]
-    public void Then_The_Api_Client_Is_Called_To_Get_Standards()
+    public void Then_The_Api_Client_Is_Called_To_Get_Courses()
     {
-        //Act
-        _apprenticeshipCoursesService.GetCourseInformation();
+        _courseImportImportService.GetCourseInformation();
 
-        //Assert
-        _standardApiClient.Verify(x=>x.GetStandards(),Times.Once);
+        _courseApiClient.Verify(x => x.GetCourses(), Times.Once);
     }
 
     [Test]
-    public void Then_The_List_Of_Mapped_Standards_Is_Returned()
+    public void Then_The_List_Of_Mapped_Courses_Is_Returned()
     {
         //Act
-        var actual = _apprenticeshipCoursesService.GetCourseInformation();
+        var actual = _courseImportImportService.GetCourseInformation();
 
         //Assert
         actual.Should().BeOfType<List<Course>>();

@@ -29,8 +29,8 @@ var host = new HostBuilder()
         var config = configuration.GetSection("ReservationsJobs").Get<ReservationsJobs>();
         services.AddDasLogging(typeof(Program).Namespace);
 
-        services.AddTransient<IFindApprenticeshipTrainingService, FindApprenticeshipTrainingService>();
-        services.AddTransient<IApprenticeshipCourseService, ApprenticeshipCoursesService>();
+        services.AddTransient<IReferenceDataImportService, ReferenceDataImportService>();
+        services.AddTransient<ICourseImportService, CourseImportImportService>();
         services.AddTransient<ICourseService, CourseService>();
 
         services.AddTransient<IGetCoursesHandler, GetCoursesHandler>();

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SFA.DAS.Reservations.Data.Configuration
@@ -14,6 +14,8 @@ namespace SFA.DAS.Reservations.Data.Configuration
             builder.Property(x => x.Title).HasColumnName(@"Title").HasColumnType("varchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.Level).HasColumnName(@"Level").HasColumnType("tinyint").IsRequired();
             builder.Property(x => x.EffectiveTo).HasColumnName(@"EffectiveTo").HasColumnType("datetime");
+            builder.Property(x => x.ApprenticeshipType).HasColumnName(@"ApprenticeshipType").HasColumnType("varchar").HasMaxLength(50).IsRequired(false);
+            builder.Property(x => x.LearningType).HasColumnName(@"LearningType").HasColumnType("tinyint").IsRequired(false);
         }
     }
 }

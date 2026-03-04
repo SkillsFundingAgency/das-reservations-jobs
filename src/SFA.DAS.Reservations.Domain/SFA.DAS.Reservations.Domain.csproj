@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -22,7 +22,7 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+    <PackageReference Include="Azure.Data.Tables" Version="12.9.1" />
   </ItemGroup>
 
 </Project>

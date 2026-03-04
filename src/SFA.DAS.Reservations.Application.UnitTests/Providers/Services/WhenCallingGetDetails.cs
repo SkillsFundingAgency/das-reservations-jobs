@@ -17,7 +17,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Providers.Services
         public async Task Then_Gets_Provider_Details_From_Api(
             uint ukPrn,
             ProviderApiResponse providerFromApi,
-            [Frozen] Mock<IFindApprenticeshipTrainingService> mockApiClient,
+            [Frozen] Mock<IReferenceDataImportService> mockApiClient,
             ProviderService service)
         {
             mockApiClient
