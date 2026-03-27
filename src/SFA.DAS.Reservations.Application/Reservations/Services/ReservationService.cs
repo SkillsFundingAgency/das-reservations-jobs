@@ -189,7 +189,7 @@ public class ReservationService(
             CourseId = entity.CourseId,
             CourseTitle = entity.Course?.Title,
             CourseLevel = entity.Course?.Level,
-            CourseLearningType = ((byte?)entity.Course?.LearningType),
+            CourseLearningType = ((int?)entity.Course?.LearningType),
             AccountLegalEntityId = entity.AccountLegalEntityId,
             ProviderId = entity.ProviderId,
             AccountLegalEntityName = entity.AccountLegalEntityName,
