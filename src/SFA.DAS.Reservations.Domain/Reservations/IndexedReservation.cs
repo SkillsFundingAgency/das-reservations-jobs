@@ -51,6 +51,8 @@ namespace SFA.DAS.Reservations.Domain.Reservations
         public int? CourseLevel { get; set; }
         [JsonProperty(PropertyName = "courseDescription")]
         public string CourseDescription => $"{CourseTitle} - Level {CourseLevel}";
+        [JsonProperty(PropertyName = "courseLearningType")]
+        public int? CourseLearningType { get; set; }
         [JsonProperty(PropertyName = "accountLegalEntityId")]
         public long AccountLegalEntityId { get; set; }
         [JsonProperty(PropertyName = "providerId")]

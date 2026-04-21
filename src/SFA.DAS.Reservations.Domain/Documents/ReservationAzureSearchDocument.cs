@@ -22,6 +22,7 @@ public class ReservationAzureSearchDocument
             CourseTitle = source.CourseTitle,
             CourseLevel = source.CourseLevel,
             CourseDescription = source.CourseDescription,
+            CourseLearningType = source.CourseLearningType.HasValue ? source.CourseLearningType.Value : 0,
             AccountLegalEntityId = source.AccountLegalEntityId,
             ProviderId = source.ProviderId.HasValue ? (int)source.ProviderId.Value : 0,
             AccountLegalEntityName = source.AccountLegalEntityName,
@@ -67,6 +68,9 @@ public class ReservationAzureSearchDocument
 
     [SearchableField(IsFilterable = true, IsSortable = true, IsFacetable = true)]
     public string CourseDescription { get; set; }
+
+    [SimpleField(IsFilterable = true, IsSortable = true)]
+    public int CourseLearningType { get; set; }
 
     [SimpleField(IsFilterable = true)]
     public long AccountLegalEntityId { get; set; }
