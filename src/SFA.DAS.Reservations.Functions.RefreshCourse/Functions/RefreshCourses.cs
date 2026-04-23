@@ -9,7 +9,7 @@ public class RefreshCourses(ILogger<RefreshCourses> logger)
 {
     [Function("RefreshCourses")]
     [QueueOutput(QueueNames.GetCourses)]
-    public string Run([TimerTrigger("0 0 0 */1 * *")] TimerInfo myTimer)
+    public string Run([TimerTrigger("%ReservationsJobs:RefreshCoursesSchedule%")] TimerInfo myTimer)
     {
         logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         return "get-courses";
