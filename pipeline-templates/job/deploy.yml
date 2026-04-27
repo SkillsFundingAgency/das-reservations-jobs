@@ -61,6 +61,7 @@ jobs:
               AzureWebJobsStorage: $(AzureWebJobsStorage)
               NServiceBusLicense: $(NServiceBusLicense)
               ServiceBusConnectionString: $(ServiceBusConnectionString)
+              RefreshCoursesSchedule: $(RefreshCoursesSchedule)
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
