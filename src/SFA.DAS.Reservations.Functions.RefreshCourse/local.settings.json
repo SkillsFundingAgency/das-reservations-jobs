@@ -4,6 +4,7 @@
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
     "ConfigNames": "SFA.DAS.Reservations.Jobs",
     "EnvironmentName": "LOCAL",
+    "RefreshCoursesSchedule": "0 15 5 * * *",
     "Version": "1.0",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
