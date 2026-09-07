@@ -12,6 +12,5 @@ namespace SFA.DAS.Reservations.Domain.Configuration
         public string ReservationCreatedEmailTemplateId { get; set; }
         public virtual string ReservationsApimUrl { get; set; }
         public virtual string ReservationsApimSubscriptionKey { get; set; }
-        public bool IncludeShortCourses { get; set; }
     }
 }
